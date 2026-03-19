@@ -1,0 +1,256 @@
+/* General styles */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    background-color: rgb(255, 255, 255);
+}
+
+/* Root container */
+#root {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+/* Header styles */
+header {
+    background-color: #142B36;
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    width: 100%;
+    box-sizing: border-box;
+    height: 70px;
+    position: relative;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 40px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Menu styles */
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.menu img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+/* Profile menu */
+.profile-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: transparent;
+    border: none;
+}
+
+.profile-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-button:hover .profile-icon {
+    transform: scale(1.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Dropdown menu styles */
+.dropdown-menu {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #466e78;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    width: 170px;
+    height: 110px;
+    padding: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    overflow: hidden;
+}
+
+.dropdown-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Menu items */
+.menu-item {
+    padding: 0.5rem 1rem;
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-sizing: border-box;
+}
+
+/* Specific styles for "Ver perfil" */
+.menu-item.ver-perfil .menu-item-icon {
+    width: 40px; 
+    height: 40px;
+}
+
+/* Specific styles for "Cerrar sesión" */
+.menu-item.cerrar-sesion .menu-item-icon {
+    width: 60px;
+    height: 60px;
+}
+
+/* General menu item icon styles */
+.menu-item-icon {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+/* Section titles */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 1.5rem 0 1rem;
+    color: #2C4A52;
+    line-height: 1.6rem;
+}
+
+/* Form container */
+form {
+    background-color: white;
+    padding: 1.5rem;
+    margin: 1rem auto;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+form input {
+    width: 95%;
+    padding: 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+form button {
+    background-color: #2C4A52;
+    color: white;
+    padding: 0.7rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+form button:hover {
+    background-color: #5a7188;
+}
+
+/* History container */
+.history-container {
+    width: 90%;
+    margin: 1rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    header {
+        font-size: 0.85rem;
+        height: 60px;
+        padding: 0.5rem 0.8rem;
+    }
+
+    .menu img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .profile-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    form {
+        width: 95%;
+    }
+}
+
+@media (max-width: 480px) {
+    form {
+        padding: 1rem;
+        width: 85%;
+    }
+
+    form input,
+    form button {
+        font-size: 0.8rem;
+        width: 95%;
+        padding: 0.6rem;
+    }
+
+    .menu img {
+        width: 25px;
+        height: 25px;
+    }
+
+    .profile-icon {
+        width: 25px;
+        height: 25px;
+    }
+}

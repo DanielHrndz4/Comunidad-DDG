@@ -1,0 +1,289 @@
+/* Contenedor principal */
+.user-home-container {
+    font-family: Arial, sans-serif;
+    background-color: #F5F5F5;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Barra de navegación */
+.user-home-navbar {
+    background-color: #314A52;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px; 
+    width: 100%;
+    height: 60px; 
+    box-sizing: border-box;
+}
+
+/* Contenedor del logo */
+.user-home-logo {
+    display: block;
+    margin: 5 auto 10px;
+    width: 70px;
+    overflow: hidden; /* Evita cualquier desborde */
+}
+
+/* Imagen del logo */
+.user-home-logo img {
+    height: 90%; /* Igual a la altura de la barra */
+    max-height: 50px; /* Igual a la altura máxima de la barra */
+    width: auto; /* Mantiene proporción */
+    object-fit: contain; /* Ajusta la imagen dentro del contenedor */
+    cursor: pointer;
+}
+
+/* Menú de navegación */
+.user-home-navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-home-navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Espaciado consistente entre íconos */
+}
+
+/* Íconos */
+.user-home-icono,
+.user-home-icono-usuario {
+    height: 45px; /* Tamaño del ícono */
+    cursor: pointer;
+}
+
+/* Desplegable */
+.user-home-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.user-home-desplegable {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.user-home-desplegable img {
+    height: 20px; /* Tamaño del ícono del desplegable */
+}
+
+/* Contenido principal */
+.user-home-contenido {
+    flex-grow: 1; /* Ocupa el espacio restante entre la barra y el pie */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centra los elementos verticalmente */
+    align-items: center; /* Centra los elementos horizontalmente */
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Selectores y botón */
+.user-home-select-contenedor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: -50px; /* Mueve el selector hacia arriba */
+    margin-bottom: 90px; /* Espacio entre el selector y las tarjetas */
+    width: 100%; /* Garantiza que ocupe todo el ancho */
+    max-width: 500px;
+}
+
+.user-home-select {
+    padding: 10px;
+    color:#36606E;
+    border-radius: 30px;
+    font-size: 1rem;
+    width: 70%;
+    background-color: rgba(67, 66, 66, 0.17); /* Fondo gris claro transparente */
+}
+
+.user-home-boton-agregar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #4c82af10;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.user-home-boton-agregar img {
+    height: 40px;
+}
+
+/* Cards */
+.user-home-cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px; /* Incrementa el espacio entre las tarjetas */
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 900px;
+    margin-top: 40px; /* Espacio adicional encima de las tarjetas */
+}
+
+/* Estilo individual de cada card */
+.user-home-card {
+    background-color: #ACBDC5;
+    padding: 20px;
+    border-radius: 10px;
+    width: 200px;
+    text-align: center;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 200px;
+}
+
+.user-home-card:hover {
+    transform: translateY(-10px);
+    background-color: #97A8B3;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-home-card img {
+    height: 120px;
+    margin-bottom: 10px;
+}
+
+.user-home-card-texto {
+    color: #36606E;
+    font-weight: bold;
+    margin: 0;
+}
+/* Imagen del menú */
+.user-home-menu {
+    position: absolute;
+    top: 70px; /* Ajusta la posición vertical */
+    left: 40px; /* Ajusta la posición horizontal */
+    width: 50px; /* Tamaño de la imagen */
+    height: auto;
+    cursor: pointer;
+}
+.user-home-menu-desplegable {
+    position: absolute;
+    top: 120px; /* Ajusta la posición del menú desplegable */
+    left: 60px; /* Ajusta la posición horizontal */
+    background-color: none;
+    border: 1px solid #dddddd00;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #7b7b7b00;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: left;
+    padding: 8px 10px;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+    color: black;
+  }
+  
+  .menu-item img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .menu-item:hover {
+    background-color: #ACBDC5;
+  }
+  
+  /* Fondo del formulario */
+.form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Cambia de center a flex-start para controlar el eje vertical */
+    padding-top: 250px; /* Agrega un espacio superior opcional */
+    z-index: 1000;
+  }
+  
+  /* Contenedor del formulario */
+  .form-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  /* Estilo de los títulos */
+  .form-title {
+    font-size: 1.0rem;
+    margin-bottom: 10px;
+    color: black;
+  }
+  
+  /* Inputs */
+  .form-input,
+  .form-textarea {
+    max-width: 100%; /* Asegura que el ancho no exceda el contenedor padre */
+    box-sizing: border-box; /* Incluye padding y border dentro del ancho total */
+    width: 100%; /* Ocupa el 100% del espacio disponible del contenedor */
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f5f5f5;
+    color: black;
+  }
+  
+  /* Botones */
+  .form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px; 
+    margin-top: 20px;
+  }
+  
+  .form-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .form-button.cancel {
+    background-color: #6c757d;
+    color: white;
+  }
+  
+  .form-button.submit {
+    background-color: #B2CCBB;
+    color: white;
+  }
+  

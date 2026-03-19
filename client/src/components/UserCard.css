@@ -1,0 +1,42 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    margin: 0;
+}
+
+.cards-container {
+    display: flex;
+    justify-content: center; /* Centra las tarjetas horizontalmente */
+    align-items: center; /* Centra las tarjetas verticalmente */
+    flex-wrap: wrap; /* Permite que las tarjetas se ajusten cuando hay muchas */
+    gap: 20px; /* Espacio entre las tarjetas */
+}
+
+.card-user {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+    margin: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.card-description {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+h2, p {
+    color: black;
+}

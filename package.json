@@ -1,0 +1,14 @@
+{
+  "name": "proyectois2025-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install-all": "pnpm install --prefix client && pnpm install --prefix service",
+    "install-client": "pnpm install --prefix client",
+    "install-service": "pnpm install --prefix service",
+    "dev": "concurrently \"pnpm run dev --prefix service\" \"pnpm run dev --prefix client\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
