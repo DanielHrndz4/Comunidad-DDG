@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "install-all": "pnpm install --prefix client && pnpm install --prefix service",
-    "install-client": "pnpm install --prefix client",
-    "install-service": "pnpm install --prefix service",
-    "dev": "concurrently \"pnpm run dev --prefix service\" \"pnpm run dev --prefix client\""
+    "install:all": "yarn --cwd client install && yarn --cwd service install",
+    "install:client": "yarn --cwd client install",
+    "install:service": "yarn --cwd service install",
+    "dev": "concurrently \"yarn --cwd service dev\" \"yarn --cwd client dev\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
