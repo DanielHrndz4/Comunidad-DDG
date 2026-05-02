@@ -33,7 +33,7 @@ import Home from "./pages/home/Home.jsx";
 
 // Contextos
 // @ts-ignore
-import { AuthProvider } from "./context/AuthContext.jsx";
+import { AuthProvider } from "./context/AuthContext";
 // @ts-ignore
 import { TaskProvider } from "./context/TaskContext.jsx";
 
@@ -65,13 +65,7 @@ import ProfileVigilant from "./pages/vigilant/ProfileVigilant.jsx";
 
 // Rutas protegidas según rol
 // @ts-ignore
-import ProtectedRoute from "./protected/ProtectedRoute.jsx";
-// @ts-ignore
-import ProtectedRouteVigilant from "./protected/ProtectedRouteVigilant.jsx";
-// @ts-ignore
-import ProtectedRouteUser from "./protected/ProtectedRouteUser.jsx";
-// @ts-ignore
-import ProtectedRouteAdmin from './protected/ProtectedRouteAdmin.jsx'
+import ProtectedRoute from "./protected/ProtectedRoute";
 
 // CSS global
 import './index.css'
@@ -90,7 +84,7 @@ if (rootElement) {
               <Route path="/register" element={<Register />} />
 
               <Route element={<ProtectedRoute />}>
-                <Route element={<ProtectedRouteUser />}>
+                <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
                   <Route element={<UserNormalLayout />}>
                     <Route path="/user" element={<LoginAccess />} />
                     <Route path="/userReport" element={<UserNormalReportView />} />
@@ -102,7 +96,7 @@ if (rootElement) {
                   </Route>
                 </Route>
 
-                <Route element={<ProtectedRouteVigilant />}>
+                <Route element={<ProtectedRoute allowedRoles={["vigilant"]} />}>
                   <Route element={<VigilantLayout />}>
                     <Route path="/vigilant" element={<Vigilant />} />
                     <Route path="/visits" element={<Visits />} />
@@ -111,7 +105,7 @@ if (rootElement) {
                   </Route>
                 </Route>
 
-                <Route element={<ProtectedRouteAdmin />}>
+                <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
                   <Route element={<AdminLayout />}>
                     <Route path='/admin' element={<AdminHome />} />
                     <Route path="/admin/users" element={<AdminUserView />} />
