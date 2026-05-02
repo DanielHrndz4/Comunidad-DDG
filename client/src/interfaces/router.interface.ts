@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type UserRole = "ADMIN" | "USER" | "SUPPORT";
+export type UserRole = "admin" | "normal" | "vigilant";
 
 export interface ProtectedRouteProps {
   allowedRoles: UserRole[];
