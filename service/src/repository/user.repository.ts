@@ -8,7 +8,7 @@ import bcrypt from "bcrypt";
 * @param {Object} userData - Datos del usuario.
 * @returns {Promise<Object>} Usuario creado.
 */
-export const createUser = async (userData) => {
+export const createUser = async (userData: Object): Promise<Object | null> => {
     const newUser = new User(userData);
     return await newUser.save();
 };
@@ -20,7 +20,7 @@ export const createUser = async (userData) => {
 * @param {Object} userData - Datos del usuario.
 * @returns {Promise<Object>} Usuario creado.
 */
-export const createUserByAdmin = async (userData) => {
+export const createUserByAdmin = async (userData: Object): Promise<Object | null> => {
     const newUser = new User(userData);
     return await newUser.save();
 };
@@ -32,7 +32,7 @@ export const createUserByAdmin = async (userData) => {
 * @param {string} username - Nombre de usuario.
 * @returns {Promise<Object|null>} Usuario encontrado o null.
 */
-export const findByUsername = async (username) => {
+export const findByUsername = async (username: String): Promise<Object | null> => {
     return await User.findOne({ username });
 };
 
@@ -44,7 +44,7 @@ export const findByUsername = async (username) => {
 * @param {string} hashedPassword - Contraseña encriptada.
 * @returns {Promise<boolean>} true si coincide, false si no.
 */
-export const validatePassword = async (password, hashedPassword) => {
+export const validatePassword = async (password: String, hashedPassword: String): Promise<Boolean> => {
     return bcrypt.compare(password, hashedPassword);
 };
 
@@ -55,7 +55,7 @@ export const validatePassword = async (password, hashedPassword) => {
 * @param {string} id - ID del usuario.
 * @returns {Promise<Object|null>} Usuario encontrado o null.
 */
-export const findUserById = async (id) => {
+export const findUserById = async (id: String): Promise<Object | null> => {
     return await User.findById(id);
 };
 
@@ -65,7 +65,7 @@ export const findUserById = async (id) => {
 * @function getAllUserFromDB
 * @returns {Promise<Array>} Lista de usuarios.
 */
-export const getAllUserFromDB = async () => {
+export const getAllUserFromDB = async (): Promise<Array<Object> | null> => {
     return await User.find();
 };
 
@@ -75,7 +75,7 @@ export const getAllUserFromDB = async () => {
 * @function getAllUserNotFilter
 * @returns {Promise<Array>} Lista de usuarios.
 */
-export const getAllUserNotFilter = async () => {
+export const getAllUserNotFilter = async (): Promise<Array<Object> | null> => {
     return await User.find();
 };
 
@@ -86,7 +86,7 @@ export const getAllUserNotFilter = async () => {
 * @param {string} id - ID del usuario a eliminar.
 * @returns {Promise<Object|null>} Usuario eliminado o null.
 */
-export const deleteUser = async (id) => {
+export const deleteUser = async (id: String): Promise<Object | null> => {
     return await User.findByIdAndDelete(id);
 };
 
@@ -97,7 +97,7 @@ export const deleteUser = async (id) => {
 * @param {string} id - ID del usuario.
 * @returns {Promise<Object|null>} Usuario encontrado o null.
 */
-export const getUserById = async(id) => {
+export const getUserById = async(id: String): Promise<Object | null> => {
     return await User.findById(id);
 };
 
@@ -109,7 +109,7 @@ export const getUserById = async(id) => {
 * @param {Object} updateData - Datos a actualizar.
 * @returns {Promise<Object|null>} Usuario actualizado.
 */
-export const updateUserById = async (id, updateData) => {
+export const updateUserById = async (id: String, updateData: Object): Promise<Object | null> => {
     return await User.findByIdAndUpdate(id, updateData, { new: true });
 };
 
@@ -121,7 +121,7 @@ export const updateUserById = async (id, updateData) => {
 * @param {string} newHashedPassword - Nueva contraseña encriptada.
 * @returns {Promise<Object|null>} Usuario actualizado.
 */
-export const updatePasswordByUsername = async (username, newHashedPassword) => {
+export const updatePasswordByUsername = async (username: String, newHashedPassword: String): Promise<Object | null> => {
     return await User.findOneAndUpdate(
         { username },
         { password: newHashedPassword },

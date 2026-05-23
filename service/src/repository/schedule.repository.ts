@@ -7,7 +7,7 @@ import Schedule from "../models/schedule.model.js";
 * @param {Object} scheduleData - Datos del horario a registrar.
 * @returns {Promise<Object>} El documento creado.
 */
-export const createSchedule = async(scheduleData) => {
+export const createSchedule = async (scheduleData: Object): Promise<Object> => {
     const newSchedule = new Schedule(scheduleData);
     return await newSchedule.save();
 };
@@ -18,6 +18,6 @@ export const createSchedule = async(scheduleData) => {
 * @function selectSchedule
 * @returns {Promise<Array>} Lista de todos los horarios.
 */
-export const selectSchedule = async () => {
+export const selectSchedule = async (): Promise<Array<Object> | null> => {
     return await Schedule.find();
 };

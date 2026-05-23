@@ -7,7 +7,7 @@ import Pay from "../models/pay.vigilance.model.js";
 * @param {string|number} numberTarjet - Número de tarjeta asociado al pago.
 * @returns {Promise<Object|null>} Documento encontrado o null si no existe.
 */
-export const findPay = async (numberTarjet) => {
+export const findPay = async (numberTarjet: string | number): Promise<Object | null> => {
     return await Pay.findOne({ numberTarjet });
 };
 
@@ -18,7 +18,7 @@ export const findPay = async (numberTarjet) => {
 * @param {Object} payData - Datos del pago a registrar.
 * @returns {Promise<Object>} El documento creado.
 */
-export const createPay = async (payData) => {
+export const createPay = async (payData: Object): Promise<Object | null> => {
     const newPay = new Pay(payData);
     return await newPay.save();
 };
@@ -29,6 +29,6 @@ export const createPay = async (payData) => {
 * @function getAllPays
 * @returns {Promise<Array>} Lista de todos los pagos almacenados.
 */
-export const getAllPays = async () => {
+export const getAllPays = async (): Promise<Array<Object> | null> => {
     return await Pay.find();
 };

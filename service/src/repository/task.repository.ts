@@ -7,7 +7,7 @@ import Task from "../models/task.model.js";
 * @param {Object} taskData - Datos de la tarea a guardar.
 * @returns {Promise<Object>} La tarea creada.
 */
-export const insertTask = async (taskData) => {
+export const insertTask = async (taskData: Object): Promise<Object | null> => {
     const newTask = new Task(taskData);
     return await newTask.save();
 };
@@ -19,8 +19,8 @@ export const insertTask = async (taskData) => {
 * @param {string} userId - ID del usuario dueño de las tareas.
 * @returns {Promise<Object|null>} Tarea encontrada o null.
 */
-export const selectTask = async (userId) => {
-    return await Task.findById({ user: userId }).populate();
+export const selectTask = async (userId: string): Promise<Object | null> => {
+    return await Task.findById({ user: userId }).populate("user");
 };
 
 /**
@@ -30,12 +30,12 @@ export const selectTask = async (userId) => {
 * @returns {Promise<Array>} Lista de tareas.
 * @throws {Error} Cuando ocurre un fallo al consultar la base.
 */
-export const selectTaskHome = async () => {
+export const selectTaskHome = async (): Promise<Array<Object> | null> => {
     try {
         const tasks = await Task.find();
         return tasks;
     } catch (error) {
-        throw new Error('Error al obtener las tareas desde la base de datos');
+        throw new Error('Error al obtener las tareas');
     }
 };
 
