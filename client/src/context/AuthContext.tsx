@@ -3,7 +3,6 @@ import {
   useState,
   useContext,
   useEffect,
-  type ReactNode,
 } from "react";
 
 import {
@@ -21,250 +20,408 @@ import {
 } from "../api/auth.js";
 
 import Cookies from "js-cookie";
-import type { UserRole } from "../interfaces/router.interface";
 
-// ---- Tipos mínimos (sin inventar estructura de tu backend) ----
-type GenericObject = Record<string, unknown>;
+import type {
+  AuthContextType,
+  AuthProviderProps,
+  LoginData,
+  UpdatePasswordData,
+} from "../interfaces/IAuthContext";
 
-export interface AuthUser extends GenericObject {
-  role?: UserRole; // clave para ProtectedRoute
-}
+import type { IUser } from "../interfaces/IUser";
+import type { IPayment } from "../interfaces/IPayment";
 
-export interface AuthContextValue {
-  signup: (user: GenericObject) => Promise<void>;
-  signin: (user: GenericObject) => Promise<void>;
-  logout: () => void;
+export const AuthContext =
+  createContext<AuthContextType | null>(null);
 
-  createUser: (userData: GenericObject) => Promise<void>;
-  updatePasswordByPassword: (data: { username: string; password: string }) => Promise<void>;
+export const useAuth = (): AuthContextType => {
 
-  getUsers: () => Promise<void>;
-  deleteUser: (id: string) => Promise<void>;
-
-  getOneProfile: (id: string) => Promise<unknown>;
-  updateProfile: (id: string, profile: GenericObject) => Promise<unknown>;
-
-  addPay: (pay: GenericObject) => Promise<void>;
-  getAllUsers: () => Promise<void>;
-
-  loading: boolean;
-  user: AuthUser | null;
-  isAuthenticate: boolean;
-  setIsAuthenticate: React.Dispatch<React.SetStateAction<boolean>>;
-  errors: string[];
-
-  getAdminUsers: unknown[];
-  users: unknown[];
-}
-
-export const AuthContext = createContext<AuthContextValue | null>(null);
-
-export const useAuth = (): AuthContextValue => {
   const context = useContext(AuthContext);
+
   if (!context) {
-    throw new Error("useAuth debe estar dentro del provider");
+    throw new Error(
+      "useAuth debe estar dentro del provider"
+    );
   }
+
   return context;
 };
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [users, setGetUsers] = useState<unknown[]>([]);
-  const [isAuthenticate, setIsAuthenticate] = useState<boolean>(false);
-  const [errors, setErrors] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [getAdminUsers, setGetAdminUsers] = useState<unknown[]>([]);
+export const AuthProvider = ({
+  children,
+}: AuthProviderProps) => {
 
-  const updatePasswordByPassword = async ({
-    username,
-    password,
-  }: {
-    username: string;
-    password: string;
-  }): Promise<void> => {
+  const [user, setUser] =
+    useState<IUser | null>(null);
+
+  const [users, setGetUsers] =
+    useState<IUser[]>([]);
+
+  const [isAuthenticate, setIsAuthenticate] =
+    useState<boolean>(false);
+
+  const [errors, setErrors] =
+    useState<string[]>([]);
+
+  const [loading, setLoading] =
+    useState<boolean>(true);
+
+  const [getAdminUsers, setGetAdminUsers] =
+    useState<IUser[]>([]);
+
+  const updatePasswordByPassword = async (
+    data: UpdatePasswordData
+  ): Promise<void> => {
+
+    const {
+      username,
+      password,
+    } = data;
+
     try {
+
       setErrors([]);
-      await updatePasswordRequest({ username, password });
+
+      await updatePasswordRequest({
+        username,
+        password,
+      });
+
     } catch (error: unknown) {
-      const err = error as { response?: { data?: unknown } };
-      const data = err.response?.data;
+
+      const err = error as {
+        response?: {
+          data?: unknown;
+        };
+      };
+
+      const data =
+        err.response?.data;
 
       const msgs =
         Array.isArray(data)
           ? (data as string[])
           : [
-              (data as { message?: string } | undefined)?.message ||
+              (
+                data as {
+                  message?: string;
+                } | undefined
+              )?.message ||
                 "Error al actualizar la contraseña",
             ];
 
       setErrors(msgs);
+
       throw error;
     }
   };
 
-  const signup = async (userData: GenericObject): Promise<void> => {
+  const signup = async (
+    userData: IUser
+  ): Promise<void> => {
+
     try {
-      const res = (await registerRequest(userData)) as { data: AuthUser };
+
+      const res =
+        await registerRequest(userData);
+
       setUser(res.data);
+
       setIsAuthenticate(true);
+
     } catch (error: unknown) {
+
       console.log("Error");
-      setErrors(["Vuelva a intentarlo o contacte con el administrador"]);
+
+      setErrors([
+        "Vuelva a intentarlo o contacte con el administrador",
+      ]);
+
       throw error;
     }
   };
 
-  const signin = async (userData: GenericObject): Promise<void> => {
+  const signin = async (
+    userData: LoginData
+  ): Promise<void> => {
+
     try {
-      const res = (await loginRequest(userData)) as { data: AuthUser };
+
+      const res =
+        await loginRequest(userData);
+
       setUser(res.data);
+
       setIsAuthenticate(true);
+
       setErrors([]);
+
     } catch (error: unknown) {
-      console.log("Revise que los campos sean correctos");
-      setErrors(["Revise que los campos sean correctos"]);
+
+      console.log(
+        "Revise que los campos sean correctos"
+      );
+
+      setErrors([
+        "Revise que los campos sean correctos",
+      ]);
     }
   };
 
-  const createUser = async (userData: GenericObject): Promise<void> => {
+  const createUser = async (
+    userData: IUser
+  ): Promise<void> => {
+
     try {
-      await registerRequestByAdmin(userData);
+
+      await registerRequestByAdmin(
+        userData
+      );
+
       setErrors([]);
+
     } catch (error: unknown) {
+
       console.log("Error");
-      setErrors(["Revise que los campos sean correctos"]);
+
+      setErrors([
+        "Revise que los campos sean correctos",
+      ]);
+
       throw error;
     }
   };
 
   const logout = (): void => {
+
     Cookies.remove("token");
+
     setIsAuthenticate(false);
+
     setUser(null);
   };
 
   const getUsers = async (): Promise<void> => {
+
     try {
-      const res = (await getUsersAdmin()) as { data: unknown[] };
+
+      const res =
+        await getUsersAdmin();
+
       setGetAdminUsers(res.data);
+
     } catch (error: unknown) {
+
       console.log(error);
     }
   };
 
   const getAllUsers = async (): Promise<void> => {
+
     try {
-      const res = (await getAllUsersForUser()) as { data: unknown[] };
+
+      const res =
+        await getAllUsersForUser();
+
       setGetUsers(res.data);
+
     } catch (error: unknown) {
+
       console.log(error);
     }
   };
 
-  const deleteUser = async (id: string): Promise<void> => {
+  const deleteUser = async (
+    id: string
+  ): Promise<void> => {
+
     try {
+
       await deleteUserAdmin(id);
+
     } catch (error: unknown) {
+
       console.log(error);
     }
   };
 
-  const getOneProfile = async (id: string): Promise<unknown> => {
+  const getOneProfile = async (
+    id: string
+  ): Promise<IUser | undefined> => {
+
     try {
-      const res = (await getOneProfileUser(id)) as { data: unknown };
+
+      const res =
+        await getOneProfileUser(id);
+
       return res.data;
+
     } catch (error: unknown) {
+
       console.log(error);
+
       return undefined;
     }
   };
 
   const updateProfile = async (
     id: string,
-    profile: GenericObject
-  ): Promise<unknown> => {
-    try {
-      const res = (await updateOneProfile(id, profile)) as { data: GenericObject };
-      const updated = res.data;
+    profile: Partial<IUser>
+  ): Promise<IUser | undefined> => {
 
-      setUser((prev) => ({ ...(prev ?? {}), ...updated } as AuthUser));
+    try {
+
+      const res =
+        await updateOneProfile(
+          id,
+          profile
+        );
+
+      const updated =
+        res.data;
+
+      setUser((prev) => ({
+        ...(prev ?? {}),
+        ...updated,
+      }));
+
       return updated;
+
     } catch (error: unknown) {
+
       console.log(error);
+
       throw error;
     }
   };
 
-  const addPay = async (pay: GenericObject): Promise<void> => {
+  const addPay = async (
+    pay: IPayment
+  ): Promise<void> => {
+
     try {
-      await addPayVigilanceFromUser(pay);
+
+      await addPayVigilanceFromUser(
+        pay
+      );
+
     } catch (error: unknown) {
+
       console.log(error);
     }
   };
 
   useEffect(() => {
+
     if (errors.length > 0) {
-      const time = setTimeout(() => {
-        setErrors([]);
-      }, 5000);
-      return () => clearTimeout(time);
+
+      const time =
+        setTimeout(() => {
+
+          setErrors([]);
+
+        }, 5000);
+
+      return () =>
+        clearTimeout(time);
     }
+
   }, [errors]);
 
   useEffect(() => {
+
     async function checkLogin() {
-      const cookies = Cookies.get() as Record<string, string | undefined>;
+
+      const cookies =
+        Cookies.get() as Record<
+          string,
+          string | undefined
+        >;
 
       if (!cookies.token) {
+
         setIsAuthenticate(false);
+
         setLoading(false);
+
         setUser(null);
+
         return;
       }
 
       try {
-        const res = (await verifyTokenRequest()) as { data?: AuthUser };
+
+        const res =
+          await verifyTokenRequest();
 
         if (!res.data) {
+
           setIsAuthenticate(false);
+
           setLoading(false);
+
           return;
         }
 
         setIsAuthenticate(true);
+
         setUser(res.data);
+
         setLoading(false);
+
       } catch (error: unknown) {
+
         console.log(error);
+
         setIsAuthenticate(false);
+
         setUser(null);
+
         setLoading(false);
       }
     }
+
     checkLogin();
+
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
         signup,
+
         loading,
+
         user,
+
         isAuthenticate,
+
         setIsAuthenticate,
+
         errors,
+
         signin,
+
         logout,
+
         getAdminUsers,
+
         getUsers,
+
         deleteUser,
+
         getOneProfile,
+
         updateProfile,
+
         addPay,
+
         users,
+
         getAllUsers,
+
         createUser,
+
         updatePasswordByPassword,
       }}
     >

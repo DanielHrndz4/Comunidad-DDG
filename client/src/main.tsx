@@ -35,7 +35,7 @@ import Home from "./pages/home/Home.jsx";
 // @ts-ignore
 import { AuthProvider } from "./context/AuthContext";
 // @ts-ignore
-import { TaskProvider } from "./context/TaskContext.jsx";
+import { TaskProvider } from "./context/TaskContext";
 
 // Vistas de usuarios normales
 // @ts-ignore
