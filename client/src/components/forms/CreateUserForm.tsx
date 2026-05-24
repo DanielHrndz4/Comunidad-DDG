@@ -5,21 +5,41 @@ import Swal from "sweetalert2";
 import { IUser } from "../../interfaces/IUser";
 import { createUser } from "../../services/auth.service";
 
+import FormModal from "../ui/FormModal";
+import FormInput from "../ui/FormInput";
+import FormError from "../ui/FormError";
+import PrimaryButton from "../ui/PrimaryButton";
+import SecondaryButton from "../ui/SecondaryButton";
+
 interface Props {
   close: () => void;
 }
 
-export default function CreateUserForm({ close }: Props) {
+export default function CreateUserForm({
+  close,
+}: Props) {
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<IUser>();
 
   const navigate = useNavigate();
 
-  const onSubmit = async (data: IUser) => {
+  const nameValue = watch("name") || "";
+  const usernameValue = watch("username") || "";
+  const emailValue = watch("email") || "";
+  const passwordValue = watch("password") || "";
+  const telephoneValue = watch("telephone") || "";
+
+  const onSubmit = async (
+    data: IUser
+  ) => {
+
     try {
+
       await createUser(data);
 
       Swal.fire({
@@ -28,9 +48,11 @@ export default function CreateUserForm({ close }: Props) {
         icon: "success",
         confirmButtonColor: "#2563eb",
         timer: 2000,
+        showConfirmButton: false,
       }).then(() => navigate("/admin"));
 
     } catch {
+
       Swal.fire({
         title: "Error",
         text: "No se pudo crear al usuario.",
@@ -41,150 +63,209 @@ export default function CreateUserForm({ close }: Props) {
   };
 
   return (
-    <div className="flex flex-col bg-white p-8 rounded-2xl w-full max-w-lg border border-[#E5E5E7]">
-      <h2 className="text-xl font-semibold mb-6">
-        Creación de Usuario
-      </h2>
+    <FormModal title="Nuevo Usuario">
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-6"
       >
-        <div>
-          <label>Nombre</label>
 
-          <input
-            {...register("name", { required: true })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3 focus:ring-2 focus:ring-gray-300"
-            placeholder="Ingrese el nombre del usuario"
-          />
+        <FormInput
+          label="Nombre"
+          placeholder="Ingrese el nombre del usuario"
+          error={errors.name?.message}
+          success={nameValue.trim().length >= 3}
+          {...register("name", {
+            required: "El nombre es requerido",
+            minLength: {
+              value: 3,
+              message: "Mínimo 3 caracteres",
+            },
+          })}
+        />
 
-          {errors.name && (
-            <p className="text-red-500 text-sm">
-              El nombre es requerido
-            </p>
-          )}
-        </div>
+        <FormInput
+          label="Username"
+          placeholder="Ingrese un username"
+          error={errors.username?.message}
+          success={usernameValue.trim().length >= 3}
+          {...register("username", {
+            required: "El username es requerido",
+            minLength: {
+              value: 3,
+              message: "Mínimo 3 caracteres",
+            },
+          })}
+        />
 
-        <div>
-          <label>Username</label>
+        <FormInput
+          type="email"
+          label="Email"
+          placeholder="example@gmail.com"
+          error={errors.email?.message}
+          success={emailValue.includes("@")}
+          {...register("email", {
+            required: "El email es requerido",
+          })}
+        />
 
-          <input
-            {...register("username", { required: true })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3 focus:ring-2 focus:ring-gray-300"
-            placeholder="Ingrese un username"
-          />
+        <FormInput
+          type="password"
+          label="Contraseña"
+          placeholder="Mínimo 12 caracteres"
+          error={errors.password?.message}
+          success={passwordValue.length >= 12}
+          {...register("password", {
+            required: "La contraseña es requerida",
+            minLength: {
+              value: 12,
+              message:
+                "Mínimo 12 caracteres",
+            },
+          })}
+        />
 
-          {errors.username && (
-            <p className="text-red-500 text-sm">
-              El username es requerido
-            </p>
-          )}
-        </div>
+        <FormInput
+          label="Teléfono"
+          placeholder="12345678"
+          maxLength={8}
+          error={errors.telephone?.message}
+          success={telephoneValue.trim().length === 8}
+          {...register("telephone", {
+            required: "El teléfono es requerido",
+            pattern: {
+              value: /^[0-9]{8}$/,
+              message: "Debe contener exactamente 8 dígitos",
+            },
+          })}
+        />
 
-        <div>
-          <label>Email</label>
+        <div className="flex flex-col gap-2">
 
-          <input
-            type="email"
-            {...register("email", { required: true })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3 focus:ring-2 focus:ring-gray-300"
-            placeholder="example@gmail.com"
-          />
-
-          {errors.email && (
-            <p className="text-red-500 text-sm">
-              El email es requerido
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label>Contraseña</label>
-
-          <input
-            type="password"
-            {...register("password", { required: true })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3 focus:ring-2 focus:ring-gray-300"
-            placeholder="Mínimo 12 caracteres"
-          />
-
-          {errors.password && (
-            <p className="text-red-500 text-sm">
-              La contraseña es requerida
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label>Teléfono</label>
-
-          <input
-            {...register("telephone", { required: true })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3 focus:ring-2 focus:ring-gray-300"
-            placeholder="Ingrese el teléfono"
-          />
-
-          {errors.telephone && (
-            <p className="text-red-500 text-sm">
-              El teléfono es requerido
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label>Edad</label>
+          <label
+            className="
+                            text-[0.88rem]
+                            font-medium
+                            text-[#6E6E73]
+                            ml-1
+                        "
+          >
+            Edad
+          </label>
 
           <input
             type="number"
             min={0}
             {...register("age", {
-              required: true,
+              required: "La edad es requerida",
               valueAsNumber: true,
-              min: 0,
+              min: {
+                value: 0,
+                message:
+                  "Edad inválida",
+              },
             })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3 focus:ring-2 focus:ring-gray-300"
+            className="
+                            w-full
+                            h-[58px]
+                            px-5
+                            rounded-[20px]
+                            bg-[#F5F5F7]
+                            border
+                            border-[#D2D2D7]
+                            text-[#1D1D1F]
+                            outline-none
+                            transition-all
+                            duration-200
+
+                            focus:border-[#0071E3]
+                            focus:ring-4
+                            focus:ring-[#0071E3]/10
+                        "
           />
 
-          {errors.age && (
-            <p className="text-red-500 text-sm">
-              Edad inválida
-            </p>
-          )}
+          <FormError
+            message={errors.age?.message}
+          />
+
         </div>
 
-        <div>
-          <label>Rol</label>
+        <div className="flex flex-col gap-2">
+
+          <label
+            className="
+                            text-[0.88rem]
+                            font-medium
+                            text-[#6E6E73]
+                            ml-1
+                        "
+          >
+            Rol
+          </label>
 
           <select
-            {...register("role", { required: true })}
+            {...register("role", {
+              required:
+                "El rol es requerido",
+            })}
             defaultValue="normal"
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
+            className="
+                            w-full
+                            h-[58px]
+                            px-5
+                            rounded-[20px]
+                            bg-[#F5F5F7]
+                            border
+                            border-[#D2D2D7]
+                            text-[#1D1D1F]
+                            outline-none
+                            transition-all
+                            duration-200
+
+                            focus:border-[#0071E3]
+                            focus:ring-4
+                            focus:ring-[#0071E3]/10
+                        "
           >
-            <option value="normal">Normal</option>
-            <option value="vigilant">Vigilant</option>
+            <option value="normal">
+              Normal
+            </option>
+
+            <option value="vigilant">
+              Vigilant
+            </option>
           </select>
 
-          {errors.role && (
-            <p className="text-red-500 text-sm">
-              El rol es requerido
-            </p>
-          )}
+          <FormError
+            message={errors.role?.message}
+          />
+
         </div>
 
-        <div className="flex justify-between mt-4">
-          <button
+        <div
+          className="
+                        flex
+                        justify-between
+                        items-center
+                        pt-3
+                    "
+        >
+
+          <SecondaryButton
             type="button"
             onClick={close}
           >
             Cancelar
-          </button>
+          </SecondaryButton>
 
-          <button type="submit">
+          <PrimaryButton type="submit">
             Crear cuenta
-          </button>
+          </PrimaryButton>
+
         </div>
+
       </form>
-    </div>
+
+    </FormModal>
   );
 }

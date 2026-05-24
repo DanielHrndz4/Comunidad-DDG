@@ -2,111 +2,237 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import Swal from "sweetalert2";
+
 import { ITaskAnnouncement } from "../../interfaces/ITaskAnnouncement";
 import { createAnnouncement } from "../../services/task.service";
 
+import FormModal from "../ui/FormModal";
+import FormInput from "../ui/FormInput";
+import FormTextarea from "../ui/FormTextarea";
+import FormError from "../ui/FormError";
+import PrimaryButton from "../ui/PrimaryButton";
+import SecondaryButton from "../ui/SecondaryButton";
+
 interface Props {
-  close: () => void;
+    close: () => void;
 }
 
-export default function CreateTaskForm({ close }: Props) {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<ITaskAnnouncement>();
+export default function CreateTaskForm({
+    close,
+}: Props) {
 
-  const [imageBase64, setImageBase64] = useState<string>("");
-  const [imageError, setImageError] = useState<string>("");
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        formState: { errors },
+        watch,
+    } = useForm<ITaskAnnouncement>();
 
-  const navigate = useNavigate();
+    const [imageBase64, setImageBase64] =
+        useState<string>("");
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const [imageError, setImageError] =
+        useState<string>("");
 
-    const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const navigate = useNavigate();
 
-    if (!validTypes.includes(file.type)) {
-      setImageError("Formato inválido (JPG, PNG, GIF, WEBP)");
-      setImageBase64("");
-      return;
-    }
+    const titleValue = watch("title2") || "";
 
-    const reader = new FileReader();
+    const descriptionValue =
+        watch("description2") || "";
 
-    reader.onloadend = () => {
-      const result = reader.result as string;
-      setImageBase64(result);
-      setValue("image", result);
-      setImageError("");
+    const handleImageChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+
+        const file = event.target.files?.[0];
+
+        if (!file) return;
+
+        const validTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+        ];
+
+        if (!validTypes.includes(file.type)) {
+
+            setImageError(
+                "Formato inválido (JPG, PNG, GIF, WEBP)"
+            );
+
+            setImageBase64("");
+
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+
+            const result = reader.result as string;
+
+            setImageBase64(result);
+
+            setValue("image", result);
+
+            setImageError("");
+        };
+
+        reader.readAsDataURL(file);
     };
 
-    reader.readAsDataURL(file);
-  };
+    const onSubmit = async (
+        data: ITaskAnnouncement
+    ) => {
 
-  const onSubmit = async (data: ITaskAnnouncement) => {
-    if (!imageBase64) {
-      setImageError("Debes seleccionar una imagen");
-      return;
-    }
+        if (!imageBase64) {
 
-    try {
-      await createAnnouncement({ ...data, image: imageBase64 });
+            setImageError(
+                "Debes seleccionar una imagen"
+            );
 
-      Swal.fire({
-        title: "¡Anuncio creado!",
-        icon: "success",
-        timer: 2000,
-      });
+            return;
+        }
 
-      navigate("/admin");
-    } catch {
-      Swal.fire({
-        title: "Error",
-        text: "No se pudo crear el anuncio",
-        icon: "error",
-      });
-    }
-  };
+        try {
 
-  return (
-    <div className="flex flex-col bg-white p-8 rounded-2xl w-full max-w-lg border border-[#E5E5E7]">
-      <h2 className="text-xl font-semibold mb-6">Creación de Anuncio</h2>
+            await createAnnouncement({
+                ...data,
+                image: imageBase64,
+            });
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div>
-          <label>Título</label>
-          <input
-            {...register("title2", { required: true })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3 focus:ring-2 focus:ring-gray-300"
-          />
-          {errors.title2 && <p className="text-red-500 text-sm">Requerido</p>}
-        </div>
+            Swal.fire({
+                title: "¡Anuncio creado!",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+            });
 
-        <div>
-          <label>Descripción</label>
-          <textarea
-            {...register("description2")}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
-          />
-        </div>
+            navigate("/admin");
 
-        <div>
-          <label>Imagen</label>
-          <input type="file" onChange={handleImageChange} />
-          {imageError && <p className="text-red-500 text-sm">{imageError}</p>}
-        </div>
+        } catch {
 
-        <div className="flex justify-between mt-4">
-          <button type="button" onClick={close}>
-            Cancelar
-          </button>
+            Swal.fire({
+                title: "Error",
+                text: "No se pudo crear el anuncio",
+                icon: "error",
+            });
+        }
+    };
 
-          <button type="submit">Publicar</button>
-        </div>
-      </form>
-    </div>
-  );
+    return (
+        <FormModal title="Nuevo Anuncio">
+
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-col gap-6"
+            >
+
+                <FormInput
+                    label="Título"
+                    placeholder="Ingrese el título del anuncio"
+                    error={errors.title2?.message}
+                    success={titleValue.trim().length >= 5}
+                    {...register("title2", {
+                        required: "El título es requerido",
+                        minLength: {
+                            value: 5,
+                            message: "Mínimo 5 caracteres",
+                        },
+                    })}
+                />
+
+                <FormTextarea
+                    label="Descripción"
+                    placeholder="Ingrese una descripción"
+                    maxLength={300}
+                    error={errors.description2?.message}
+                    success={
+                        descriptionValue.trim().length >= 10
+                    }
+                    {...register("description2", {
+                        required:
+                            "La descripción es requerida",
+                        minLength: {
+                            value: 10,
+                            message:
+                                "Mínimo 10 caracteres",
+                        },
+                    })}
+                />
+
+                <div className="flex flex-col gap-2">
+
+                    <label
+                        className="
+                            text-[0.88rem]
+                            font-medium
+                            text-[#6E6E73]
+                            ml-1
+                        "
+                    >
+                        Imagen
+                    </label>
+
+                    <input
+                        type="file"
+                        onChange={handleImageChange}
+                        className="
+                            w-full
+                            bg-[#F5F5F7]
+                            border
+                            border-[#D2D2D7]
+                            rounded-[20px]
+                            px-4
+                            py-3
+                            text-[0.95rem]
+                            text-[#1D1D1F]
+                            transition-all
+                            duration-200
+
+                            file:mr-4
+                            file:px-4
+                            file:py-2
+                            file:border-0
+                            file:rounded-full
+                            file:bg-[#0071E3]
+                            file:text-white
+                            file:cursor-pointer
+                            hover:file:brightness-110
+                        "
+                    />
+
+                    <FormError message={imageError} />
+
+                </div>
+
+                <div
+                    className="
+                        flex
+                        justify-between
+                        items-center
+                        pt-3
+                    "
+                >
+
+                    <SecondaryButton
+                        type="button"
+                        onClick={close}
+                    >
+                        Cancelar
+                    </SecondaryButton>
+
+                    <PrimaryButton type="submit">
+                        Publicar
+                    </PrimaryButton>
+
+                </div>
+
+            </form>
+
+        </FormModal>
+    );
 }

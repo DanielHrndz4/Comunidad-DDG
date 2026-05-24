@@ -6,6 +6,12 @@ import Swal from "sweetalert2";
 import { IUser } from "../../interfaces/IUser";
 import { updateUser } from "../../services/auth.service";
 
+import FormModal from "../ui/FormModal";
+import FormInput from "../ui/FormInput";
+import FormError from "../ui/FormError";
+import PrimaryButton from "../ui/PrimaryButton";
+import SecondaryButton from "../ui/SecondaryButton";
+
 interface Props {
   user: IUser & { id?: string };
   close: () => void;
@@ -21,6 +27,7 @@ export default function UpdateAdminForm({
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm<IUser>({
     defaultValues: {
       ...(user ?? {}),
@@ -30,32 +37,62 @@ export default function UpdateAdminForm({
 
   const navigate = useNavigate();
 
+  const nameValue =
+    watch("name") || "";
+
+  const usernameValue =
+    watch("username") || "";
+
+  const emailValue =
+    watch("email") || "";
+
+  const passwordValue =
+    watch("password") || "";
+
+  const telephoneValue =
+    watch("telephone") || "";
+
   useEffect(() => {
+
     if (user) {
+
       reset({
         ...user,
         password: "",
       });
     }
+
   }, [user, reset]);
 
-  const onSubmit = async (data: IUser) => {
-    const payload: Partial<IUser> = { ...data };
+  const onSubmit = async (
+    data: IUser
+  ) => {
+
+    const payload: Partial<IUser> = {
+      ...data,
+    };
 
     if (
       !payload.password ||
       payload.password.trim() === ""
     ) {
+
       delete payload.password;
     }
 
     if (user?.id) {
+
       try {
-        await updateUser(user.id, payload);
+
+        await updateUser(
+          user.id,
+          payload
+        );
 
         await Swal.fire({
           title: "Actualizado",
-          text: "Datos actualizados correctamente.",
+          text:
+            "Datos actualizados correctamente.",
           icon: "success",
           showConfirmButton: false,
           timer: 2000,
@@ -66,9 +103,11 @@ export default function UpdateAdminForm({
         navigate("/admin");
 
       } catch {
+
         Swal.fire({
           title: "Error",
-          text: "Ocurrió un error al actualizar.",
+          text:
+            "Ocurrió un error al actualizar.",
           icon: "error",
         });
       }
@@ -76,136 +115,180 @@ export default function UpdateAdminForm({
   };
 
   return (
-    <div className="flex flex-col bg-white p-8 rounded-2xl w-full max-w-lg border border-[#E5E5E7]">
-
-      <h2 className="text-xl font-semibold mb-6">
-        Actualizar Usuario
-      </h2>
+    <FormModal title="Actualizar Usuario">
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-6"
       >
 
-        <div>
-          <label>Nombre</label>
+        <FormInput
+          label="Nombre"
+          placeholder="Ingrese el nombre"
 
-          <input
-            type="text"
-            {...register("name", {
-              required: true,
-            })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
-          />
+          error={
+            errors.name?.message
+          }
 
-          {errors.name && (
-            <p className="text-red-500 text-sm">
-              El nombre es requerido
-            </p>
-          )}
-        </div>
+          success={
+            nameValue.trim().length >= 3
+          }
 
-        <div>
-          <label>Username</label>
+          {...register("name", {
+            required:
+              "El nombre es requerido",
 
-          <input
-            type="text"
-            {...register("username", {
-              required: true,
-            })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
-          />
+            minLength: {
+              value: 3,
+              message:
+                "Mínimo 3 caracteres",
+            },
+          })}
+        />
 
-          {errors.username && (
-            <p className="text-red-500 text-sm">
-              El usuario es requerido
-            </p>
-          )}
-        </div>
+        <FormInput
+          label="Username"
+          placeholder="Ingrese el username"
 
-        <div>
-          <label>Email</label>
+          error={
+            errors.username?.message
+          }
 
-          <input
-            type="email"
-            {...register("email", {
-              required: true,
-            })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
-          />
+          success={
+            usernameValue.trim().length >= 3
+          }
 
-          {errors.email && (
-            <p className="text-red-500 text-sm">
-              El email es requerido
-            </p>
-          )}
-        </div>
+          {...register("username", {
+            required:
+              "El usuario es requerido",
 
-        <div>
-          <label>Contraseña</label>
+            minLength: {
+              value: 3,
+              message:
+                "Mínimo 3 caracteres",
+            },
+          })}
+        />
 
-          <input
-            type="password"
-            {...register("password")}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
-            placeholder="Opcional"
-          />
-        </div>
+        <FormInput
+          type="email"
+          label="Email"
+          placeholder="example@gmail.com"
 
-        <div>
-          <label>Teléfono</label>
+          error={
+            errors.email?.message
+          }
 
-          <input
-            type="text"
-            {...register("telephone", {
-              required: true,
-            })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
-          />
+          success={
+            emailValue.includes("@")
+          }
 
-          {errors.telephone && (
-            <p className="text-red-500 text-sm">
-              El teléfono es requerido
-            </p>
-          )}
-        </div>
+          {...register("email", {
+            required:
+              "El email es requerido",
+          })}
+        />
 
-        <div>
-          <label>Edad</label>
+        <FormInput
+          type="password"
+          label="Contraseña"
+          placeholder="Opcional"
 
-          <input
-            type="number"
-            min={0}
-            {...register("age", {
-              required: true,
-              valueAsNumber: true,
-              min: 0,
-            })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
-          />
+          error={
+            errors.password?.message
+          }
 
-          {errors.age && (
-            <p className="text-red-500 text-sm">
-              Edad inválida
-            </p>
-          )}
-        </div>
+          success={
+            passwordValue.length >= 12
+          }
 
-        <div className="flex justify-between mt-4">
+          {...register("password", {
+            minLength: {
+              value: 12,
+              message:
+                "Mínimo 12 caracteres",
+            },
+          })}
+        />
 
-          <button
+        <FormInput
+          label="Teléfono"
+          placeholder="12345678"
+          maxLength={8}
+
+          error={
+            errors.telephone?.message
+          }
+
+          success={
+            telephoneValue.trim().length === 8
+          }
+
+          {...register("telephone", {
+            required:
+              "El teléfono es requerido",
+
+            pattern: {
+              value: /^[0-9]{8}$/,
+
+              message:
+                "Debe contener exactamente 8 dígitos",
+            },
+          })}
+        />
+
+        <FormInput
+          type="number"
+          label="Edad"
+          placeholder="Ingrese la edad"
+
+          error={
+            errors.age?.message
+          }
+
+          success={
+            Number(watch("age")) > 0
+          }
+
+          {...register("age", {
+            required:
+              "La edad es requerida",
+
+            valueAsNumber: true,
+
+            min: {
+              value: 0,
+
+              message:
+                "Edad inválida",
+            },
+          })}
+        />
+
+        <div
+          className="
+                        flex
+                        justify-between
+                        items-center
+                        pt-3
+                    "
+        >
+
+          <SecondaryButton
             type="button"
             onClick={close}
           >
             Cancelar
-          </button>
+          </SecondaryButton>
 
-          <button type="submit">
+          <PrimaryButton type="submit">
             Actualizar
-          </button>
+          </PrimaryButton>
 
         </div>
+
       </form>
-    </div>
+
+    </FormModal>
   );
 }

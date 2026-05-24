@@ -5,135 +5,167 @@ import Swal from "sweetalert2";
 import { ITaskAnnouncement } from "../../interfaces/ITaskAnnouncement";
 import { updateAnnouncement } from "../../services/task.service";
 
+import FormModal from "../ui/FormModal";
+import FormInput from "../ui/FormInput";
+import FormTextarea from "../ui/FormTextarea";
+import PrimaryButton from "../ui/PrimaryButton";
+import SecondaryButton from "../ui/SecondaryButton";
+
 interface Props {
-  task: ITaskAnnouncement & { _id: string };
-  close: () => void;
+    task: ITaskAnnouncement & { _id: string };
+    close: () => void;
 }
 
 export default function UpdateTaskForm({
-  task,
-  close,
+    task,
+    close,
 }: Props) {
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ITaskAnnouncement>({
-    defaultValues: {
-      title2: task?.title2 ?? "",
-      description2: task?.description2 ?? "",
-    },
-  });
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch,
+    } = useForm<ITaskAnnouncement>({
+        defaultValues: {
+            title2: task?.title2 ?? "",
+            description2:
+                task?.description2 ?? "",
+        },
+    });
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const onSubmit = async (
-    data: ITaskAnnouncement
-  ) => {
+    const titleValue =
+        watch("title2") || "";
 
-    try {
+    const descriptionValue =
+        watch("description2") || "";
 
-      await updateAnnouncement(task._id, data);
+    const onSubmit = async (
+        data: ITaskAnnouncement
+    ) => {
 
-      Swal.fire({
-        text: "Tu anuncio se ha actualizado.",
-        icon: "success",
-        confirmButtonColor: "#2563eb",
-        confirmButtonText: "Aceptar",
-        background: "#fefefe",
-        color: "#1e293b",
-        timer: 2000,
-        timerProgressBar: true,
-      }).then(() => navigate("/admin"));
+        try {
 
-    } catch {
+            await updateAnnouncement(
+                task._id,
+                data
+            );
 
-      Swal.fire({
-        title: "Error",
-        text: "No se pudo actualizar el anuncio.",
-        icon: "error",
-        confirmButtonColor: "#dc2626",
-      });
-    }
-  };
+            Swal.fire({
+                text:
+                    "Tu anuncio se ha actualizado.",
 
-  return (
-    <div className="flex flex-col bg-white p-8 rounded-2xl w-full max-w-2xl border border-[#E5E5E7]">
+                icon: "success",
 
-      <header className="mb-6">
-        <h2 className="text-2xl font-semibold text-slate-800">
-          Actualizar Anuncio
-        </h2>
-      </header>
+                confirmButtonColor:
+                    "#2563eb",
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
-      >
+                confirmButtonText:
+                    "Aceptar",
 
-        <div className="flex flex-col gap-2">
+                background: "#fefefe",
 
-          <label
-            htmlFor="title2"
-            className="text-sm font-medium text-slate-700"
-          >
-            Título
-          </label>
+                color: "#1e293b",
 
-          <input
-            type="text"
-            {...register("title2", {
-              required: true,
-            })}
-            className="p-3 border border-[#E5E5E7] rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-300 transition-all"
-            placeholder="Ingrese el título de su anuncio"
-          />
+                timer: 2000,
 
-          {errors.title2 && (
-            <p className="text-red-500 text-sm">
-              El título es requerido
-            </p>
-          )}
+                timerProgressBar: true,
+            }).then(() =>
+                navigate("/admin")
+            );
 
-        </div>
+        } catch {
 
-        <div className="flex flex-col gap-2">
+            Swal.fire({
+                title: "Error",
 
-          <label
-            htmlFor="description2"
-            className="text-sm font-medium text-slate-700"
-          >
-            Descripción
-          </label>
+                text:
+                    "No se pudo actualizar el anuncio.",
 
-          <textarea
-            {...register("description2")}
-            className="p-3 border border-[#E5E5E7] rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-300 transition-all min-h-[120px]"
-            placeholder="Ingrese la descripción de su anuncio"
-          />
+                icon: "error",
 
-        </div>
+                confirmButtonColor:
+                    "#dc2626",
+            });
+        }
+    };
 
-        <div className="flex justify-between gap-4 mt-4">
+    return (
+        <FormModal title="Actualizar Anuncio">
 
-          <button
-            type="button"
-            onClick={close}
-            className="px-5 py-3 rounded-2xl border border-[#E5E5E7] hover:bg-gray-100 transition-all"
-          >
-            Cancelar
-          </button>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-col gap-6"
+            >
 
-          <button
-            type="submit"
-            className="px-5 py-3 rounded-2xl bg-slate-800 text-white hover:opacity-90 transition-all"
-          >
-            Actualizar
-          </button>
+                <FormInput
+                    label="Título"
+                    placeholder="Ingrese el título de su anuncio"
 
-        </div>
-      </form>
-    </div>
-  );
+                    error={
+                        errors.title2?.message
+                    }
+
+                    success={
+                        titleValue.trim().length >= 3
+                    }
+
+                    {...register("title2", {
+                        required:
+                            "El título es requerido",
+
+                        minLength: {
+                            value: 3,
+
+                            message:
+                                "Mínimo 3 caracteres",
+                        },
+                    })}
+                />
+
+                <FormTextarea
+                    label="Descripción"
+                    placeholder="Ingrese la descripción de su anuncio"
+
+                    rows={6}
+
+                    error={
+                        errors.description2?.message
+                    }
+
+                    success={
+                        descriptionValue.trim().length >= 10
+                    }
+
+                    {...register("description2")}
+                />
+
+                <div
+                    className="
+                        flex
+                        justify-between
+                        items-center
+                        pt-3
+                    "
+                >
+
+                    <SecondaryButton
+                        type="button"
+                        onClick={close}
+                    >
+                        Cancelar
+                    </SecondaryButton>
+
+                    <PrimaryButton type="submit">
+                        Actualizar
+                    </PrimaryButton>
+
+                </div>
+
+            </form>
+
+        </FormModal>
+    );
 }

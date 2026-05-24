@@ -5,132 +5,166 @@ import Swal from "sweetalert2";
 import { IReport } from "../../interfaces/IReport";
 import { updateReport } from "../../services/report.service";
 
+import FormModal from "../ui/FormModal";
+import FormInput from "../ui/FormInput";
+import FormTextarea from "../ui/FormTextarea";
+import PrimaryButton from "../ui/PrimaryButton";
+import SecondaryButton from "../ui/SecondaryButton";
+
 interface Props {
-  report: IReport & { _id: string };
-  close: () => void;
+    report: IReport & { _id: string };
+    close: () => void;
 }
 
 export default function UpdateReportForm({
-  report,
-  close,
+    report,
+    close,
 }: Props) {
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IReport>({
-    defaultValues: {
-      title: report?.title ?? "",
-      description: report?.description ?? "",
-    },
-  });
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch,
+    } = useForm<IReport>({
+        defaultValues: {
+            title: report?.title ?? "",
+            description: report?.description ?? "",
+        },
+    });
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const onSubmit = async (data: IReport) => {
-    try {
+    const titleValue =
+        watch("title") || "";
 
-      await updateReport(report._id, data);
+    const descriptionValue =
+        watch("description") || "";
 
-      Swal.fire({
-        text: "Tu publicación se ha actualizado.",
-        icon: "success",
-        confirmButtonColor: "#2563eb",
-        confirmButtonText: "Aceptar",
-        background: "#fefefe",
-        color: "#1e293b",
-        timer: 2000,
-        timerProgressBar: true,
-      }).then(() => navigate("/admin"));
+    const onSubmit = async (
+        data: IReport
+    ) => {
 
-    } catch {
+        try {
 
-      Swal.fire({
-        title: "Error",
-        text: "No se pudo actualizar la publicación.",
-        icon: "error",
-        confirmButtonColor: "#dc2626",
-      });
-    }
-  };
+            await updateReport(
+                report._id,
+                data
+            );
 
-  return (
-    <div className="flex flex-col bg-white p-8 rounded-2xl w-full max-w-2xl border border-[#E5E5E7]">
+            Swal.fire({
+                text:
+                    "Tu publicación se ha actualizado.",
 
-      <header className="mb-6">
-        <h2 className="text-2xl font-semibold text-slate-800">
-          Actualizar Reporte
-        </h2>
-      </header>
+                icon: "success",
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
-      >
+                confirmButtonColor:
+                    "#2563eb",
 
-        <div className="flex flex-col gap-2">
+                confirmButtonText:
+                    "Aceptar",
 
-          <label
-            htmlFor="title"
-            className="text-sm font-medium text-slate-700"
-          >
-            Título
-          </label>
+                background: "#fefefe",
 
-          <input
-            type="text"
-            {...register("title", {
-              required: true,
-            })}
-            className="p-3 border border-[#E5E5E7] rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-300 transition-all"
-            placeholder="Ingrese el título de su reporte"
-          />
+                color: "#1e293b",
 
-          {errors.title && (
-            <p className="text-red-500 text-sm">
-              El título es requerido
-            </p>
-          )}
+                timer: 2000,
 
-        </div>
+                timerProgressBar: true,
+            }).then(() =>
+                navigate("/admin")
+            );
 
-        <div className="flex flex-col gap-2">
+        } catch {
 
-          <label
-            htmlFor="description"
-            className="text-sm font-medium text-slate-700"
-          >
-            Descripción
-          </label>
+            Swal.fire({
+                title: "Error",
 
-          <textarea
-            {...register("description")}
-            className="p-3 border border-[#E5E5E7] rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-300 transition-all min-h-[120px]"
-            placeholder="Ingrese la descripción de su reporte"
-          />
+                text:
+                    "No se pudo actualizar la publicación.",
 
-        </div>
+                icon: "error",
 
-        <div className="flex justify-between gap-4 mt-4">
+                confirmButtonColor:
+                    "#dc2626",
+            });
+        }
+    };
 
-          <button
-            type="button"
-            onClick={close}
-            className="px-5 py-3 rounded-2xl border border-[#E5E5E7] hover:bg-gray-100 transition-all"
-          >
-            Cancelar
-          </button>
+    return (
+        <FormModal title="Actualizar Reporte">
 
-          <button
-            type="submit"
-            className="px-5 py-3 rounded-2xl bg-slate-800 text-white hover:opacity-90 transition-all"
-          >
-            Actualizar
-          </button>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-col gap-6"
+            >
 
-        </div>
-      </form>
-    </div>
-  );
+                <FormInput
+                    label="Título"
+                    placeholder="Ingrese el título de su reporte"
+
+                    error={
+                        errors.title?.message
+                    }
+
+                    success={
+                        titleValue.trim().length >= 3
+                    }
+
+                    {...register("title", {
+                        required:
+                            "El título es requerido",
+
+                        minLength: {
+                            value: 3,
+
+                            message:
+                                "Mínimo 3 caracteres",
+                        },
+                    })}
+                />
+
+                <FormTextarea
+                    label="Descripción"
+                    placeholder="Ingrese la descripción de su reporte"
+
+                    rows={6}
+
+                    error={
+                        errors.description?.message
+                    }
+
+                    success={
+                        descriptionValue.trim().length >= 10
+                    }
+
+                    {...register("description")}
+                />
+
+                <div
+                    className="
+                        flex
+                        justify-between
+                        items-center
+                        pt-3
+                    "
+                >
+
+                    <SecondaryButton
+                        type="button"
+                        onClick={close}
+                    >
+                        Cancelar
+                    </SecondaryButton>
+
+                    <PrimaryButton type="submit">
+                        Actualizar
+                    </PrimaryButton>
+
+                </div>
+
+            </form>
+
+        </FormModal>
+    );
 }

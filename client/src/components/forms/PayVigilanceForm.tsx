@@ -6,23 +6,48 @@ import Swal from "sweetalert2";
 import { IPayment } from "../../interfaces/IPayment";
 import { addPayment } from "../../services/payment.service";
 
+import FormModal from "../ui/FormModal";
+import FormInput from "../ui/FormInput";
+import PrimaryButton from "../ui/PrimaryButton";
+import SecondaryButton from "../ui/SecondaryButton";
+
 interface Props {
   close: () => void;
 }
 
-export default function PayVigilanceForm({ close }: Props) {
+export default function PayVigilanceForm({
+  close,
+}: Props) {
+
   const {
     register,
     handleSubmit,
     setError,
     clearErrors,
     formState: { errors },
+    watch,
   } = useForm<IPayment>();
 
   const navigate = useNavigate();
 
-  const validarNumeroTarjeta = (numberTarget: string): boolean => {
-    const cleanNumber = numberTarget.replace(/\D/g, "");
+  const numberTargetValue =
+    watch("numberTarget") || "";
+
+  const contextValue =
+    watch("context") || "";
+
+  const amountValue =
+    watch("amount");
+
+  const cvcValue =
+    watch("cvc") || "";
+
+  const validarNumeroTarjeta = (
+    numberTarget: string
+  ): boolean => {
+
+    const cleanNumber =
+      numberTarget.replace(/\D/g, "");
 
     if (!/^\d{13,19}$/.test(cleanNumber)) {
       return false;
@@ -31,31 +56,54 @@ export default function PayVigilanceForm({ close }: Props) {
     let suma = 0;
     let alternar = false;
 
-    for (let i = cleanNumber.length - 1; i >= 0; i--) {
-      let digito = parseInt(cleanNumber.charAt(i), 10);
+    for (
+      let i = cleanNumber.length - 1;
+      i >= 0;
+      i--
+    ) {
+
+      let digito = parseInt(
+        cleanNumber.charAt(i),
+        10
+      );
 
       if (alternar) {
+
         digito *= 2;
 
-        if (digito > 9) digito -= 9;
+        if (digito > 9) {
+          digito -= 9;
+        }
       }
 
       suma += digito;
+
       alternar = !alternar;
     }
 
     return suma % 10 === 0;
   };
 
-  const validarCVC = (cvc: string): boolean => {
+  const validarCVC = (
+    cvc: string
+  ): boolean => {
+
     return /^\d{3,4}$/.test(cvc);
   };
 
-  const generarFacturaPDF = (datos: IPayment) => {
+  const generarFacturaPDF = (
+    datos: IPayment
+  ) => {
+
     const doc = new jsPDF();
 
     doc.setFontSize(20);
-    doc.text("Factura de Pago", 20, 20);
+
+    doc.text(
+      "Factura de Pago",
+      20,
+      20
+    );
 
     doc.setFontSize(12);
 
@@ -65,20 +113,63 @@ export default function PayVigilanceForm({ close }: Props) {
       40
     );
 
-    doc.text(`Contexto: ${datos.context}`, 20, 50);
-    doc.text(`Monto: $${datos.amount}`, 20, 60);
-    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 20, 70);
+    doc.text(
+      `Contexto: ${datos.context}`,
+      20,
+      50
+    );
 
-    doc.save(`Factura_${Date.now()}.pdf`);
+    doc.text(
+      `Monto: $${datos.amount}`,
+      20,
+      60
+    );
+
+    doc.text(
+      `Fecha: ${new Date().toLocaleDateString()}`,
+      20,
+      70
+    );
+
+    doc.save(
+      `Factura_${Date.now()}.pdf`
+    );
   };
 
-  const onSubmit = async (values: IPayment) => {
-    const { numberTarget, cvc } = values;
+  const formatCardNumber = (
+    value: string
+  ) => {
 
-    if (!validarNumeroTarjeta(numberTarget)) {
+    const cleaned =
+      value.replace(/\D/g, "")
+        .slice(0, 16);
+
+    const formatted =
+      cleaned.replace(
+        /(.{4})/g,
+        "$1 "
+      ).trim();
+
+    return formatted;
+  };
+
+  const onSubmit = async (
+    values: IPayment
+  ) => {
+
+    const {
+      numberTarget,
+      cvc,
+    } = values;
+
+    if (
+      !validarNumeroTarjeta(numberTarget)
+    ) {
+
       setError("numberTarget", {
         type: "manual",
-        message: "Número de tarjeta inválido",
+        message:
+          "Número de tarjeta inválido",
       });
 
       return;
@@ -87,6 +178,7 @@ export default function PayVigilanceForm({ close }: Props) {
     clearErrors("numberTarget");
 
     if (!validarCVC(cvc)) {
+
       setError("cvc", {
         type: "manual",
         message: "CVC inválido",
@@ -98,12 +190,15 @@ export default function PayVigilanceForm({ close }: Props) {
     clearErrors("cvc");
 
     try {
+
       await addPayment(values);
 
       await Swal.fire({
         icon: "success",
-        title: "¡Pago realizado con éxito!",
-        text: "Tu transacción se ha completado correctamente.",
+        title:
+          "¡Pago realizado con éxito!",
+        text:
+          "Tu transacción se ha completado correctamente.",
         showConfirmButton: false,
         timer: 2000,
       });
@@ -115,110 +210,144 @@ export default function PayVigilanceForm({ close }: Props) {
       navigate("/admin");
 
     } catch {
+
       Swal.fire({
         icon: "error",
         title: "Error en el pago",
-        text: "No se pudo completar la transacción.",
+        text:
+          "No se pudo completar la transacción.",
       });
     }
   };
 
   return (
-    <div className="flex flex-col bg-white p-8 rounded-2xl w-full max-w-lg border border-[#E5E5E7]">
-      <h2 className="text-xl font-semibold mb-6">
-        Pago de Vigilancia
-      </h2>
+    <FormModal title="Pago de Vigilancia">
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-6"
       >
-        <div>
-          <label>Número de tarjeta</label>
 
-          <input
-            type="text"
-            {...register("numberTarget", {
-              required: "El número de tarjeta es requerido",
-            })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
-          />
+        <FormInput
+          type="text"
+          label="Número de tarjeta"
+          placeholder="1234 5678 9012 3456"
+          maxLength={19}
 
-          {errors.numberTarget && (
-            <p className="text-red-500 text-sm">
-              {errors.numberTarget.message}
-            </p>
-          )}
-        </div>
+          error={
+            errors.numberTarget?.message
+          }
 
-        <div>
-          <label>Contexto</label>
+          success={
+            numberTargetValue.replace(/\D/g, "")
+              .length === 16
+          }
 
-          <input
-            type="text"
-            {...register("context", {
-              required: "El contexto es requerido",
-            })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
-          />
+          {...register("numberTarget", {
+            required:
+              "El número de tarjeta es requerido",
 
-          {errors.context && (
-            <p className="text-red-500 text-sm">
-              {errors.context.message}
-            </p>
-          )}
-        </div>
+            onChange: (e) => {
 
-        <div>
-          <label>Monto</label>
+              e.target.value =
+                formatCardNumber(
+                  e.target.value
+                );
+            },
+          })}
+        />
 
-          <input
-            type="number"
-            {...register("amount", {
-              required: "El monto es requerido",
-              valueAsNumber: true,
-            })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
-          />
+        <FormInput
+          type="text"
+          label="Contexto"
+          placeholder="Pago de vigilancia"
+          error={
+            errors.context?.message
+          }
+          success={
+            contextValue.trim().length >= 5
+          }
+          {...register("context", {
+            required:
+              "El contexto es requerido",
+          })}
+        />
 
-          {errors.amount && (
-            <p className="text-red-500 text-sm">
-              {errors.amount.message}
-            </p>
-          )}
-        </div>
+        <FormInput
+          type="number"
+          label="Monto"
+          placeholder="0.00"
+          error={
+            errors.amount?.message
+          }
+          success={
+            Number(amountValue) > 0
+          }
+          {...register("amount", {
+            required:
+              "El monto es requerido",
+            valueAsNumber: true,
+          })}
+        />
 
-        <div>
-          <label>CVC</label>
+        <FormInput
+          type="password"
+          label="CVC"
+          placeholder="123"
+          maxLength={3}
 
-          <input
-            type="text"
-            {...register("cvc", {
-              required: "El CVC es requerido",
-            })}
-            className="w-full border border-[#E5E5E7] rounded-xl p-3"
-          />
+          error={
+            errors.cvc?.message
+          }
 
-          {errors.cvc && (
-            <p className="text-red-500 text-sm">
-              {errors.cvc.message}
-            </p>
-          )}
-        </div>
+          success={
+            cvcValue.length === 3
+          }
 
-        <div className="flex justify-between mt-4">
-          <button
+          {...register("cvc", {
+            required:
+              "El CVC es requerido",
+
+            pattern: {
+              value: /^[0-9]{3}$/,
+              message:
+                "El CVC debe tener 3 dígitos",
+            },
+
+            onChange: (e) => {
+
+              e.target.value =
+                e.target.value
+                  .replace(/\D/g, "")
+                  .slice(0, 3);
+            },
+          })}
+        />
+
+        <div
+          className="
+                        flex
+                        justify-between
+                        items-center
+                        pt-3
+                    "
+        >
+
+          <SecondaryButton
             type="button"
             onClick={close}
           >
             Cancelar
-          </button>
+          </SecondaryButton>
 
-          <button type="submit">
+          <PrimaryButton type="submit">
             Pagar
-          </button>
+          </PrimaryButton>
+
         </div>
+
       </form>
-    </div>
+
+    </FormModal>
   );
 }
