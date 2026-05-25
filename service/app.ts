@@ -10,6 +10,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerOptions from "./src/swagger/swagger.options.js";
 import { swaggerSpec } from "./src/config/swagger.js";
+import { errorHandler } from "./src/middlewares/error.handler.js";
 
 const app = express(); // Crea la aplicación Express
 
@@ -36,6 +37,9 @@ app.use("/api", vigilantRoute);
 
 // Define el puerto del servidor
 const PORT = process.env.PORT || 1200;
+
+// Middleware global de manejo de errores (debe ir AL FINAL)
+app.use(errorHandler);
 
 // Inicia el servidor escuchando el puerto asignado
 app.listen(PORT, () => {
