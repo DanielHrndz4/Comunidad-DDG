@@ -72,3 +72,26 @@ export const deleteTaskById = async (taskId) => {
 export const updateTaskById = async (taskId, taskData) => {
     return await Task.findByIdAndUpdate(taskId, taskData, { new: true });
 };
+
+/**
+* Obtiene tareas dentro de un radio geográfico usando índice 2dsphere.
+* @async
+* @function selectTasksNearby
+* @param {number} longitude - Longitud del punto central.
+* @param {number} latitude - Latitud del punto central.
+* @param {number} radius - Radio máximo en metros.
+* @returns {Promise<Array>} Lista de tareas cercanas.
+*/
+export const selectTasksNearby = async (longitude, latitude, radius) => {
+    return await Task.find({
+        location: {
+            $near: {
+                $geometry: {
+                    type: "Point",
+                    coordinates: [longitude, latitude]
+                },
+                $maxDistance: radius
+            }
+        }
+    }).populate("user");
+};

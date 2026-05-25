@@ -1,10 +1,11 @@
-import { 
-    insertTask, 
-    selectTask, 
+import {
+    insertTask,
+    selectTask,
     selectTaskHome,
     selectOneTask,
     deleteTaskById,
-    updateTaskById
+    updateTaskById,
+    selectTasksNearby
 } from "../repository/task.repository.js";
 
 /**
@@ -109,9 +110,26 @@ export const updateTaskId = async (taskId, taskData) => {
         if (!updateTask) {
             throw new Error("Tarea no encontrada");
         }
-    
+
         return updateTask;
     } catch (error) {
         return new Error(error.message);
+    }
+};
+
+/**
+* Obtiene tareas dentro de un radio geográfico.
+* @async
+* @function selectNearbyTasks
+* @param {number} longitude - Longitud del punto central.
+* @param {number} latitude - Latitud del punto central.
+* @param {number} radius - Radio máximo en metros.
+* @returns {Promise<Array|Error>} Lista de tareas cercanas o error.
+*/
+export const selectNearbyTasks = async (longitude, latitude, radius) => {
+    try {
+        return await selectTasksNearby(longitude, latitude, radius);
+    } catch (error) {
+        throw new Error(error.message);
     }
 };

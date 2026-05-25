@@ -21,9 +21,21 @@ const taskSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
+    },
+    location: {
+        type: {
+            type: String,
+            enum: ["Point"],
+            default: "Point"
+        },
+        coordinates: {
+            type: [Number], // [longitud, latitud]
+        }
     }
 }, {
     timestamps: true
 });
+
+taskSchema.index({ location: "2dsphere" });
 
 export default mongoose.model("Task", taskSchema);
