@@ -1,6 +1,16 @@
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import {
+    Dispatch,
+    ReactNode,
+    SetStateAction,
+} from "react";
+
 import { IUser } from "./IUser";
+
 import { IPayment } from "./IPayment";
+
+import type {
+    RegisterPayload,
+} from "./IAuthForms";
 
 export interface LoginData {
     username: string;
@@ -17,27 +27,43 @@ export interface AuthProviderProps {
 }
 
 export interface AuthContextType {
-    signup: (user: IUser) => Promise<void>;
-    signin: (user: LoginData) => Promise<void>;
+
+    signup: (
+        user: RegisterPayload
+    ) => Promise<void>;
+
+    signin: (
+        user: LoginData
+    ) => Promise<void>;
+
     logout: () => void;
 
-    createUser: (userData: IUser) => Promise<void>;
+    createUser: (
+        userData: IUser
+    ) => Promise<void>;
 
     updatePasswordByPassword: (
         data: UpdatePasswordData
     ) => Promise<void>;
 
     getUsers: () => Promise<void>;
-    deleteUser: (id: string) => Promise<void>;
 
-    getOneProfile: (id: string) => Promise<IUser | undefined>;
+    deleteUser: (
+        id: string
+    ) => Promise<void>;
+
+    getOneProfile: (
+        id: string
+    ) => Promise<IUser | undefined>;
 
     updateProfile: (
         id: string,
         profile: Partial<IUser>
     ) => Promise<IUser | undefined>;
 
-    addPay: (pay: IPayment) => Promise<void>;
+    addPay: (
+        pay: IPayment
+    ) => Promise<void>;
 
     getAllUsers: () => Promise<void>;
 
