@@ -2,7 +2,7 @@ import { Router } from "express";
 // Middleware que verifica si el usuario está autenticado mediante token
 import { authRequired } from "../middlewares/validate.token.js";
 // Controladores para el módulo de vigilancia (horarios y visitas)
-import { createSchedule, createVisit, getAllSchedules, getAllVisits } from "../controllers/vigilant.controllers.js";
+import { vigilantController } from "../controllers/vigilant.controllers.js";
 
 const router = Router();
 
@@ -113,7 +113,7 @@ const router = Router();
  *       401:
  *         description: No tienes permiso
  */
-router.post("/schedules", authRequired, createSchedule);
+router.post("/schedules", authRequired, vigilantController.createSchedule.bind(vigilantController));
 
 /**
  * @swagger
@@ -129,7 +129,7 @@ router.post("/schedules", authRequired, createSchedule);
  *       401:
  *         description: Acceso denegado
  */
-router.get("/schedules", authRequired, getAllSchedules);
+router.get("/schedules", authRequired, vigilantController.getAllSchedules.bind(vigilantController));
 
 
 // ----------- RUTAS PARA VISITAS (VISITS) -----------
@@ -164,7 +164,7 @@ router.get("/schedules", authRequired, getAllSchedules);
  *       401:
  *         description: No autorizado
  */
-router.post("/visit", authRequired, createVisit);
+router.post("/visit", authRequired, vigilantController.createVisit.bind(vigilantController));
 
 /**
  * @swagger
@@ -180,6 +180,6 @@ router.post("/visit", authRequired, createVisit);
  *       401:
  *         description: Acceso denegado
  */
-router.get("/visits", authRequired, getAllVisits);
+router.get("/visits", authRequired, vigilantController.getAllVisits.bind(vigilantController));
 
 export default router;

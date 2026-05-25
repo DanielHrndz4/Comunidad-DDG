@@ -32,7 +32,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ["./src/routes/*.js"], // Ruta a los archivos con anotaciones
+    apis: ["./src/routes/*.ts"], // Ruta a los archivos con anotaciones
 };
 
 export const swaggerSpec = swaggerJSDoc(swaggerOptions);

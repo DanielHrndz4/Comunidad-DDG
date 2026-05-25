@@ -1,36 +1,15 @@
 import Task from "../models/task.model.js";
 
-/**
-* Inserta una nueva tarea en la base de datos.
-* @async
-* @function insertTask
-* @param {Object} taskData - Datos de la tarea a guardar.
-* @returns {Promise<Object>} La tarea creada.
-*/
-export const insertTask = async (taskData: Object): Promise<Object | null> => {
+export const insertTask = async (taskData: Record<string, unknown>) => {
     const newTask = new Task(taskData);
     return await newTask.save();
 };
 
-/**
-* Obtiene las tareas asociadas a un usuario.
-* @async
-* @function selectTask
-* @param {string} userId - ID del usuario dueño de las tareas.
-* @returns {Promise<Object|null>} Tarea encontrada o null.
-*/
-export const selectTask = async (userId: string): Promise<Object | null> => {
-    return await Task.findById({ user: userId }).populate("user");
+export const selectTask = async (userId: string) => {
+    return await Task.find({ user: userId }).populate("user");
 };
 
-/**
-* Obtiene todas las tareas de la base de datos.
-* @async
-* @function selectTaskHome
-* @returns {Promise<Array>} Lista de tareas.
-* @throws {Error} Cuando ocurre un fallo al consultar la base.
-*/
-export const selectTaskHome = async (): Promise<Array<Object> | null> => {
+export const selectTaskHome = async () => {
     try {
         const tasks = await Task.find();
         return tasks;
@@ -39,36 +18,14 @@ export const selectTaskHome = async (): Promise<Array<Object> | null> => {
     }
 };
 
-/**
-* Obtiene una tarea específica por su ID.
-* @async
-* @function selectOneTask
-* @param {string} taskId - ID de la tarea.
-* @returns {Promise<Object|null>} Tarea encontrada o null.
-*/
-export const selectOneTask = async (taskId) => {
+export const selectOneTask = async (taskId: string) => {
     return await Task.findById(taskId).populate("user");
 };
 
-/**
-* Elimina una tarea por su ID.
-* @async
-* @function deleteTaskById
-* @param {string} taskId - ID de la tarea a eliminar.
-* @returns {Promise<Object|null>} Documento eliminado o null.
-*/
-export const deleteTaskById = async (taskId) => {
+export const deleteTaskById = async (taskId: string) => {
     return await Task.findByIdAndDelete(taskId);
 };
 
-/**
-* Actualiza una tarea por su ID.
-* @async
-* @function updateTaskById
-* @param {string} taskId - ID de la tarea a actualizar.
-* @param {Object} taskData - Datos actualizados.
-* @returns {Promise<Object|null>} La tarea actualizada.
-*/
-export const updateTaskById = async (taskId, taskData) => {
+export const updateTaskById = async (taskId: string, taskData: Record<string, unknown>) => {
     return await Task.findByIdAndUpdate(taskId, taskData, { new: true });
 };
