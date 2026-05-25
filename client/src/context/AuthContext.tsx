@@ -115,7 +115,7 @@ export const AuthProvider = ({
                   userData
               );
 
-          setUser(res.data);
+          setUser(res.data.data);
 
           setIsAuthenticate(true);
 
@@ -144,7 +144,7 @@ export const AuthProvider = ({
                   userData
               );
 
-          setUser(res.data);
+          setUser(res.data.data);
 
           setIsAuthenticate(true);
 
@@ -202,7 +202,7 @@ export const AuthProvider = ({
                   await getUsersService();
 
               setGetAdminUsers(
-                  res.data
+                  res.data.data
               );
 
           } catch (error: unknown) {
@@ -220,7 +220,7 @@ export const AuthProvider = ({
                   await getAllUsersService();
 
               setGetUsers(
-                  res.data
+                  res.data.data
               );
 
           } catch (error: unknown) {
@@ -255,7 +255,7 @@ export const AuthProvider = ({
                       id
                   );
 
-              return res.data;
+              return res.data.data;
 
           } catch (error: unknown) {
 
@@ -280,7 +280,7 @@ export const AuthProvider = ({
                   );
 
               const updated =
-                  res.data;
+                  res.data.data;
 
               setUser((prev) => ({
                   ...(prev ?? {}),
@@ -356,7 +356,7 @@ export const AuthProvider = ({
               const res =
                   await verifyTokenService();
 
-              if (!res.data) {
+              if (!res.data.data) {
 
                   setIsAuthenticate(false);
 
@@ -367,7 +367,7 @@ export const AuthProvider = ({
 
               setIsAuthenticate(true);
 
-              setUser(res.data);
+              setUser(res.data.data);
 
               setLoading(false);
 
