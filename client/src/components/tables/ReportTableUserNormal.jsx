@@ -37,7 +37,7 @@ export default function ReportTableUserNormal({ reports }) {
         <>
             {/* TableView: estructura principal de la tabla */}
             <TableView fields={fields}>
-                {reports.map(i =>
+                {reports && reports.map(i =>
                     <TableCard key={i._id}>
                         {/* Información visible del reporte */}
                         <h2 className="text-[1.5rem] text-dark-gray font-bold">{i.title}</h2>

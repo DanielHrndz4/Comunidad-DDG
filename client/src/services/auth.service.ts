@@ -11,7 +11,7 @@ export const registerUserService = (user: IUser) => {
 
 export const registerService = (user: IUser) => {
     return axios.post(
-        "/createUser",
+        "/register",
         user
     );
 };
@@ -65,7 +65,7 @@ export const addPaymentService = (pay: IPayment) => {
 
 export const getAllUsersService = () => {
     return axios.get(
-        "/allUsers"
+        "/allUser"
     );
 };
 

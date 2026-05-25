@@ -218,7 +218,7 @@ export class UserService {
             const salt = await bcrypt.genSalt(10);
             updateData.password = await bcrypt.hash(updateData.password as string, salt);
         }
-        
+
         const updateProfile = await updateUserById(id as string, updateData);
 
         if (!updateProfile) {
