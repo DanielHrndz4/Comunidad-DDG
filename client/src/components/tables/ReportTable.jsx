@@ -41,7 +41,7 @@ export default function ReportTable({ reports }) {
         <>
             {/* TableView: layout general de la tabla */}
             <TableView fields={fields}>
-                {reports.map(i =>
+                {reports.length > 0 && reports.map(i =>
                     <TableCard key={i._id}>
                         {/* Contenido de cada fila / tarjeta */}
                         <h2 className="text-[1.5rem] text-dark-gray font-bold">{i.title}</h2>
