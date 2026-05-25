@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 
 import { IUser } from "../../interfaces/IUser";
-import { createUser } from "../../services/auth.service";
+import { createUserService } from "../../services/auth.service";
 
 import FormModal from "../ui/FormModal";
 import FormInput from "../ui/FormInput";
@@ -40,7 +40,7 @@ export default function CreateUserForm({
 
     try {
 
-      await createUser(data);
+      await createUserService(data);
 
       Swal.fire({
         title: "Usuario creado!",

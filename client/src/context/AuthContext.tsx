@@ -5,21 +5,21 @@ import {
   useEffect,
 } from "react";
 
-import {
-  registerRequest,
-  loginRequest,
-  verifyTokenRequest,
-  getUsersAdmin,
-  deleteUserAdmin,
-  getOneProfileUser,
-  updateOneProfile,
-  addPayVigilanceFromUser,
-  getAllUsersForUser,
-  registerRequestByAdmin,
-  updatePasswordRequest,
-} from "../api/auth.js";
-
 import Cookies from "js-cookie";
+
+import {
+  registerService,
+  loginService,
+  verifyTokenService,
+  getUsersService,
+  deleteUserService,
+  getProfileService,
+  updateProfileService,
+  addPaymentService,
+  getAllUsersService,
+  createUserService,
+  updatePasswordService,
+} from "../services/auth.service";
 
 import type {
   AuthContextType,
@@ -29,403 +29,405 @@ import type {
 } from "../interfaces/IAuthContext";
 
 import type { IUser } from "../interfaces/IUser";
+
 import type { IPayment } from "../interfaces/IPayment";
 
 export const AuthContext =
-  createContext<AuthContextType | null>(null);
+  createContext<AuthContextType | null>(
+      null
+  );
 
-export const useAuth = (): AuthContextType => {
+export const useAuth =
+  (): AuthContextType => {
 
-  const context = useContext(AuthContext);
+      const context =
+          useContext(AuthContext);
 
-  if (!context) {
-    throw new Error(
-      "useAuth debe estar dentro del provider"
-    );
-  }
+      if (!context) {
 
-  return context;
-};
+          throw new Error(
+              "useAuth debe estar dentro del provider"
+          );
+      }
+
+      return context;
+  };
 
 export const AuthProvider = ({
   children,
 }: AuthProviderProps) => {
 
   const [user, setUser] =
-    useState<IUser | null>(null);
+      useState<IUser | null>(null);
 
   const [users, setGetUsers] =
-    useState<IUser[]>([]);
+      useState<IUser[]>([]);
 
-  const [isAuthenticate, setIsAuthenticate] =
-    useState<boolean>(false);
+  const [
+      isAuthenticate,
+      setIsAuthenticate,
+  ] = useState<boolean>(false);
 
   const [errors, setErrors] =
-    useState<string[]>([]);
+      useState<string[]>([]);
 
   const [loading, setLoading] =
-    useState<boolean>(true);
+      useState<boolean>(true);
 
-  const [getAdminUsers, setGetAdminUsers] =
-    useState<IUser[]>([]);
+  const [
+      getAdminUsers,
+      setGetAdminUsers,
+  ] = useState<IUser[]>([]);
 
-  const updatePasswordByPassword = async (
-    data: UpdatePasswordData
-  ): Promise<void> => {
+  const updatePasswordByPassword =
+      async (
+          data: UpdatePasswordData
+      ): Promise<void> => {
 
-    const {
-      username,
-      password,
-    } = data;
+          try {
 
-    try {
+              setErrors([]);
 
-      setErrors([]);
+              await updatePasswordService(
+                  data
+              );
 
-      await updatePasswordRequest({
-        username,
-        password,
-      });
+          } catch (error: unknown) {
 
-    } catch (error: unknown) {
+              console.log(error);
 
-      const err = error as {
-        response?: {
-          data?: unknown;
-        };
+              setErrors([
+                  "Error al actualizar contraseña",
+              ]);
+
+              throw error;
+          }
       };
 
-      const data =
-        err.response?.data;
-
-      const msgs =
-        Array.isArray(data)
-          ? (data as string[])
-          : [
-              (
-                data as {
-                  message?: string;
-                } | undefined
-              )?.message ||
-                "Error al actualizar la contraseña",
-            ];
-
-      setErrors(msgs);
-
-      throw error;
-    }
-  };
-
   const signup = async (
-    userData: IUser
+      userData: IUser
   ): Promise<void> => {
 
-    try {
+      try {
 
-      const res =
-        await registerRequest(userData);
+          const res =
+              await registerService(
+                  userData
+              );
 
-      setUser(res.data);
+          setUser(res.data);
 
-      setIsAuthenticate(true);
+          setIsAuthenticate(true);
 
-    } catch (error: unknown) {
+          setErrors([]);
 
-      console.log("Error");
+      } catch (error: unknown) {
 
-      setErrors([
-        "Vuelva a intentarlo o contacte con el administrador",
-      ]);
+          console.log(error);
 
-      throw error;
-    }
+          setErrors([
+              "Vuelva a intentarlo o contacte con el administrador",
+          ]);
+
+          throw error;
+      }
   };
 
   const signin = async (
-    userData: LoginData
+      userData: LoginData
   ): Promise<void> => {
 
-    try {
+      try {
 
-      const res =
-        await loginRequest(userData);
+          const res =
+              await loginService(
+                  userData
+              );
 
-      setUser(res.data);
+          setUser(res.data);
 
-      setIsAuthenticate(true);
+          setIsAuthenticate(true);
 
-      setErrors([]);
+          setErrors([]);
 
-    } catch (error: unknown) {
+      } catch (error: unknown) {
 
-      console.log(
-        "Revise que los campos sean correctos"
-      );
+          console.log(error);
 
-      setErrors([
-        "Revise que los campos sean correctos",
-      ]);
-    }
+          setErrors([
+              "Revise que los campos sean correctos",
+          ]);
+      }
   };
 
   const createUser = async (
-    userData: IUser
+      userData: IUser
   ): Promise<void> => {
 
-    try {
+      try {
 
-      await registerRequestByAdmin(
-        userData
-      );
+          await createUserService(
+              userData
+          );
 
-      setErrors([]);
+          setErrors([]);
 
-    } catch (error: unknown) {
+      } catch (error: unknown) {
 
-      console.log("Error");
+          console.log(error);
 
-      setErrors([
-        "Revise que los campos sean correctos",
-      ]);
+          setErrors([
+              "Revise que los campos sean correctos",
+          ]);
 
-      throw error;
-    }
+          throw error;
+      }
   };
 
   const logout = (): void => {
 
-    Cookies.remove("token");
+      Cookies.remove("token");
 
-    setIsAuthenticate(false);
+      setIsAuthenticate(false);
 
-    setUser(null);
+      setUser(null);
   };
 
-  const getUsers = async (): Promise<void> => {
+  const getUsers =
+      async (): Promise<void> => {
 
-    try {
+          try {
 
-      const res =
-        await getUsersAdmin();
+              const res =
+                  await getUsersService();
 
-      setGetAdminUsers(res.data);
+              setGetAdminUsers(
+                  res.data
+              );
 
-    } catch (error: unknown) {
+          } catch (error: unknown) {
 
-      console.log(error);
-    }
-  };
+              console.log(error);
+          }
+      };
 
-  const getAllUsers = async (): Promise<void> => {
+  const getAllUsers =
+      async (): Promise<void> => {
 
-    try {
+          try {
 
-      const res =
-        await getAllUsersForUser();
+              const res =
+                  await getAllUsersService();
 
-      setGetUsers(res.data);
+              setGetUsers(
+                  res.data
+              );
 
-    } catch (error: unknown) {
+          } catch (error: unknown) {
 
-      console.log(error);
-    }
-  };
+              console.log(error);
+          }
+      };
 
   const deleteUser = async (
-    id: string
+      id: string
   ): Promise<void> => {
 
-    try {
+      try {
 
-      await deleteUserAdmin(id);
+          await deleteUserService(id);
 
-    } catch (error: unknown) {
+      } catch (error: unknown) {
 
-      console.log(error);
-    }
+          console.log(error);
+      }
   };
 
-  const getOneProfile = async (
-    id: string
-  ): Promise<IUser | undefined> => {
+  const getOneProfile =
+      async (
+          id: string
+      ): Promise<IUser | undefined> => {
 
-    try {
+          try {
 
-      const res =
-        await getOneProfileUser(id);
+              const res =
+                  await getProfileService(
+                      id
+                  );
 
-      return res.data;
+              return res.data;
 
-    } catch (error: unknown) {
+          } catch (error: unknown) {
 
-      console.log(error);
+              console.log(error);
 
-      return undefined;
-    }
-  };
+              return undefined;
+          }
+      };
 
-  const updateProfile = async (
-    id: string,
-    profile: Partial<IUser>
-  ): Promise<IUser | undefined> => {
+  const updateProfile =
+      async (
+          id: string,
+          profile: Partial<IUser>
+      ): Promise<IUser | undefined> => {
 
-    try {
+          try {
 
-      const res =
-        await updateOneProfile(
-          id,
-          profile
-        );
+              const res =
+                  await updateProfileService(
+                      id,
+                      profile
+                  );
 
-      const updated =
-        res.data;
+              const updated =
+                  res.data;
 
-      setUser((prev) => ({
-        ...(prev ?? {}),
-        ...updated,
-      }));
+              setUser((prev) => ({
+                  ...(prev ?? {}),
+                  ...updated,
+              }));
 
-      return updated;
+              return updated;
 
-    } catch (error: unknown) {
+          } catch (error: unknown) {
 
-      console.log(error);
+              console.log(error);
 
-      throw error;
-    }
-  };
+              throw error;
+          }
+      };
 
   const addPay = async (
-    pay: IPayment
+      pay: IPayment
   ): Promise<void> => {
 
-    try {
+      try {
 
-      await addPayVigilanceFromUser(
-        pay
-      );
+          await addPaymentService(
+              pay
+          );
 
-    } catch (error: unknown) {
+      } catch (error: unknown) {
 
-      console.log(error);
-    }
+          console.log(error);
+      }
   };
 
   useEffect(() => {
 
-    if (errors.length > 0) {
+      if (errors.length > 0) {
 
-      const time =
-        setTimeout(() => {
+          const time =
+              setTimeout(() => {
 
-          setErrors([]);
+                  setErrors([]);
 
-        }, 5000);
+              }, 5000);
 
-      return () =>
-        clearTimeout(time);
-    }
+          return () =>
+              clearTimeout(time);
+      }
 
   }, [errors]);
 
   useEffect(() => {
 
-    async function checkLogin() {
+      async function checkLogin() {
 
-      const cookies =
-        Cookies.get() as Record<
-          string,
-          string | undefined
-        >;
+          const cookies =
+              Cookies.get() as Record<
+                  string,
+                  string | undefined
+              >;
 
-      if (!cookies.token) {
+          if (!cookies.token) {
 
-        setIsAuthenticate(false);
+              setIsAuthenticate(false);
 
-        setLoading(false);
+              setLoading(false);
 
-        setUser(null);
+              setUser(null);
 
-        return;
+              return;
+          }
+
+          try {
+
+              const res =
+                  await verifyTokenService();
+
+              if (!res.data) {
+
+                  setIsAuthenticate(false);
+
+                  setLoading(false);
+
+                  return;
+              }
+
+              setIsAuthenticate(true);
+
+              setUser(res.data);
+
+              setLoading(false);
+
+          } catch (error: unknown) {
+
+              console.log(error);
+
+              setIsAuthenticate(false);
+
+              setUser(null);
+
+              setLoading(false);
+          }
       }
 
-      try {
-
-        const res =
-          await verifyTokenRequest();
-
-        if (!res.data) {
-
-          setIsAuthenticate(false);
-
-          setLoading(false);
-
-          return;
-        }
-
-        setIsAuthenticate(true);
-
-        setUser(res.data);
-
-        setLoading(false);
-
-      } catch (error: unknown) {
-
-        console.log(error);
-
-        setIsAuthenticate(false);
-
-        setUser(null);
-
-        setLoading(false);
-      }
-    }
-
-    checkLogin();
+      checkLogin();
 
   }, []);
 
   return (
-    <AuthContext.Provider
-      value={{
-        signup,
+      <AuthContext.Provider
+          value={{
+              signup,
 
-        loading,
+              loading,
 
-        user,
+              user,
 
-        isAuthenticate,
+              isAuthenticate,
 
-        setIsAuthenticate,
+              setIsAuthenticate,
 
-        errors,
+              errors,
 
-        signin,
+              signin,
 
-        logout,
+              logout,
 
-        getAdminUsers,
+              getAdminUsers,
 
-        getUsers,
+              getUsers,
 
-        deleteUser,
+              deleteUser,
 
-        getOneProfile,
+              getOneProfile,
 
-        updateProfile,
+              updateProfile,
 
-        addPay,
+              addPay,
 
-        users,
+              users,
 
-        getAllUsers,
+              getAllUsers,
 
-        createUser,
+              createUser,
 
-        updatePasswordByPassword,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+              updatePasswordByPassword,
+          }}
+      >
+          {children}
+      </AuthContext.Provider>
   );
 };
