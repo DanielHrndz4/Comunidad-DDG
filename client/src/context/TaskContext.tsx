@@ -82,7 +82,7 @@ export function TaskProvider({
         try {
             const res = await getTaskAdminRequest();
 
-            setTaskAdmin(res.data);
+            setTaskAdmin(res.data.data);
 
         } catch (error: unknown) {
             console.log(error);
@@ -93,7 +93,7 @@ export function TaskProvider({
         try {
             const res = await getTaskAdminRequest2();
 
-            setTaskAdmin2(res.data);
+            setTaskAdmin2(res.data.data);
 
         } catch (error: unknown) {
             console.log(error);
@@ -104,7 +104,7 @@ export function TaskProvider({
         try {
             const res = await getTaskHomeRequest();
 
-            setTaskHome(res.data);
+            setTaskHome(res.data.data);
 
         } catch (error: unknown) {
             console.log(error);
@@ -115,7 +115,7 @@ export function TaskProvider({
         try {
             const res = await getTaskHomeRequest2();
 
-            setTaskHome2(res.data);
+            setTaskHome2(res.data.data);
 
         } catch (error: unknown) {
             console.log(error);
@@ -126,7 +126,7 @@ export function TaskProvider({
         try {
             const res = await getTaskRequest();
 
-            setTasks(res.data);
+            setTasks(res.data.data);
 
         } catch (error: unknown) {
             console.log(error);
@@ -137,7 +137,7 @@ export function TaskProvider({
         try {
             const res = await getTaskRequest2();
 
-            setTasks2(res.data);
+            setTasks2(res.data.data);
 
         } catch (error: unknown) {
             console.log(error);
@@ -153,10 +153,10 @@ export function TaskProvider({
 
             setTaskAdmin((prev) => [
                 ...prev,
-                res.data,
+                res.data.data,
             ]);
 
-            return res.data;
+            return res.data.data;
 
         } catch (error: unknown) {
             console.log(error);
@@ -172,10 +172,10 @@ export function TaskProvider({
 
             setTaskAdmin2((prev) => [
                 ...prev,
-                res.data,
+                res.data.data,
             ]);
 
-            return res.data;
+            return res.data.data;
 
         } catch (error: unknown) {
             console.log(error);
@@ -213,7 +213,7 @@ export function TaskProvider({
         try {
             const res = await getOneTaskRequest(id);
 
-            return res.data;
+            return res.data.data;
 
         } catch (error: unknown) {
             console.log(error);
@@ -227,7 +227,7 @@ export function TaskProvider({
         try {
             const res = await getOneTaskRequest2(id);
 
-            return res.data;
+            return res.data.data;
 
         } catch (error: unknown) {
             console.log(error);
@@ -289,7 +289,7 @@ export function TaskProvider({
         try {
             const res = await getAllSchedule();
 
-            return res;
+            return res.data.data;
 
         } catch (error: unknown) {
             console.log(error);
@@ -301,7 +301,7 @@ export function TaskProvider({
         try {
             const res = await getVisits();
 
-            setAddVisit(res.data);
+            setAddVisit(res.data.data);
 
         } catch (error: unknown) {
             console.log(error);

@@ -1,10 +1,8 @@
 import { Router } from "express";
-// Middleware para verificar que el usuario esté autenticado mediante token
 import { authRequired } from "../middlewares/validate.token.js";
-// Controladores para las tareas (task)
-import { getTask, getOneTask, createTask, updateTask, deleteTask, getTaskHome, getNearbyTasks } from "../controllers/task.controllers.js";
+import { taskController } from "../controllers/task.controllers.js";
 // Controladores para las tareas tipo 2 (task2)
-import { getTask2, getOneTask2, createTask2, updateTask2, deleteTask2, getTaskHome2 } from "../controllers/task2.controllers.js";
+import { task2Controller } from "../controllers/task2.controllers.js";
 // Middleware para validar datos con Zod
 import { validateSchema } from "../middlewares/validate.middleware.js";
 // Schemas de validación para cada tipo de task
@@ -272,7 +270,7 @@ const router = Router();
  *       401:
  *         description: No estás autorizado
  */
-router.post("/task", authRequired, validateSchema(createTaskSchema), createTask);
+router.post("/task", authRequired, validateSchema(createTaskSchema), taskController.createTask.bind(taskController));
 
 /**
  * @swagger
@@ -288,7 +286,7 @@ router.post("/task", authRequired, validateSchema(createTaskSchema), createTask)
  *       401:
  *         description: Necesitas iniciar sesión
  */
-router.get("/task", authRequired, getTask);
+router.get("/task", authRequired, taskController.getTask.bind(taskController));
 
 /**
  * @swagger
@@ -304,7 +302,7 @@ router.get("/task", authRequired, getTask);
  *       401:
  *         description: Acceso denegado
  */
-router.get("/taskhome", authRequired, getTaskHome);
+router.get("/taskhome", authRequired, taskController.getTaskHome.bind(taskController));
 
 /**
  * @swagger
@@ -341,7 +339,7 @@ router.get("/taskhome", authRequired, getTaskHome);
  *       500:
  *         description: Error del servidor
  */
-router.get("/tasks/nearby", authRequired, getNearbyTasks);
+router.get("/tasks/nearby", authRequired, taskController.getNearbyTasks.bind(taskController));
 
 /**
  * @swagger
@@ -366,7 +364,7 @@ router.get("/tasks/nearby", authRequired, getNearbyTasks);
  *       401:
  *         description: No tienes permiso
  */
-router.get("/task/:id", authRequired, getOneTask);
+router.get("/task/:id", authRequired, taskController.getOneTask.bind(taskController));
 
 /**
  * @swagger
@@ -391,7 +389,7 @@ router.get("/task/:id", authRequired, getOneTask);
  *       401:
  *         description: No autorizado
  */
-router.delete("/task/:id", authRequired, deleteTask);
+router.delete("/task/:id", authRequired, taskController.deleteTask.bind(taskController));
 
 /**
  * @swagger
@@ -433,7 +431,7 @@ router.delete("/task/:id", authRequired, deleteTask);
  *       401:
  *         description: No autorizado
  */
-router.put("/task/:id", authRequired, updateTask);
+router.put("/task/:id", authRequired, taskController.updateTask.bind(taskController));
 
 
 // ---------- RUTAS PARA TASK2 (tareas tipo 2) ----------
@@ -472,7 +470,7 @@ router.put("/task/:id", authRequired, updateTask);
  *       401:
  *         description: No autorizado
  */
-router.post("/taskd", authRequired, validateSchema(createTaskSchema2), createTask2);
+router.post("/taskd", authRequired, validateSchema(createTaskSchema2), task2Controller.createTask2.bind(task2Controller));
 
 /**
  * @swagger
@@ -488,7 +486,7 @@ router.post("/taskd", authRequired, validateSchema(createTaskSchema2), createTas
  *       401:
  *         description: Necesitas iniciar sesión
  */
-router.get("/taskd", authRequired, getTask2);
+router.get("/taskd", authRequired, task2Controller.getTask2.bind(task2Controller));
 
 /**
  * @swagger
@@ -504,7 +502,7 @@ router.get("/taskd", authRequired, getTask2);
  *       401:
  *         description: Acceso denegado
  */
-router.get("/taskhomed", authRequired, getTaskHome2);
+router.get("/taskhomed", authRequired, task2Controller.getTaskHome2.bind(task2Controller));
 
 /**
  * @swagger
@@ -529,7 +527,7 @@ router.get("/taskhomed", authRequired, getTaskHome2);
  *       401:
  *         description: No autorizado
  */
-router.get("/taskd/:id", authRequired, getOneTask2);
+router.get("/taskd/:id", authRequired, task2Controller.getOneTask2.bind(task2Controller));
 
 /**
  * @swagger
@@ -554,7 +552,7 @@ router.get("/taskd/:id", authRequired, getOneTask2);
  *       401:
  *         description: No autorizado
  */
-router.delete("/taskd/:id", authRequired, deleteTask2);
+router.delete("/taskd/:id", authRequired, task2Controller.deleteTask2.bind(task2Controller));
 
 /**
  * @swagger
@@ -596,6 +594,6 @@ router.delete("/taskd/:id", authRequired, deleteTask2);
  *       401:
  *         description: No autorizado
  */
-router.put("/taskd/:id", authRequired, updateTask2);
+router.put("/taskd/:id", authRequired, task2Controller.updateTask2.bind(task2Controller));
 
 export default router;
