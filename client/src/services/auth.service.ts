@@ -1,6 +1,10 @@
 import axios from "../api/axios";
-import type { IUser } from "../interfaces/IUser";
-import type { IPayment } from "../interfaces/IPayment";
+import { IUser } from "../interfaces/IUser";
+import { IPayment } from "../interfaces/IPayment";
+
+export const createUser = (user: IUser) => {
+  return axios.post("/createUser", user);
+};
 
 export const registerUserService = (user: IUser) => {
     return axios.post(
@@ -93,11 +97,8 @@ export const createUserService = (user: IUser) => {
 };
 
 export const updateUser = (
-    id: string,
-    user: Partial<IUser>
+  id: string,
+  user: Partial<IUser>
 ) => {
-    return axios.put(
-        `/profile/${id}`,
-        user
-    );
+  return axios.put(`/profile/${id}`, user);
 };

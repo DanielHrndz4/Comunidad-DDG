@@ -4,7 +4,8 @@ import {
     selectTaskHome,
     selectOneTask,
     deleteTaskById,
-    updateTaskById
+    updateTaskById,
+    selectTasksNearby
 } from "../repository/task.repository.js";
 
 export class TaskService {
@@ -67,5 +68,17 @@ export class TaskService {
         }
     
         return updateTask;
+    }
+
+    /**
+    * Obtiene tareas dentro de un radio geográfico.
+    */
+    public async selectNearbyTasks(longitude: number, latitude: number, radius: number) {
+        try {
+            return await selectTasksNearby(longitude, latitude, radius);
+        } catch (error: unknown) {
+            const err = error as Error;
+            throw new Error(err.message);
+        }
     }
 }

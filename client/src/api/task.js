@@ -15,3 +15,6 @@ export const updateTaskRequest2 = (id, task) => axios.put(`/taskd/${id}`, task);
 export const deleteTaskRequest2 = (id) => axios.delete(`/taskd/${id}`);
 export const getTaskHomeRequest2 = () => axios.get("/taskHomed");
 export const getTaskAdminRequest2 = () => axios.get("/taskHomed");
+
+export const getNearbyTasksRequest = (longitude, latitude, radius) =>
+    axios.get(`/tasks/nearby?longitude=${longitude}&latitude=${latitude}&radius=${radius}`);

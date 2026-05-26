@@ -38,8 +38,14 @@ export default function NavBar() {
             {/* Contenedor derecho del navbar */}
             <div className="flex items-center gap-20">
 
-                {/* Contenedor vacío (posible reserva para futuros elementos de UI) */}
+                {/* Enlace al módulo SIG */}
                 <div className="flex items-center gap-5">
+                    <Link
+                        to="/admin/sig"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium hover:bg-white/10 transition-colors"
+                    >
+                        🗺️ Mapa SIG
+                    </Link>
                 </div>
 
                 {/* Popup mostrado al hacer clic en el icono de usuario */}

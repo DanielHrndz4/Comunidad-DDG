@@ -22,6 +22,8 @@ import AdminTaskView from './pages/admin/AdminTaskView.jsx'
 import AdminReportView from './pages/admin/AdminReportView.jsx'
 // @ts-ignore
 import AdminProfile from './pages/admin/AdminProfile.jsx'
+// @ts-ignore
+import AdminSIGView from './pages/admin/AdminSIGView.jsx'
 
 // Vistas de registro e inicio de sesión
 // @ts-ignore
@@ -112,6 +114,7 @@ if (rootElement) {
                     <Route path="/admin/tasks" element={<AdminTaskView />} />
                     <Route path="/admin/reports" element={<AdminReportView />} />
                     <Route path="/admin/profile" element={<AdminProfile />} />
+                    <Route path="/admin/sig" element={<AdminSIGView />} />
                   </Route>
                 </Route>
               </Route>

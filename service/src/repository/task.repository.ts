@@ -29,3 +29,17 @@ export const deleteTaskById = async (taskId: string) => {
 export const updateTaskById = async (taskId: string, taskData: Record<string, unknown>) => {
     return await Task.findByIdAndUpdate(taskId, taskData, { new: true });
 };
+
+export const selectTasksNearby = async (longitude: number, latitude: number, radius: number) => {
+    return await Task.find({
+        location: {
+            $near: {
+                $geometry: {
+                    type: "Point",
+                    coordinates: [longitude, latitude]
+                },
+                $maxDistance: radius
+            }
+        }
+    }).populate("user");
+};

@@ -1,7 +1,5 @@
 import { Router } from "express";
-// Middleware para verificar que el usuario esté autenticado mediante token
 import { authRequired } from "../middlewares/validate.token.js";
-// Controladores para las tareas (task)
 import { taskController } from "../controllers/task.controllers.js";
 // Controladores para las tareas tipo 2 (task2)
 import { task2Controller } from "../controllers/task2.controllers.js";
@@ -305,6 +303,43 @@ router.get("/task", authRequired, taskController.getTask.bind(taskController));
  *         description: Acceso denegado
  */
 router.get("/taskhome", authRequired, taskController.getTaskHome.bind(taskController));
+
+/**
+ * @swagger
+ * /tasks/nearby:
+ *   get:
+ *     summary: Obtiene tareas cercanas a una coordenada geográfica
+ *     tags: [Tareas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: longitude
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: Longitud del punto central (entre -180 y 180)
+ *       - in: query
+ *         name: latitude
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: Latitud del punto central (entre -90 y 90)
+ *       - in: query
+ *         name: radius
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: Radio máximo de búsqueda en metros
+ *     responses:
+ *       200:
+ *         description: GeoJSON FeatureCollection con las tareas cercanas (compatible con QGIS)
+ *       400:
+ *         description: Parámetros inválidos o fuera de rango
+ *       500:
+ *         description: Error del servidor
+ */
+router.get("/tasks/nearby", authRequired, taskController.getNearbyTasks.bind(taskController));
 
 /**
  * @swagger
