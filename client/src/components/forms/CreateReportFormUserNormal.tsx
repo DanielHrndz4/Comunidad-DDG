@@ -84,34 +84,26 @@ export default function CreateReportFormUserNormal({
     };
 
     const onSubmit = async (data: IReport) => {
-
         if (!imageBase64) {
-
             setImageError(
                 "Debes seleccionar una imagen"
             );
-
             return;
         }
 
         try {
-
             await createReport({
                 ...data,
                 image: imageBase64,
             });
-
             Swal.fire({
                 title: "¡Publicación creada!",
                 icon: "success",
                 timer: 2000,
                 showConfirmButton: false,
             });
-
             navigate("/user");
-
         } catch {
-
             Swal.fire({
                 title: "Error",
                 text: "No se pudo crear la publicación",
@@ -122,12 +114,10 @@ export default function CreateReportFormUserNormal({
 
     return (
         <FormModal title="Nuevo Reporte">
-
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-col gap-6"
             >
-
                 <FormInput
                     label="Título"
                     placeholder="Ingrese el título del reporte"
@@ -141,7 +131,6 @@ export default function CreateReportFormUserNormal({
                         },
                     })}
                 />
-
                 <FormTextarea
                     label="Descripción"
                     placeholder="Ingrese una descripción"
@@ -160,9 +149,7 @@ export default function CreateReportFormUserNormal({
                         },
                     })}
                 />
-
                 <div className="flex flex-col gap-2">
-
                     <label
                         className="
                             text-[0.88rem]
@@ -173,7 +160,6 @@ export default function CreateReportFormUserNormal({
                     >
                         Imagen
                     </label>
-
                     <input
                         type="file"
                         onChange={handleImageChange}
@@ -201,11 +187,9 @@ export default function CreateReportFormUserNormal({
                             hover:file:brightness-110
                         "
                     />
-
                     <FormError message={imageError} />
 
                 </div>
-
                 <div
                     className="
                         flex
@@ -214,14 +198,12 @@ export default function CreateReportFormUserNormal({
                         pt-3
                     "
                 >
-
                     <SecondaryButton
                         type="button"
                         onClick={close}
                     >
                         Cancelar
                     </SecondaryButton>
-
                     <PrimaryButton type="submit">
                         Publicar
                     </PrimaryButton>

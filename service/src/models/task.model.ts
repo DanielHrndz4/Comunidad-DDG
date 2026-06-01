@@ -1,40 +1,52 @@
 import mongoose from "mongoose";
 
-const taskSchema = new mongoose.Schema({
+const locationSchema = new mongoose.Schema(
+  {
+    type: {
+      type: String,
+      enum: ["Point"],
+      required: true,
+    },
+    coordinates: {
+      type: [Number], // [longitud, latitud]
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
+const taskSchema = new mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     description: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     date: {
-        type: Date,
-        default: Date.now
+      type: Date,
+      default: Date.now,
     },
     image: {
-        type: String,
-        require: true
+      type: String,
+      required: true,
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     location: {
-        type: {
-            type: String,
-            enum: ["Point"],
-            default: "Point"
-        },
-        coordinates: {
-            type: [Number], // [longitud, latitud]
-        }
-    }
-}, {
-    timestamps: true
-});
+      type: locationSchema,
+      default: undefined,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 taskSchema.index({ location: "2dsphere" });
 

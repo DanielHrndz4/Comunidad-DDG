@@ -10,24 +10,55 @@ export class TaskController {
     public async createTask(req: Request, res: Response): Promise<Response> {
         try {
             const { title, description, image, date, location } = req.body;
-            
-            // Construye el objeto de la tarea incluyendo el usuario autenticado
+
+            const authUser = (req as any).user;
+
+            console.log("REQ.USER:", authUser);
+
+            const userId =
+                authUser?.id ||
+                authUser?._id ||
+                authUser?.userId;
+
+            if (!userId) {
+                return res.status(HttpCodes.UNAUTHORIZED).json(
+                    HttpResponse(
+                        HttpCodes.UNAUTHORIZED,
+                        "Usuario autenticado sin ID válido en el token",
+                        null,
+                        false
+                    )
+                );
+            }
+
             const newTask = {
                 title,
                 description,
-                image, 
+                image,
                 date,
-                user: (req as unknown as Record<string, unknown>).user ? ((req as unknown as Record<string, unknown>).user as Record<string, unknown>).id : undefined,
-                ...(location && { location })
+                user: userId,
+                ...(location && { location }),
             };
 
-            // Llama al servicio para insertar la nueva tarea
+            console.log("NEW TASK:", newTask);
+
             const saveTask = await taskService.insertNewTask(newTask);
 
-            return res.status(HttpCodes.CREATED).json(HttpResponse(HttpCodes.CREATED, "Tarea creada", saveTask, true));
+            return res.status(HttpCodes.CREATED).json(
+                HttpResponse(HttpCodes.CREATED, "Tarea creada", saveTask, true)
+            );
         } catch (error: unknown) {
             const err = error as Error;
-            return res.status(HttpCodes.INTERNAL_SERVER_ERROR).json(HttpResponse(HttpCodes.INTERNAL_SERVER_ERROR, "Error al crear un task: " + err.message, null, false));
+            console.error("ERROR CREATE TASK:", err);
+
+            return res.status(HttpCodes.INTERNAL_SERVER_ERROR).json(
+                HttpResponse(
+                    HttpCodes.INTERNAL_SERVER_ERROR,
+                    "Error al crear un task: " + err.message,
+                    null,
+                    false
+                )
+            );
         }
     }
 

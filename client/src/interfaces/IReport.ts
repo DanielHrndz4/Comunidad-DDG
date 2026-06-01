@@ -1,13 +1,14 @@
 export interface IGeoPoint {
   type: "Point";
-  coordinates: [number, number]; // [longitud, latitud]
+  coordinates: [number, number];
 }
 
 export interface IReport {
-  _id?: string;
+  _id: string;
   title: string;
-  description?: string;
-  image?: string;
+  description: string;
+  image: string;
   location?: IGeoPoint;
-  date?: string;
+  date: string;
+  user: string;
 }
