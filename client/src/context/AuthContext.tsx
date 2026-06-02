@@ -17,7 +17,7 @@ import {
   getAllUsersForUser,
   registerRequestByAdmin,
   updatePasswordRequest,
-} from "../api/auth.js";
+} from "../api/auth";
 
 import Cookies from "js-cookie";
 
@@ -30,6 +30,7 @@ import type {
 
 import type { IUser } from "../interfaces/IUser";
 import type { IPayment } from "../interfaces/IPayment";
+import { RegisterFormData } from "@/interfaces/IAuthForms";
 
 export const AuthContext =
   createContext<AuthContextType | null>(null);
@@ -102,13 +103,13 @@ export const AuthProvider = ({
         Array.isArray(data)
           ? (data as string[])
           : [
-              (
-                data as {
-                  message?: string;
-                } | undefined
-              )?.message ||
-                "Error al actualizar la contraseña",
-            ];
+            (
+              data as {
+                message?: string;
+              } | undefined
+            )?.message ||
+            "Error al actualizar la contraseña",
+          ];
 
       setErrors(msgs);
 
@@ -117,7 +118,7 @@ export const AuthProvider = ({
   };
 
   const signup = async (
-    userData: IUser
+    userData: RegisterFormData
   ): Promise<void> => {
 
     try {
@@ -169,24 +170,34 @@ export const AuthProvider = ({
   };
 
   const createUser = async (
-    userData: IUser
+    userData: RegisterFormData
   ): Promise<void> => {
-
     try {
+      const res = await registerRequestByAdmin(userData);
 
-      await registerRequestByAdmin(
-        userData
-      );
+      setGetAdminUsers((prev) => [
+        ...prev,
+        res.data.data.user ?? res.data.data,
+      ]);
 
       setErrors([]);
-
     } catch (error: unknown) {
+      const err = error as {
+        response?: {
+          data?: {
+            message?: string;
+            errors?: string[];
+          };
+        };
+      };
 
-      console.log("Error");
+      console.log("CREATE USER ERROR:", err.response?.data);
 
-      setErrors([
-        "Revise que los campos sean correctos",
-      ]);
+      const backendMessage =
+        err.response?.data?.message ||
+        "Revise que los campos sean correctos";
+
+      setErrors([backendMessage]);
 
       throw error;
     }
@@ -234,16 +245,28 @@ export const AuthProvider = ({
   const deleteUser = async (
     id: string
   ): Promise<void> => {
-
     try {
-
       await deleteUserAdmin(id);
 
-    } catch (error: unknown) {
+      setGetAdminUsers((prev) =>
+        prev.filter((u) => {
+          const userId = u._id ?? u.id;
+          return userId !== id;
+        })
+      );
 
+      setGetUsers((prev) =>
+        prev.filter((u) => {
+          const userId = u._id ?? u.id;
+          return userId !== id;
+        })
+      );
+    } catch (error: unknown) {
       console.log(error);
+      throw error;
     }
   };
+
 
   const getOneProfile = async (
     id: string
@@ -268,28 +291,20 @@ export const AuthProvider = ({
     id: string,
     profile: Partial<IUser>
   ): Promise<IUser | undefined> => {
-
     try {
+      await updateOneProfile(id, profile);
 
-      const res =
-        await updateOneProfile(
-          id,
-          profile
-        );
-
-      const updated = res.data.data;
+      const freshRes = await getOneProfileUser(id);
+      const freshUser = freshRes.data.data as IUser;
 
       setUser((prev) => ({
         ...(prev ?? {}),
-        ...updated,
+        ...freshUser,
       }));
 
-      return updated;
-
+      return freshUser;
     } catch (error: unknown) {
-
       console.log(error);
-
       throw error;
     }
   };

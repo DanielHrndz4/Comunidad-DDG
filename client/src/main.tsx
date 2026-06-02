@@ -86,7 +86,7 @@ if (rootElement) {
               <Route path="/register" element={<Register />} />
 
               <Route element={<ProtectedRoute />}>
-                <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
+                <Route element={<ProtectedRoute allowedRoles={["normal"]} />}>
                   <Route element={<UserNormalLayout />}>
                     <Route path="/user" element={<LoginAccess />} />
                     <Route path="/userReport" element={<UserNormalReportView />} />

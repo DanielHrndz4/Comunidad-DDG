@@ -3,12 +3,11 @@ import { useNavigate } from "react-router";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 
-import { IUser } from "../../interfaces/IUser";
-import { updateUser } from "../../services/auth.service";
+import { useAuth } from "../../context/AuthContext";
+import type { IUser } from "../../interfaces/IUser";
 
 import FormModal from "../ui/FormModal";
 import FormInput from "../ui/FormInput";
-import FormError from "../ui/FormError";
 import PrimaryButton from "../ui/PrimaryButton";
 import SecondaryButton from "../ui/SecondaryButton";
 
@@ -21,7 +20,6 @@ export default function UpdateAdminForm({
   user,
   close,
 }: Props) {
-
   const {
     register,
     handleSubmit,
@@ -35,39 +33,32 @@ export default function UpdateAdminForm({
     },
   });
 
+  const { updateProfile } = useAuth();
   const navigate = useNavigate();
 
-  const nameValue =
-    watch("name") || "";
-
-  const usernameValue =
-    watch("username") || "";
-
-  const emailValue =
-    watch("email") || "";
-
-  const passwordValue =
-    watch("password") || "";
-
-  const telephoneValue =
-    watch("telephone") || "";
+  const nameValue = watch("name") || "";
+  const usernameValue = watch("username") || "";
+  const emailValue = watch("email") || "";
+  const passwordValue = watch("password") || "";
+  const telephoneValue = watch("telephone") || "";
 
   useEffect(() => {
-
     if (user) {
-
       reset({
         ...user,
         password: "",
       });
     }
-
   }, [user, reset]);
+
+  const getErrorMessage = (
+    value: unknown
+  ): string | undefined =>
+    typeof value === "string" ? value : undefined;
 
   const onSubmit = async (
     data: IUser
-  ) => {
-
+  ): Promise<void> => {
     const payload: Partial<IUser> = {
       ...data,
     };
@@ -76,23 +67,16 @@ export default function UpdateAdminForm({
       !payload.password ||
       payload.password.trim() === ""
     ) {
-
       delete payload.password;
     }
 
     if (user?.id) {
-
       try {
-
-        await updateUser(
-          user.id,
-          payload
-        );
+        await updateProfile(user.id, payload);
 
         await Swal.fire({
           title: "Actualizado",
-          text:
-            "Datos actualizados correctamente.",
+          text: "Datos actualizados correctamente.",
           icon: "success",
           showConfirmButton: false,
           timer: 2000,
@@ -101,13 +85,10 @@ export default function UpdateAdminForm({
         close();
 
         navigate("/admin");
-
       } catch {
-
         Swal.fire({
           title: "Error",
-          text:
-            "Ocurrió un error al actualizar.",
+          text: "Ocurrió un error al actualizar.",
           icon: "error",
         });
       }
@@ -116,32 +97,20 @@ export default function UpdateAdminForm({
 
   return (
     <FormModal title="Actualizar Usuario">
-
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-6"
       >
-
         <FormInput
           label="Nombre"
           placeholder="Ingrese el nombre"
-
-          error={
-            errors.name?.message
-          }
-
-          success={
-            nameValue.trim().length >= 3
-          }
-
+          error={getErrorMessage(errors.name?.message)}
+          success={nameValue.trim().length >= 3}
           {...register("name", {
-            required:
-              "El nombre es requerido",
-
+            required: "El nombre es requerido",
             minLength: {
               value: 3,
-              message:
-                "Mínimo 3 caracteres",
+              message: "Mínimo 3 caracteres",
             },
           })}
         />
@@ -149,23 +118,13 @@ export default function UpdateAdminForm({
         <FormInput
           label="Username"
           placeholder="Ingrese el username"
-
-          error={
-            errors.username?.message
-          }
-
-          success={
-            usernameValue.trim().length >= 3
-          }
-
+          error={getErrorMessage(errors.username?.message)}
+          success={usernameValue.trim().length >= 3}
           {...register("username", {
-            required:
-              "El usuario es requerido",
-
+            required: "El usuario es requerido",
             minLength: {
               value: 3,
-              message:
-                "Mínimo 3 caracteres",
+              message: "Mínimo 3 caracteres",
             },
           })}
         />
@@ -174,18 +133,10 @@ export default function UpdateAdminForm({
           type="email"
           label="Email"
           placeholder="example@gmail.com"
-
-          error={
-            errors.email?.message
-          }
-
-          success={
-            emailValue.includes("@")
-          }
-
+          error={getErrorMessage(errors.email?.message)}
+          success={emailValue.includes("@")}
           {...register("email", {
-            required:
-              "El email es requerido",
+            required: "El email es requerido",
           })}
         />
 
@@ -193,20 +144,12 @@ export default function UpdateAdminForm({
           type="password"
           label="Contraseña"
           placeholder="Opcional"
-
-          error={
-            errors.password?.message
-          }
-
-          success={
-            passwordValue.length >= 12
-          }
-
+          error={getErrorMessage(errors.password?.message)}
+          success={passwordValue.length >= 12}
           {...register("password", {
             minLength: {
               value: 12,
-              message:
-                "Mínimo 12 caracteres",
+              message: "Mínimo 12 caracteres",
             },
           })}
         />
@@ -215,24 +158,13 @@ export default function UpdateAdminForm({
           label="Teléfono"
           placeholder="12345678"
           maxLength={8}
-
-          error={
-            errors.telephone?.message
-          }
-
-          success={
-            telephoneValue.trim().length === 8
-          }
-
+          error={getErrorMessage(errors.telephone?.message)}
+          success={telephoneValue.trim().length === 8}
           {...register("telephone", {
-            required:
-              "El teléfono es requerido",
-
+            required: "El teléfono es requerido",
             pattern: {
               value: /^[0-9]{8}$/,
-
-              message:
-                "Debe contener exactamente 8 dígitos",
+              message: "Debe contener exactamente 8 dígitos",
             },
           })}
         />
@@ -241,39 +173,19 @@ export default function UpdateAdminForm({
           type="number"
           label="Edad"
           placeholder="Ingrese la edad"
-
-          error={
-            errors.age?.message
-          }
-
-          success={
-            Number(watch("age")) > 0
-          }
-
+          error={getErrorMessage(errors.age?.message)}
+          success={Number(watch("age")) > 0}
           {...register("age", {
-            required:
-              "La edad es requerida",
-
+            required: "La edad es requerida",
             valueAsNumber: true,
-
             min: {
               value: 0,
-
-              message:
-                "Edad inválida",
+              message: "Edad inválida",
             },
           })}
         />
 
-        <div
-          className="
-                        flex
-                        justify-between
-                        items-center
-                        pt-3
-                    "
-        >
-
+        <div className="flex justify-between items-center pt-3">
           <SecondaryButton
             type="button"
             onClick={close}
@@ -284,11 +196,8 @@ export default function UpdateAdminForm({
           <PrimaryButton type="submit">
             Actualizar
           </PrimaryButton>
-
         </div>
-
       </form>
-
     </FormModal>
   );
 }

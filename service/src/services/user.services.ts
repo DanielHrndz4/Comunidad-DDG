@@ -93,18 +93,22 @@ export class UserService {
      * Autentica un usuario verificando credenciales y generando JWT.
      */
     public async authUser(username: unknown, password: unknown) {
+        console.log("-> Intentando hacer login con username:", username);
         const user = await findByUsername(username as string) as unknown as IUserRecord;
 
         if (!user) {
+            console.error("-> Error de Login: Usuario no encontrado en la base de datos.");
             throw new Error("Usuario no encontrado");
         }
 
         const passwordValid = await validatePassword(password as string, user.password as string);
 
         if (!passwordValid) {
+            console.error("-> Error de Login: Contraseña incorrecta para el usuario", username);
             throw new Error("Datos incorrectos");
         }
 
+        console.log("-> Login exitoso para el usuario:", username);
         const token = await createAccessToken({ id: user._id });
 
         return {

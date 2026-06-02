@@ -9,7 +9,7 @@ import {
     createVisit,
     getAllSchedule,
     getVisits,
-} from "../api/vigilant.js";
+} from "../api/vigilant";
 
 import {
     createTaskRequest,
@@ -27,7 +27,7 @@ import {
     getTaskAdminRequest2,
     getOneTaskRequest2,
     updateTaskRequest2,
-} from "../api/task.js";
+} from "../api/task";
 
 import type {
     ITaskContext,

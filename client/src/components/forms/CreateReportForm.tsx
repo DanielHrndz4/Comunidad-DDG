@@ -134,7 +134,7 @@ export default function CreateReportForm({ close }: Props) {
 
                 <FormTextarea
                     label="Descripción"
-                    placeholder="Ingrese una descripción"
+                    placeholder="Ingrese una descripcións"
                     maxLength={300}
                     error={errors.description?.message}
                     success={descriptionValue.trim().length >= 10}
