@@ -20,37 +20,22 @@ export default function UserNormalReportView() {
   }, [getTaskAdmin]);
 
   return (
-    <div className="flex grow flex-col justify-start items-center w-full min-h-screen bg-transparent p-10 box-border">
-      
-      {/* HEADER TIPO BENTO */}
-      <div style={{ width: "100%", maxWidth: "1000px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "32px", marginBottom: "48px", flexWrap: "wrap", gap: "20px" }}>
-        <div style={{ textAlign: "left" }}>
-          <h1 style={{ fontSize: "36px", fontWeight: "bold", color: "white", margin: "0 0 8px 0", letterSpacing: "-0.5px" }}>Reportes de la Comunidad</h1>
-          <p style={{ fontSize: "16px", color: "#9ca3af", margin: 0 }}>Visualiza y crea reportes para mantener informada a tu comunidad.</p>
-        </div>
-        
-        <button
-          type="button"
-          onClick={openPopup}
-          style={{
-            display: "flex", alignItems: "center", gap: "8px",
-            background: "#3ecf8e", color: "#050505",
-            padding: "12px 24px", borderRadius: "8px",
-            fontSize: "15px", fontWeight: "600",
-            border: "none", cursor: "pointer",
-            boxShadow: "0 4px 14px rgba(62,207,142,0.4)",
-            transition: "all 0.2s ease"
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(62,207,142,0.6)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(62,207,142,0.4)"; }}
+    <div className="flex grow-1 flex-col justify-start items-center p-16 w-full h-content box-border">
+      <div className="flex justify-center items-center my-16 mx-auto p-16 bg-dark-green w-3/5 rounded-lg shadow-md">
+        <h2
+          style={{ color: "white" }}
+          className="font-sans text-[1.75rem] font-bold text-white m-0 text-center"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          Nuevo Reporte
-        </button>
+          Lista de reportes
+        </h2>
       </div>
+
+      <button
+        type="button"
+        onClick={openPopup}
+      >
+        <CreateButton text="Crear Reporte" />
+      </button>
 
       <Popup
         open={isOpen}
@@ -59,15 +44,12 @@ export default function UserNormalReportView() {
         position="top center"
         closeOnDocumentClick={false}
         modal={true}
-        overlayStyle={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
+        overlayStyle={{
+          background: "rgba(0,0,0,0.5)",
+        }}
         contentStyle={{
-          background: "transparent", // Quita el fondo blanco por defecto
-          border: "none",
-          padding: 0,
-          width: "100%",
-          maxWidth: "600px",
-          maxHeight: "95vh",
-          overflow: "auto"
+          maxHeight: "95%",
+          overflow: "auto",
         }}
       >
         <CreateReportFormUserNormal close={closePopup} />

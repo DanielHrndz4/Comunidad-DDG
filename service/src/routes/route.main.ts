@@ -310,14 +310,4 @@ router.get("/allPay", authRequired, payController.getAllPay.bind(payController))
 router.post("/createUser", validateSchema(registerSchema), authRequired, userController.createUserByAdmin.bind(userController));
 router.put("/updatePassword", userController.updatePassword.bind(userController));
 
-router.post(
-    "/forgotPassword",
-    userController.forgotPassword.bind(userController)
-);
-
-router.post(
-    "/verifyOtp",
-    userController.verifyOtp.bind(userController)
-);
-
 export default router;

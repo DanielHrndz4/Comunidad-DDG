@@ -128,17 +128,7 @@ export default function CreateTaskFormUserNormal({
 
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "24px",
-                    background: "transparent",
-                    boxShadow: "none",
-                    padding: 0,
-                    margin: 0,
-                    width: "100%",
-                    maxWidth: "100%"
-                }}
+                className="flex flex-col gap-6"
             >
 
                 <FormInput
@@ -177,35 +167,43 @@ export default function CreateTaskFormUserNormal({
                 <div className="flex flex-col gap-2">
 
                     <label
-                        style={{
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            color: "#9ca3af",
-                            marginLeft: "4px",
-                            marginBottom: "2px"
-                        }}
+                        className="
+                            text-[0.88rem]
+                            font-medium
+                            text-[#6E6E73]
+                            ml-1
+                        "
                     >
                         Imagen
                     </label>
 
-                    <div style={{ position: "relative" }}>
-                        <input
-                            type="file"
-                            onChange={handleImageChange}
-                            style={{
-                                width: "100%",
-                                backgroundColor: "#2a2a2a",
-                                border: "1px solid rgba(255,255,255,0.1)",
-                                borderRadius: "8px",
-                                padding: "12px 16px",
-                                color: "white",
-                                outline: "none",
-                                fontSize: "15px",
-                                cursor: "pointer",
-                                boxSizing: "border-box"
-                            }}
-                        />
-                    </div>
+                    <input
+                        type="file"
+                        onChange={handleImageChange}
+                        className="
+                            w-full
+                            bg-[#F5F5F7]
+                            border
+                            border-[#D2D2D7]
+                            rounded-[20px]
+                            px-4
+                            py-3
+                            text-[0.95rem]
+                            text-[#1D1D1F]
+                            transition-all
+                            duration-200
+
+                            file:mr-4
+                            file:px-4
+                            file:py-2
+                            file:border-0
+                            file:rounded-full
+                            file:bg-[#0071E3]
+                            file:text-white
+                            file:cursor-pointer
+                            hover:file:brightness-110
+                        "
+                    />
 
                     <FormError message={imageError} />
 
