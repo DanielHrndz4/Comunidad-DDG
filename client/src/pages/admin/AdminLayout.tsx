@@ -14,7 +14,7 @@ export default function AdminLayout() {
         // - Altura mínima de pantalla completa
         // - Flex vertical para colocar NavBar y contenido
         // - 'tooltipBoundary' usado para limitar tooltips o popups dentro del layout
-        <div className="font-sans bg-custom-white h-content min-h-screen m-0 flex flex-col tooltipBoundary">
+        <div className="font-sans bg-transparent h-content min-h-screen m-0 flex flex-col tooltipBoundary">
             
             {/* Barra de navegación fija en la parte superior */}
             <NavBar />

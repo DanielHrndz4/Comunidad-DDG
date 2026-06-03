@@ -1,10 +1,12 @@
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { jsPDF } from "jspdf";
+import Swal from "sweetalert2";
+import { useState } from "react";
 
 import { useAuth } from "../../context/AuthContext";
-import assets from "../../assets";
-import "./PayVigilance.css";
+import FormModal from "../../components/ui/FormModal";
+import PrimaryButton from "../../components/ui/PrimaryButton";
 
 interface PayFormData {
   numberTarget: string;
@@ -15,6 +17,8 @@ interface PayFormData {
 
 export default function PayVigilance() {
   const { addPay, user } = useAuth();
+  const navigate = useNavigate();
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const {
     register,
@@ -24,235 +28,211 @@ export default function PayVigilance() {
     formState: { errors },
   } = useForm<PayFormData>();
 
-  const navigate = useNavigate();
-
-  const getErrorMessage = (
-    value: unknown
-  ): string | undefined =>
+  const getErrorMessage = (value: unknown): string | undefined =>
     typeof value === "string" ? value : undefined;
 
-  // Función que valida número de tarjeta mediante Algoritmo de Luhn
-  const validarNumeroTarjeta = (
-    numberTarget: string
-  ): boolean => {
-    const cleanNumber =
-      numberTarget.replace(/\D/g, "");
-
-    if (!/^\d{13,19}$/.test(cleanNumber)) {
-      return false;
-    }
-
+  const validarNumeroTarjeta = (numberTarget: string): boolean => {
+    const cleanNumber = numberTarget.replace(/\D/g, "");
+    if (!/^\d{13,19}$/.test(cleanNumber)) return false;
     let suma = 0;
     let alternar = false;
-
-    for (
-      let i = cleanNumber.length - 1;
-      i >= 0;
-      i--
-    ) {
-      let digito = parseInt(
-        cleanNumber.charAt(i),
-        10
-      );
-
-      if (alternar) {
-        digito *= 2;
-        if (digito > 9) {
-          digito -= 9;
-        }
-      }
-
+    for (let i = cleanNumber.length - 1; i >= 0; i--) {
+      let digito = parseInt(cleanNumber.charAt(i), 10);
+      if (alternar) { digito *= 2; if (digito > 9) digito -= 9; }
       suma += digito;
       alternar = !alternar;
     }
-
     return suma % 10 === 0;
   };
 
-  // Función que valida CVC (3 o 4 dígitos)
-  const validarCVC = (
-    cvc: string
-  ): boolean => /^\d{3,4}$/.test(cvc);
+  const validarCVC = (cvc: string): boolean => /^\d{3,4}$/.test(cvc);
 
-  // Genera una factura PDF con los datos del pago
-  const generarFacturaPDF = (
-    datos: PayFormData
-  ): void => {
+  const generarFacturaPDF = (datos: PayFormData): void => {
     const doc = new jsPDF();
-
     doc.setFontSize(20);
     doc.text("Factura de Pago", 20, 20);
-
     doc.setFontSize(12);
-    doc.text(
-      `Nombre del usuario: ${user?.name || "Usuario"}`,
-      20,
-      40
-    );
-    doc.text(
-      `Número de tarjeta: **** **** **** ${datos.numberTarget.slice(-4)}`,
-      20,
-      50
-    );
-    doc.text(
-      `Contexto: ${datos.context}`,
-      20,
-      60
-    );
-    doc.text(
-      `Monto: $${datos.amount}`,
-      20,
-      70
-    );
-    doc.text(
-      `Fecha: ${new Date().toLocaleDateString()}`,
-      20,
-      80
-    );
-
-    doc.save(
-      `Factura_${new Date().getTime()}.pdf`
-    );
+    doc.text(`Nombre del usuario: ${user?.name || "Usuario"}`, 20, 40);
+    doc.text(`Número de tarjeta: **** **** **** ${datos.numberTarget.slice(-4)}`, 20, 50);
+    doc.text(`Contexto: ${datos.context}`, 20, 60);
+    doc.text(`Monto: $${datos.amount}`, 20, 70);
+    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 20, 80);
+    doc.save(`Factura_${new Date().getTime()}.pdf`);
   };
 
-  // Función ejecutada al enviar el formulario
-  const onSubmit = handleSubmit(
-    async (values: PayFormData) => {
-      const { numberTarget, cvc } = values;
+  const onSubmit = handleSubmit(async (values: PayFormData) => {
+    if (!validarNumeroTarjeta(values.numberTarget)) {
+      setError("numberTarget", { type: "manual", message: "Número de tarjeta inválido" });
+      return;
+    } else { clearErrors("numberTarget"); }
 
-      if (!validarNumeroTarjeta(numberTarget)) {
-        setError("numberTarget", {
-          type: "manual",
-          message: "Número de tarjeta inválido",
-        });
-        return;
-      } else {
-        clearErrors("numberTarget");
-      }
+    if (!validarCVC(values.cvc)) {
+      setError("cvc", { type: "manual", message: "CVC debe tener 3 o 4 dígitos" });
+      return;
+    } else { clearErrors("cvc"); }
 
-      if (!validarCVC(cvc)) {
-        setError("cvc", {
-          type: "manual",
-          message: "CVC inválido",
-        });
-        return;
-      } else {
-        clearErrors("cvc");
-      }
+    await addPay(values);
+    generarFacturaPDF(values);
 
-      await addPay(values);
+    await Swal.fire({
+      title: "¡Pago realizado!",
+      text: "Tu factura se ha descargado automáticamente.",
+      icon: "success",
+      background: "#1c1c1c",
+      color: "#ededed",
+      confirmButtonColor: "#3ecf8e",
+      confirmButtonText: "Aceptar",
+    });
 
-      generarFacturaPDF(values);
+    navigate("/user");
+  });
 
-      alert("Pago realizado con éxito");
+  // Estilos de input idénticos a FormInput
+  const getInputStyle = (fieldName: string): React.CSSProperties => ({
+    width: "100%",
+    backgroundColor: "#2a2a2a",
+    border: `1px solid ${
+      errors[fieldName as keyof PayFormData]
+        ? "#ef4444"
+        : focusedField === fieldName
+        ? "#3ecf8e"
+        : "rgba(255,255,255,0.1)"
+    }`,
+    borderRadius: "8px",
+    padding: "12px 16px",
+    color: "#ededed",
+    outline: "none",
+    fontSize: "15px",
+    boxSizing: "border-box",
+    transition: "border-color 0.2s",
+  });
 
-      navigate("/user");
-    }
-  );
+  const labelStyle: React.CSSProperties = {
+    fontSize: "14px",
+    fontWeight: "500",
+    color: "#9ca3af",
+    marginLeft: "4px",
+    marginBottom: "6px",
+    display: "block",
+  };
+
+  const errorMsgStyle: React.CSSProperties = {
+    color: "#ef4444",
+    fontSize: "12px",
+    marginTop: "4px",
+    marginLeft: "4px",
+  };
 
   return (
-    <div>
-      <nav className="user-home-navbar">
-        <div className="user-home-navbar-left">
-          <Link to="/" />
-        </div>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 20px", backgroundColor: "transparent" }}>
+      <FormModal title="Pago de Vigilancia">
+        <form
+          onSubmit={onSubmit}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "24px",
+            background: "transparent",
+            boxShadow: "none",
+            padding: 0,
+            margin: 0,
+            width: "100%",
+            maxWidth: "100%",
+          }}
+        >
 
-        <div className="user-home-navbar-right">
-          <Link to="/user">
-            <img
-              src={assets.casa}
-              alt="Inicio"
-              className="user-home-icono"
+          {/* Número de tarjeta */}
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <label style={labelStyle}>Número de tarjeta</label>
+            <input
+              type="text"
+              maxLength={19}
+              placeholder="•••• •••• •••• ••••"
+              {...register("numberTarget", { required: "El número de tarjeta es requerido" })}
+              style={getInputStyle("numberTarget")}
+              onFocus={() => setFocusedField("numberTarget")}
+              onBlur={() => setFocusedField(null)}
             />
-          </Link>
-
-          <div className="user-home-dropdown">
-            <Link to="/profile">
-              <img
-                src={assets.usuario1}
-                alt="Usuario"
-                className="user-home-icono-usuario"
-              />
-            </Link>
+            {errors.numberTarget && <span style={errorMsgStyle}>{getErrorMessage(errors.numberTarget.message)}</span>}
           </div>
-        </div>
-      </nav>
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <input
-            type="text"
-            {...register("numberTarget", {
-              required:
-                "El número de tarjeta es requerido",
-            })}
-            placeholder="Número de tarjeta"
-          />
-          {errors.numberTarget && (
-            <p className="error">
-              {getErrorMessage(
-                errors.numberTarget.message
-              )}
-            </p>
-          )}
-        </div>
+          {/* Concepto */}
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <label style={labelStyle}>Concepto de pago</label>
+            <input
+              type="text"
+              placeholder="Ej: Cuota mensual enero 2025"
+              {...register("context", { required: "El concepto es requerido" })}
+              style={getInputStyle("context")}
+              onFocus={() => setFocusedField("context")}
+              onBlur={() => setFocusedField(null)}
+            />
+            {errors.context && <span style={errorMsgStyle}>{getErrorMessage(errors.context.message)}</span>}
+          </div>
 
-        <div>
-          <input
-            type="text"
-            {...register("context", {
-              required: "El contexto es requerido",
-            })}
-            placeholder="Contexto de pago"
-          />
-          {errors.context && (
-            <p className="error">
-              {getErrorMessage(
-                errors.context.message
-              )}
-            </p>
-          )}
-        </div>
+          {/* Monto y CVC en grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <label style={labelStyle}>Monto ($)</label>
+              <input
+                type="number"
+                min={0}
+                placeholder="0.00"
+                {...register("amount", { required: "El monto es requerido", valueAsNumber: true })}
+                style={getInputStyle("amount")}
+                onFocus={() => setFocusedField("amount")}
+                onBlur={() => setFocusedField(null)}
+              />
+              {errors.amount && <span style={errorMsgStyle}>{getErrorMessage(errors.amount.message)}</span>}
+            </div>
 
-        <div>
-          <input
-            type="number"
-            {...register("amount", {
-              required: "El monto es requerido",
-              valueAsNumber: true,
-            })}
-            placeholder="Monto"
-          />
-          {errors.amount && (
-            <p className="error">
-              {getErrorMessage(
-                errors.amount.message
-              )}
-            </p>
-          )}
-        </div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <label style={labelStyle}>CVC</label>
+              <input
+                type="text"
+                maxLength={4}
+                placeholder="•••"
+                {...register("cvc", { required: "El CVC es requerido" })}
+                style={getInputStyle("cvc")}
+                onFocus={() => setFocusedField("cvc")}
+                onBlur={() => setFocusedField(null)}
+              />
+              {errors.cvc && <span style={errorMsgStyle}>{getErrorMessage(errors.cvc.message)}</span>}
+            </div>
+          </div>
 
-        <div>
-          <input
-            type="text"
-            {...register("cvc", {
-              required: "El CVC es requerido",
-            })}
-            placeholder="CVC"
-          />
-          {errors.cvc && (
-            <p className="error">
-              {getErrorMessage(
-                errors.cvc.message
-              )}
-            </p>
-          )}
-        </div>
+          {/* Divisor */}
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }} />
 
-        <button type="submit">
-          Agregar pago
-        </button>
-      </form>
+          {/* Botones */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <button
+              type="button"
+              onClick={() => navigate("/user")}
+              style={{
+                backgroundColor: "transparent",
+                color: "#9ca3af",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                fontSize: "14px",
+                fontWeight: "500",
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; e.currentTarget.style.color = "#ededed"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "#9ca3af"; }}
+            >
+              Cancelar
+            </button>
+
+            <PrimaryButton type="submit">
+              Confirmar Pago
+            </PrimaryButton>
+          </div>
+
+        </form>
+      </FormModal>
     </div>
   );
 }
