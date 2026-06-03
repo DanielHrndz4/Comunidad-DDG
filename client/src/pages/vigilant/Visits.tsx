@@ -4,7 +4,6 @@ import Swal from "sweetalert2";
 
 import { useTask } from "../../context/TaskContext";
 import VisitCard from "../../components/VisitCard";
-import "./Visits.css";
 
 interface VisitFormData {
   visitName: string;
@@ -21,6 +20,112 @@ interface VisitItem {
   visitHouse: number | string;
   date: string;
 }
+
+const styles = {
+  page: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column" as const,
+    alignItems: "center",
+    padding: "28px 16px 40px",
+  },
+
+  formWrapper: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column" as const,
+    alignItems: "center",
+  },
+
+  title: {
+    fontSize: "2rem",
+    fontWeight: 700,
+    letterSpacing: "0.3px",
+    marginBottom: "20px",
+    color: "#c7d2fe",
+    textAlign: "center" as const,
+    textShadow: "0 4px 18px rgba(99, 102, 241, 0.18)",
+  },
+
+  historyTitle: {
+    fontSize: "2rem",
+    fontWeight: 700,
+    letterSpacing: "0.3px",
+    marginTop: "34px",
+    marginBottom: "22px",
+    color: "#c7d2fe",
+    textAlign: "center" as const,
+    textShadow: "0 4px 18px rgba(99, 102, 241, 0.18)",
+  },
+
+  formCard: {
+    width: "100%",
+    maxWidth: "420px",
+    padding: "28px 24px",
+    borderRadius: "22px",
+    background: "rgba(229, 231, 235, 0.92)",
+    border: "1px solid rgba(255, 255, 255, 0.35)",
+    boxShadow:
+      "0 10px 30px rgba(15, 23, 42, 0.28), 0 2px 10px rgba(255, 255, 255, 0.08) inset",
+    backdropFilter: "blur(10px)",
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: "12px",
+  },
+
+  input: {
+    width: "100%",
+    padding: "14px 16px",
+    borderRadius: "14px",
+    border: "1px solid #dbe4f0",
+    background: "#e2e8f0",
+    color: "#0f172a",
+    fontSize: "0.98rem",
+    outline: "none",
+    boxSizing: "border-box" as const,
+    transition: "all 0.25s ease",
+  },
+
+  inputError: {
+    border: "1px solid #f87171",
+    background: "#fff7f7",
+    boxShadow: "0 0 0 3px rgba(248, 113, 113, 0.12)",
+  },
+
+  errorText: {
+    margin: "-4px 0 2px 4px",
+    fontSize: "0.85rem",
+    color: "#dc2626",
+    fontWeight: 500,
+  },
+
+  button: {
+    width: "100%",
+    marginTop: "8px",
+    padding: "14px 18px",
+    border: "none",
+    borderRadius: "14px",
+    background: "rgba(30, 41, 59, 0.92)",
+    color: "#ffffff",
+    fontSize: "1rem",
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "all 0.25s ease",
+    boxShadow: "0 8px 18px rgba(79, 70, 229, 0.28)",
+  },
+
+  buttonDisabled: {
+    opacity: 0.7,
+    cursor: "not-allowed",
+    boxShadow: "none",
+  },
+
+  historyContainer: {
+    width: "100%",
+    maxWidth: "1000px",
+    marginTop: "10px",
+  },
+};
 
 export default function Visits() {
   const {
@@ -128,13 +233,11 @@ export default function Visits() {
     );
 
   return (
-    <div>
-      <div>
-        <h3 className="section-title">
-          Registro de visitas
-        </h3>
+    <div style={styles.page}>
+      <div style={styles.formWrapper}>
+        <h3 style={styles.title}>Registro de visitas</h3>
 
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} style={styles.formCard}>
           <input
             type="text"
             placeholder="Nombre completo"
@@ -149,17 +252,14 @@ export default function Visits() {
                 "Este campo no puede quedar vacío o solo con espacios",
             })}
             autoFocus
-            className={`input-field ${
-              errors.visitName
-                ? "input-error"
-                : ""
-            }`}
+            style={{
+              ...styles.input,
+              ...(errors.visitName ? styles.inputError : {}),
+            }}
           />
           {errors.visitName && (
-            <p className="error-text">
-              {getErrorMessage(
-                errors.visitName.message
-              )}
+            <p style={styles.errorText}>
+              {getErrorMessage(errors.visitName.message)}
             </p>
           )}
 
@@ -174,15 +274,14 @@ export default function Visits() {
                   "Formato inválido. Ejemplo: 01234567-8",
               },
             })}
-            className={`input-field ${
-              errors.dui ? "input-error" : ""
-            }`}
+            style={{
+              ...styles.input,
+              ...(errors.dui ? styles.inputError : {}),
+            }}
           />
           {errors.dui && (
-            <p className="error-text">
-              {getErrorMessage(
-                errors.dui.message
-              )}
+            <p style={styles.errorText}>
+              {getErrorMessage(errors.dui.message)}
             </p>
           )}
 
@@ -198,17 +297,14 @@ export default function Visits() {
                   "Formato de placa inválido",
               },
             })}
-            className={`input-field ${
-              errors.numPlaca
-                ? "input-error"
-                : ""
-            }`}
+            style={{
+              ...styles.input,
+              ...(errors.numPlaca ? styles.inputError : {}),
+            }}
           />
           {errors.numPlaca && (
-            <p className="error-text">
-              {getErrorMessage(
-                errors.numPlaca.message
-              )}
+            <p style={styles.errorText}>
+              {getErrorMessage(errors.numPlaca.message)}
             </p>
           )}
 
@@ -228,24 +324,24 @@ export default function Visits() {
                 Number.isInteger(v) ||
                 "Debe ser un número entero válido",
             })}
-            className={`input-field ${
-              errors.visitHouse
-                ? "input-error"
-                : ""
-            }`}
+            style={{
+              ...styles.input,
+              ...(errors.visitHouse ? styles.inputError : {}),
+            }}
           />
           {errors.visitHouse && (
-            <p className="error-text">
-              {getErrorMessage(
-                errors.visitHouse.message
-              )}
+            <p style={styles.errorText}>
+              {getErrorMessage(errors.visitHouse.message)}
             </p>
           )}
 
           <button
             type="submit"
-            className="submit-button"
             disabled={isSubmitting}
+            style={{
+              ...styles.button,
+              ...(isSubmitting ? styles.buttonDisabled : {}),
+            }}
           >
             {isSubmitting
               ? "Guardando..."
@@ -254,8 +350,8 @@ export default function Visits() {
         </form>
       </div>
 
-      <div className="history-container">
-        <h3 className="section-title">
+      <div style={styles.historyContainer}>
+        <h3 style={styles.historyTitle}>
           Historial de visitas
         </h3>
 

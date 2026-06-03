@@ -81,7 +81,7 @@ if (rootElement) {
         <TaskProvider>
           <BrowserRouter>
             <Routes>
-              <Route index element={<Home />} />
+              <Route index element={<Login />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 

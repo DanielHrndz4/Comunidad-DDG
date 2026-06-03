@@ -11,14 +11,14 @@ export default function UserNormalView() {
   }, [getAllUsers]);
 
   return (
-    <div className="flex grow-1 flex-col justify-start items-center p-16 w-full box-border">
-      <div className="flex justify-center items-center my-16 mx-auto p-16 bg-dark-green w-3/5 rounded-lg shadow-md">
-        <h2
-          style={{ color: "white" }}
-          className="font-sans text-[1.75rem] font-bold text-white m-0 text-center"
-        >
-          Lista de usuarios
-        </h2>
+    <div className="flex grow flex-col justify-start items-center w-full min-h-screen bg-transparent p-10 box-border">
+      
+      {/* HEADER TIPO BENTO */}
+      <div style={{ width: "100%", maxWidth: "1000px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "32px", marginBottom: "48px", flexWrap: "wrap", gap: "20px" }}>
+        <div style={{ textAlign: "left" }}>
+          <h1 style={{ fontSize: "36px", fontWeight: "bold", color: "white", margin: "0 0 8px 0", letterSpacing: "-0.5px" }}>Directorio de Usuarios</h1>
+          <p style={{ fontSize: "16px", color: "#9ca3af", margin: 0 }}>Visualiza la información de los miembros de tu comunidad.</p>
+        </div>
       </div>
 
       <UserNormalTable users={users} />

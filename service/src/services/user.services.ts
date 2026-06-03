@@ -1,6 +1,9 @@
 import bcrypt from "bcrypt";
 import { createAccessToken } from "../libs/jwt.js";
 import User from "../models/user.model.js";
+import { sendEmail } from "./email.service.js";
+import { otpTemplate } from "../templates/otp.template.js";
+import { welcomeTemplate } from "../templates/welcome.template.js";
 import {
     createUser,
     createUserByAdmin,
@@ -44,6 +47,12 @@ export class UserService {
         const passwordHash = await bcrypt.hash(password, 10);
         const userSave = await createUser({ ...userData, password: passwordHash }) as unknown as IUserRecord;
 
+        await sendEmail({
+            to: userSave.email,
+            subject: "Bienvenido a Comunidad DDG",
+            html: welcomeTemplate(userSave.username),
+        });
+
         return {
             user: {
                 id: userSave._id,
@@ -73,6 +82,12 @@ export class UserService {
 
         const passwordHash = await bcrypt.hash(password, 10);
         const userSave = await createUserByAdmin({ ...userData, password: passwordHash }) as unknown as IUserRecord;
+
+        await sendEmail({
+            to: userSave.email,
+            subject: "Bienvenido a Comunidad DDG",
+            html: welcomeTemplate(userSave.username),
+        });
 
         return {
             user: {
@@ -247,6 +262,90 @@ export class UserService {
         return {
             message: "Contraseña actualizada correctamente",
             updatedAt: updatedUser.updatedAt
+        };
+    }
+
+    /**
+ * Genera un OTP y lo envía por correo.
+ */
+    public async generateOtp(username: string) {
+
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            throw new Error("Usuario no encontrado");
+        }
+
+        const otp = Math.floor(
+            100000 + Math.random() * 900000
+        ).toString();
+
+        const expires = new Date(
+            Date.now() + 10 * 60 * 1000
+        );
+
+        user.otpCode = otp;
+        user.otpExpires = expires;
+
+        await user.save();
+
+        if (!user.email) {
+            throw new Error("El usuario no tiene correo registrado");
+        }
+
+        await sendEmail({
+            to: user.email,
+            subject: "Código de recuperación",
+            html: otpTemplate(otp),
+        });
+
+        return {
+            message: "OTP enviado correctamente",
+        };
+    }
+
+    /**
+     * Verifica OTP y actualiza contraseña.
+     */
+    public async verifyOtp(
+        username: string,
+        otp: string,
+        newPassword: string
+    ) {
+
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            throw new Error("Usuario no encontrado");
+        }
+
+        if (!user.otpCode) {
+            throw new Error("OTP inválido");
+        }
+
+        if (user.otpCode !== otp) {
+            throw new Error("OTP incorrecto");
+        }
+
+        if (
+            !user.otpExpires ||
+            user.otpExpires.getTime() < Date.now()
+        ) {
+            throw new Error("OTP expirado");
+        }
+
+        const hashedPassword =
+            await bcrypt.hash(newPassword, 10);
+
+        user.password = hashedPassword;
+        user.otpCode = null;
+        user.otpExpires = null;
+
+        await user.save();
+
+        return {
+            message:
+                "Contraseña actualizada correctamente",
         };
     }
 }

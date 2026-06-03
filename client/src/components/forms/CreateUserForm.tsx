@@ -83,7 +83,17 @@ export default function CreateUserForm({
     <FormModal title="Nuevo Usuario">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6"
+        style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "24px",
+            background: "transparent",
+            boxShadow: "none",
+            padding: 0,
+            margin: 0,
+            width: "100%",
+            maxWidth: "100%"
+        }}
       >
         <FormInput
           label="Nombre"
@@ -156,7 +166,7 @@ export default function CreateUserForm({
         />
 
         <div className="flex flex-col gap-2">
-          <label className="text-[0.88rem] font-medium text-[#6E6E73] ml-1">
+          <label style={{ fontSize: "14px", fontWeight: "500", marginLeft: "4px", color: "#9ca3af", marginBottom: "2px" }}>
             Edad
           </label>
 
@@ -171,22 +181,17 @@ export default function CreateUserForm({
                 message: "Edad inválida",
               },
             })}
-            className="
-              w-full
-              h-[58px]
-              px-5
-              rounded-[20px]
-              bg-[#F5F5F7]
-              border
-              border-[#D2D2D7]
-              text-[#1D1D1F]
-              outline-none
-              transition-all
-              duration-200
-              focus:border-[#0071E3]
-              focus:ring-4
-              focus:ring-[#0071E3]/10
-            "
+            style={{
+              width: "100%",
+              backgroundColor: "#2a2a2a",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "8px",
+              padding: "12px 16px",
+              color: "white",
+              outline: "none",
+              fontSize: "15px",
+              boxSizing: "border-box"
+            }}
           />
 
           <FormError
@@ -195,7 +200,7 @@ export default function CreateUserForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-[0.88rem] font-medium text-[#6E6E73] ml-1">
+          <label style={{ fontSize: "14px", fontWeight: "500", marginLeft: "4px", color: "#9ca3af", marginBottom: "2px" }}>
             Rol
           </label>
 
@@ -204,22 +209,18 @@ export default function CreateUserForm({
               required: "El rol es requerido",
             })}
             defaultValue="normal"
-            className="
-              w-full
-              h-[58px]
-              px-5
-              rounded-[20px]
-              bg-[#F5F5F7]
-              border
-              border-[#D2D2D7]
-              text-[#1D1D1F]
-              outline-none
-              transition-all
-              duration-200
-              focus:border-[#0071E3]
-              focus:ring-4
-              focus:ring-[#0071E3]/10
-            "
+            style={{
+              width: "100%",
+              backgroundColor: "#2a2a2a",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "8px",
+              padding: "12px 16px",
+              color: "white",
+              outline: "none",
+              fontSize: "15px",
+              boxSizing: "border-box",
+              cursor: "pointer"
+            }}
           >
             <option value="normal">
               Normal

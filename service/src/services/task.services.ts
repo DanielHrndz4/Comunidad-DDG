@@ -1,6 +1,6 @@
-import { 
-    insertTask, 
-    selectTask, 
+import {
+    insertTask,
+    selectTask,
     selectTaskHome,
     selectOneTask,
     deleteTaskById,
@@ -8,13 +8,31 @@ import {
     selectTasksNearby
 } from "../repository/task.repository.js";
 
+import { sendEmail } from "./email.service.js";
+import { publicationTemplate } from "../templates/publication.template.js";
+import User from "../models/user.model.js";
+
 export class TaskService {
     /**
     * Inserta una nueva tarea en la base de datos.
     */
     public async insertNewTask(taskData: Record<string, unknown>) {
-        const newTask = await insertTask(taskData);
-        return newTask;
+        const task = await insertTask(taskData);
+
+        const user = await User.findById(task.user);
+
+        if (user?.email) {
+            await sendEmail({
+                to: user.email,
+                subject: "Publicación creada",
+                html: publicationTemplate(
+                    user.username,
+                    task.title
+                ),
+            });
+        }
+
+        return task;
     }
 
     /**
@@ -37,10 +55,10 @@ export class TaskService {
     public async selectOneTaskById(taskId: unknown) {
         const task = await selectOneTask(taskId as string);
 
-        if(!task) {
+        if (!task) {
             throw new Error("Tarea no encontrada");
         }
-        
+
         return task;
     }
 
@@ -53,7 +71,7 @@ export class TaskService {
         if (!task) {
             throw new Error("Tarea no encontrada");
         }
-    
+
         return task;
     }
 
@@ -66,7 +84,7 @@ export class TaskService {
         if (!updateTask) {
             throw new Error("Tarea no encontrada");
         }
-    
+
         return updateTask;
     }
 

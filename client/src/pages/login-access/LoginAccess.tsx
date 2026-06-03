@@ -45,7 +45,11 @@ function UserHome() {
 
   return (
     <div className="flex grow-1 flex-col justify-center items-center p-29 w-full box-border">
-      <HomeCardContainer cards={menuCards} />
+      <HomeCardContainer 
+        cards={menuCards} 
+        title="Panel de Usuario"
+        subtitle="Accede rápidamente a reportes, anuncios y gestiona tus pagos."
+      />
 
       <Popup
         open={paying}
@@ -54,8 +58,16 @@ function UserHome() {
         position="top center"
         closeOnDocumentClick={false}
         modal={true}
-        overlayStyle={{ background: "rgba(0,0,0,0.5)" }}
-        contentStyle={{ maxHeight: "95%", overflow: "auto" }}
+        overlayStyle={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
+        contentStyle={{
+          background: "transparent",
+          border: "none",
+          padding: 0,
+          width: "100%",
+          maxWidth: "760px",
+          maxHeight: "95vh",
+          overflow: "auto"
+        }}
       >
         <PayVigilanceForUserNormal close={closePopup} />
       </Popup>
