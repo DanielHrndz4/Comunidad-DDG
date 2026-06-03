@@ -30,333 +30,192 @@ export default function PayVigilanceForUserNormal({
 
     const navigate = useNavigate();
 
-    const numberTargetValue =
-        watch("numberTarget") || "";
+    const numberTargetValue = watch("numberTarget") || "";
+    const contextValue = watch("context") || "";
+    const amountValue = watch("amount");
+    const cvcValue = watch("cvc") || "";
 
-    const contextValue =
-        watch("context") || "";
-
-    const amountValue =
-        watch("amount");
-
-    const cvcValue =
-        watch("cvc") || "";
-
-    const formatCardNumber = (
-        value: string
-    ) => {
-
-        const cleaned =
-            value.replace(/\D/g, "")
-                .slice(0, 16);
-
-        const formatted =
-            cleaned.replace(
-                /(.{4})/g,
-                "$1 "
-            ).trim();
-
-        return formatted;
+    const formatCardNumber = (value: string) => {
+        const cleaned = value.replace(/\D/g, "").slice(0, 16);
+        return cleaned.replace(/(.{4})/g, "$1 ").trim();
     };
 
-    const validarNumeroTarjeta = (
-        numberTarget: string
-    ): boolean => {
-
-        const cleanNumber =
-            numberTarget.replace(/\D/g, "");
-
-        if (!/^\d{16}$/.test(cleanNumber)) {
-            return false;
-        }
-
+    const validarNumeroTarjeta = (numberTarget: string): boolean => {
+        const cleanNumber = numberTarget.replace(/\D/g, "");
+        if (!/^\d{16}$/.test(cleanNumber)) return false;
         let suma = 0;
         let alternar = false;
-
-        for (
-            let i = cleanNumber.length - 1;
-            i >= 0;
-            i--
-        ) {
-
-            let digito = parseInt(
-                cleanNumber.charAt(i),
-                10
-            );
-
-            if (alternar) {
-
-                digito *= 2;
-
-                if (digito > 9) {
-                    digito -= 9;
-                }
-            }
-
+        for (let i = cleanNumber.length - 1; i >= 0; i--) {
+            let digito = parseInt(cleanNumber.charAt(i), 10);
+            if (alternar) { digito *= 2; if (digito > 9) digito -= 9; }
             suma += digito;
-
             alternar = !alternar;
         }
-
         return suma % 10 === 0;
     };
 
-    const validarCVC = (
-        cvc: string
-    ): boolean => {
+    const validarCVC = (cvc: string): boolean => /^\d{3}$/.test(cvc);
 
-        return /^\d{3}$/.test(cvc);
-    };
-
-    const generarFacturaPDF = (
-        datos: IPayment
-    ) => {
-
+    const generarFacturaPDF = (datos: IPayment) => {
         const doc = new jsPDF();
-
         doc.setFontSize(20);
-
-        doc.text(
-            "Factura de Pago",
-            20,
-            20
-        );
-
+        doc.text("Factura de Pago", 20, 20);
         doc.setFontSize(12);
-
-        doc.text(
-            `Número de tarjeta: **** **** **** ${datos.numberTarget.slice(-4)}`,
-            20,
-            40
-        );
-
-        doc.text(
-            `Contexto: ${datos.context}`,
-            20,
-            50
-        );
-
-        doc.text(
-            `Monto: $${datos.amount}`,
-            20,
-            60
-        );
-
-        doc.text(
-            `Fecha: ${new Date().toLocaleDateString()}`,
-            20,
-            70
-        );
-
-        doc.save(
-            `Factura_${Date.now()}.pdf`
-        );
+        doc.text(`Número de tarjeta: **** **** **** ${datos.numberTarget.slice(-4)}`, 20, 40);
+        doc.text(`Contexto: ${datos.context}`, 20, 50);
+        doc.text(`Monto: $${datos.amount}`, 20, 60);
+        doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 20, 70);
+        doc.save(`Factura_${Date.now()}.pdf`);
     };
 
-    const onSubmit = async (
-        values: IPayment
-    ) => {
+    const onSubmit = async (values: IPayment) => {
+        const { numberTarget, cvc } = values;
 
-        const {
-            numberTarget,
-            cvc,
-        } = values;
-
-        if (
-            !validarNumeroTarjeta(numberTarget)
-        ) {
-
-            setError("numberTarget", {
-                type: "manual",
-                message:
-                    "Número de tarjeta inválido",
-            });
-
+        if (!validarNumeroTarjeta(numberTarget)) {
+            setError("numberTarget", { type: "manual", message: "Número de tarjeta inválido (algoritmo Luhn)" });
             return;
         }
-
         clearErrors("numberTarget");
 
         if (!validarCVC(cvc)) {
-
-            setError("cvc", {
-                type: "manual",
-                message:
-                    "El CVC debe tener 3 dígitos",
-            });
-
+            setError("cvc", { type: "manual", message: "El CVC debe tener exactamente 3 dígitos" });
             return;
         }
-
         clearErrors("cvc");
 
         try {
-
             await addPayment(values);
 
             await Swal.fire({
                 icon: "success",
-                title:
-                    "¡Pago realizado con éxito!",
-                text:
-                    "Tu transacción se ha completado correctamente.",
+                title: "¡Pago realizado con éxito!",
+                text: "Tu transacción se ha completado. Se descargará la factura.",
+                background: "#1c1c1c",
+                color: "#ededed",
+                confirmButtonColor: "#3ecf8e",
+                timer: 2500,
                 showConfirmButton: false,
-                timer: 2000,
             });
 
             generarFacturaPDF(values);
-
             close();
-
             navigate("/user");
 
         } catch {
-
             Swal.fire({
                 icon: "error",
                 title: "Error en el pago",
-                text:
-                    "No se pudo completar la transacción.",
+                text: "No se pudo completar la transacción. Intenta de nuevo.",
+                background: "#1c1c1c",
+                color: "#ededed",
+                confirmButtonColor: "#ef4444",
             });
         }
     };
 
+    // Validaciones visuales en tiempo real
+    const cardDigits = numberTargetValue.replace(/\D/g, "");
+    const cardSuccess = cardDigits.length === 16 && validarNumeroTarjeta(numberTargetValue);
+    const cardError = errors.numberTarget?.message ||
+        (cardDigits.length === 16 && !validarNumeroTarjeta(numberTargetValue) ? "Número de tarjeta inválido" : undefined);
+
     return (
-        <FormModal title="Pago de Vigilancia">
+        <div style={{ width: "100%", maxWidth: "760px", margin: "0 auto" }}>
+            <FormModal title="Gestión de Pago">
 
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-6"
-            >
-
-                <FormInput
-                    type="text"
-                    label="Número de tarjeta"
-                    placeholder="1234 5678 9012 3456"
-                    maxLength={19}
-
-                    error={
-                        errors.numberTarget?.message
-                    }
-
-                    success={
-                        numberTargetValue.replace(/\D/g, "")
-                            .length === 16
-                    }
-
-                    {...register("numberTarget", {
-                        required:
-                            "El número de tarjeta es requerido",
-
-                        onChange: (e) => {
-
-                            e.target.value =
-                                formatCardNumber(
-                                    e.target.value
-                                );
-                        },
-                    })}
-                />
-
-                <FormInput
-                    type="text"
-                    label="Contexto"
-                    placeholder="Pago de vigilancia"
-
-                    error={
-                        errors.context?.message
-                    }
-
-                    success={
-                        contextValue.trim().length >= 5
-                    }
-
-                    {...register("context", {
-                        required:
-                            "El contexto es requerido",
-                    })}
-                />
-
-                <FormInput
-                    type="number"
-                    label="Monto"
-                    placeholder="0.00"
-
-                    error={
-                        errors.amount?.message
-                    }
-
-                    success={
-                        Number(amountValue) > 0
-                    }
-
-                    {...register("amount", {
-                        required:
-                            "El monto es requerido",
-
-                        valueAsNumber: true,
-                    })}
-                />
-
-                <FormInput
-                    type="password"
-                    label="CVC"
-                    placeholder="123"
-                    maxLength={3}
-
-                    error={
-                        errors.cvc?.message
-                    }
-
-                    success={
-                        cvcValue.length === 3
-                    }
-
-                    {...register("cvc", {
-                        required:
-                            "El CVC es requerido",
-
-                        pattern: {
-                            value: /^[0-9]{3}$/,
-
-                            message:
-                                "El CVC debe tener 3 dígitos",
-                        },
-
-                        onChange: (e) => {
-
-                            e.target.value =
-                                e.target.value
-                                    .replace(/\D/g, "")
-                                    .slice(0, 3);
-                        },
-                    })}
-                />
-
-                <div
-                    className="
-                        flex
-                        justify-between
-                        items-center
-                        pt-3
-                    "
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "24px",
+                        background: "transparent",
+                        boxShadow: "none",
+                        padding: 0,
+                        margin: 0,
+                        width: "100%",
+                        maxWidth: "100%"
+                    }}
                 >
 
-                    <SecondaryButton
-                        type="button"
-                        onClick={close}
-                    >
-                        Cancelar
-                    </SecondaryButton>
+                    {/* Número de tarjeta — fila completa */}
+                    <FormInput
+                        type="text"
+                        label="Número de tarjeta"
+                        placeholder="1234 5678 9012 3456"
+                        maxLength={19}
+                        error={cardError}
+                        success={cardSuccess}
+                        {...register("numberTarget", {
+                            required: "El número de tarjeta es requerido",
+                            onChange: (e) => {
+                                e.target.value = formatCardNumber(e.target.value);
+                            },
+                        })}
+                    />
 
-                    <PrimaryButton type="submit">
-                        Pagar
-                    </PrimaryButton>
+                    {/* Contexto — fila completa */}
+                    <FormInput
+                        type="text"
+                        label="Concepto de pago"
+                        placeholder="Ej: Cuota mensual vigilancia"
+                        error={errors.context?.message}
+                        success={contextValue.trim().length >= 5}
+                        {...register("context", {
+                            required: "El concepto es requerido",
+                            minLength: { value: 5, message: "Mínimo 5 caracteres" },
+                        })}
+                    />
 
-                </div>
+                    {/* Monto y CVC en grid 2 col */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                        <FormInput
+                            type="number"
+                            label="Monto ($)"
+                            placeholder="0.00"
+                            error={errors.amount?.message}
+                            success={Number(amountValue) > 0}
+                            {...register("amount", {
+                                required: "El monto es requerido",
+                                valueAsNumber: true,
+                                min: { value: 1, message: "El monto debe ser mayor a 0" },
+                            })}
+                        />
 
-            </form>
+                        <FormInput
+                            type="password"
+                            label="CVC"
+                            placeholder="•••"
+                            maxLength={3}
+                            error={errors.cvc?.message || (cvcValue.length > 0 && cvcValue.length < 3 ? "Faltan dígitos" : undefined)}
+                            success={cvcValue.length === 3}
+                            {...register("cvc", {
+                                required: "El CVC es requerido",
+                                pattern: { value: /^[0-9]{3}$/, message: "El CVC debe tener 3 dígitos" },
+                                onChange: (e) => {
+                                    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 3);
+                                },
+                            })}
+                        />
+                    </div>
 
-        </FormModal>
+                    {/* Divisor */}
+                    <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }} />
+
+                    {/* Botones */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "4px" }}>
+                        <SecondaryButton type="button" onClick={close}>
+                            Cancelar
+                        </SecondaryButton>
+
+                        <PrimaryButton type="submit">
+                            Confirmar Pago
+                        </PrimaryButton>
+                    </div>
+
+                </form>
+
+            </FormModal>
+        </div>
     );
 }

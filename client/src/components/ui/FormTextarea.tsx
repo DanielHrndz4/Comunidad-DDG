@@ -11,92 +11,57 @@ export default function FormTextarea({ label, error, success, maxLength, onFocus
   const [focused, setFocused] = useState(false);
   const [charCount, setCharCount] = useState(0);
 
-  const borderColor = error
-    ? "border-[#FF3B30] focus:border-[#FF3B30] focus:ring-[#FF3B30]/10"
-    : success
-    ? "border-[#34C759] focus:border-[#34C759] focus:ring-[#34C759]/10"
-    : "border-[#D2D2D7] focus:border-[#0071E3] focus:ring-[#0071E3]/10";
-
-  const bgColor = error
-    ? "bg-[#FFF5F5]"
-    : success
-    ? "bg-[#F5FFF8]"
-    : focused
-    ? "bg-white"
-    : "bg-[#F5F5F7]";
-
-  const labelColor = error
-    ? "text-[#FF3B30]"
-    : success
-    ? "text-[#34C759]"
-    : focused
-    ? "text-[#0071E3]"
-    : "text-[#6E6E73]";
-
+  const borderColor = error ? "#ef4444" : success ? "#3ecf8e" : focused ? "#3ecf8e" : "rgba(255, 255, 255, 0.1)";
+  const bgColor = error ? "rgba(239, 68, 68, 0.05)" : success ? "rgba(62, 207, 142, 0.05)" : "#2a2a2a";
+  const labelColor = error ? "#ef4444" : success ? "#3ecf8e" : focused ? "#3ecf8e" : "#9ca3af";
+  
   const charCountColor = maxLength
-    ? charCount >= maxLength
-      ? "text-[#FF3B30]"
-      : charCount >= maxLength * 0.85
-      ? "text-[#FF9500]"
-      : "text-[#AEAEB2]"
-    : "text-[#AEAEB2]";
+    ? charCount >= maxLength ? "#ef4444" : charCount >= maxLength * 0.85 ? "#fbbf24" : "#9ca3af"
+    : "#9ca3af";
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label className={`text-[0.88rem] font-medium ml-1 transition-colors duration-200 ${labelColor}`}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+      <label style={{ fontSize: "14px", fontWeight: "500", marginLeft: "4px", color: labelColor, transition: "color 0.2s" }}>
         {label}
       </label>
 
-      <div className="relative">
+      <div style={{ position: "relative" }}>
         <textarea
           {...props}
           maxLength={maxLength}
           onFocus={(e) => { setFocused(true); onFocus?.(e); }}
           onBlur={(e) => { setFocused(false); onBlur?.(e); }}
           onChange={(e) => { setCharCount(e.target.value.length); onChange?.(e); }}
-          className={`
-            w-full
-            min-h-[120px]
-            ${bgColor}
-            border
-            ${borderColor}
-            rounded-[20px]
-            px-5
-            py-4
-            pr-11
-            text-[1rem]
-            text-[#1D1D1F]
-            outline-none
-            resize-none
-            transition-all
-            duration-200
-            placeholder:text-[#AEAEB2]
-            focus:ring-4
-          `}
+          style={{
+            width: "100%",
+            minHeight: "120px",
+            backgroundColor: bgColor,
+            border: `1px solid ${borderColor}`,
+            borderRadius: "8px",
+            padding: "12px 16px",
+            fontSize: "15px",
+            color: "white",
+            outline: "none",
+            resize: "none",
+            transition: "all 0.2s",
+            boxSizing: "border-box",
+            boxShadow: focused ? `0 0 0 2px rgba(62,207,142,0.1)` : "none"
+          }}
         />
 
-        {error && (
-          <span className="absolute right-4 top-4 text-[#FF3B30] text-lg pointer-events-none">
-            ✕
-          </span>
-        )}
-        {success && !error && (
-          <span className="absolute right-4 top-4 text-[#34C759] text-lg pointer-events-none">
-            ✓
-          </span>
-        )}
+        {error && <span style={{ position: "absolute", right: "16px", top: "16px", color: "#ef4444" }}>✕</span>}
+        {success && !error && <span style={{ position: "absolute", right: "16px", top: "16px", color: "#3ecf8e" }}>✓</span>}
       </div>
 
-      <div className="flex justify-between items-center">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         {error ? (
-          <p className="text-[0.78rem] text-[#FF3B30] ml-1">{error}</p>
+          <p style={{ fontSize: "12px", color: "#ef4444", margin: "0 0 0 4px" }}>{error}</p>
         ) : success ? (
-          <p className="text-[0.78rem] text-[#34C759] ml-1">Perfecto</p>
-        ) : (
-          <span />
-        )}
+          <p style={{ fontSize: "12px", color: "#3ecf8e", margin: "0 0 0 4px" }}>Perfecto</p>
+        ) : <span />}
+        
         {maxLength && (
-          <span className={`text-[0.75rem] mr-1 transition-colors duration-200 ${charCountColor}`}>
+          <span style={{ fontSize: "12px", marginRight: "4px", color: charCountColor }}>
             {charCount} / {maxLength}
           </span>
         )}

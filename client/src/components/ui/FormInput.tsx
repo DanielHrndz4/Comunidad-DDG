@@ -14,148 +14,40 @@ export default function FormInput({
   onBlur,
   ...props
 }: Props) {
-
   const [focused, setFocused] = useState(false);
 
-  const borderColor = error
-    ? "border-[#FF3B30] focus:border-[#FF3B30] focus:ring-[#FF3B30]/10"
-    : success
-    ? "border-[#34C759] focus:border-[#34C759] focus:ring-[#34C759]/10"
-    : "border-[#D2D2D7] focus:border-[#0071E3] focus:ring-[#0071E3]/10";
-
-  const bgColor = error
-    ? "bg-[#FFF5F5]"
-    : success
-    ? "bg-[#F5FFF8]"
-    : focused
-    ? "bg-white"
-    : "bg-[#F5F5F7]";
-
-  const labelColor = error
-    ? "text-[#FF3B30]"
-    : success
-    ? "text-[#34C759]"
-    : focused
-    ? "text-[#0071E3]"
-    : "text-[#6E6E73]";
+  const borderColor = error ? "#ef4444" : success ? "#3ecf8e" : focused ? "#3ecf8e" : "rgba(255, 255, 255, 0.1)";
+  const bgColor = error ? "rgba(239, 68, 68, 0.05)" : success ? "rgba(62, 207, 142, 0.05)" : "#2a2a2a";
+  const labelColor = error ? "#ef4444" : success ? "#3ecf8e" : focused ? "#3ecf8e" : "#9ca3af";
 
   return (
-    <div className="flex flex-col gap-1.5">
-
-      <label
-        className={`
-          text-[0.88rem]
-          font-medium
-          ml-1
-          transition-colors
-          duration-200
-          ${labelColor}
-        `}
-      >
+    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+      <label style={{ fontSize: "14px", fontWeight: "500", marginLeft: "4px", color: labelColor, transition: "color 0.2s" }}>
         {label}
       </label>
-
-      <div className="relative">
-
+      <div style={{ position: "relative" }}>
         <input
           {...props}
-
-          onFocus={(e) => {
-            setFocused(true);
-            onFocus?.(e);
+          onFocus={(e) => { setFocused(true); onFocus?.(e); }}
+          onBlur={(e) => { setFocused(false); onBlur?.(e); }}
+          style={{
+            width: "100%",
+            backgroundColor: bgColor,
+            border: `1px solid ${borderColor}`,
+            borderRadius: "8px",
+            padding: "12px 16px",
+            fontSize: "15px",
+            color: "white",
+            outline: "none",
+            transition: "all 0.2s",
+            boxSizing: "border-box",
+            boxShadow: focused ? `0 0 0 2px rgba(62,207,142,0.1)` : "none"
           }}
-
-          onBlur={(e) => {
-            setFocused(false);
-            onBlur?.(e);
-          }}
-
-          className={`
-            w-full
-
-            ${bgColor}
-
-            border
-            ${borderColor}
-
-            rounded-[20px]
-
-            px-5
-            py-3.5
-            pr-11
-
-            text-[1rem]
-            text-[#1D1D1F]
-
-            outline-none
-
-            transition-all
-            duration-200
-
-            placeholder:text-[#AEAEB2]
-
-            focus:ring-4
-          `}
         />
-
-        {error && (
-          <span
-            className="
-              absolute
-              right-4
-              top-1/2
-              -translate-y-1/2
-              text-[#FF3B30]
-              text-lg
-              pointer-events-none
-            "
-          >
-            ✕
-          </span>
-        )}
-
-        {success && !error && (
-          <span
-            className="
-              absolute
-              right-4
-              top-1/2
-              -translate-y-1/2
-              text-[#34C759]
-              text-lg
-              pointer-events-none
-            "
-          >
-            ✓
-          </span>
-        )}
-
+        {error && <span style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", color: "#ef4444" }}>✕</span>}
+        {success && !error && <span style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", color: "#3ecf8e" }}>✓</span>}
       </div>
-
-      {error && (
-        <p
-          className="
-            text-[0.78rem]
-            text-[#FF3B30]
-            ml-1
-          "
-        >
-          {error}
-        </p>
-      )}
-
-      {success && !error && (
-        <p
-          className="
-            text-[0.78rem]
-            text-[#34C759]
-            ml-1
-          "
-        >
-          Se ve bien
-        </p>
-      )}
-
+      {error && <p style={{ fontSize: "12px", color: "#ef4444", margin: "0 0 0 4px" }}>{error}</p>}
     </div>
   );
 }

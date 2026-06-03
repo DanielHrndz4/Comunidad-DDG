@@ -45,7 +45,11 @@ export default function AdminHome() {
 
   return (
     <div className="flex grow-1 flex-col justify-center items-center p-29 w-full box-border">
-      <HomeCardContainer cards={menuCards} />
+      <HomeCardContainer 
+        cards={menuCards}
+        title="Panel de Administración"
+        subtitle="Control total sobre los reportes, anuncios, usuarios y pagos."
+      />
 
       <Popup
         open={paying}
