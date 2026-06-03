@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import { createAccessToken } from "../libs/jwt.js";
 import User from "../models/user.model.js";
+import { sendEmail } from "./email.service.js";
+import { welcomeTemplate } from "../templates/welcome.template.js";
 import {
     createUser,
     createUserByAdmin,
@@ -44,6 +46,12 @@ export class UserService {
         const passwordHash = await bcrypt.hash(password, 10);
         const userSave = await createUser({ ...userData, password: passwordHash }) as unknown as IUserRecord;
 
+        await sendEmail({
+            to: userSave.email,
+            subject: "Bienvenido a Comunidad DDG",
+            html: welcomeTemplate(userSave.username),
+        });
+
         return {
             user: {
                 id: userSave._id,
@@ -74,6 +82,12 @@ export class UserService {
         const passwordHash = await bcrypt.hash(password, 10);
         const userSave = await createUserByAdmin({ ...userData, password: passwordHash }) as unknown as IUserRecord;
 
+        await sendEmail({
+            to: userSave.email,
+            subject: "Bienvenido a Comunidad DDG",
+            html: welcomeTemplate(userSave.username),
+        });
+
         return {
             user: {
                 id: userSave._id,
@@ -88,7 +102,7 @@ export class UserService {
             }
         };
     }
-
+    
     /**
      * Autentica un usuario verificando credenciales y generando JWT.
      */
