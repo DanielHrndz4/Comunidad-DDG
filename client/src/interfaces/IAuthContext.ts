@@ -1,59 +1,83 @@
-import { Dispatch, ReactNode, SetStateAction } from "react";
-import { IUser } from "./IUser";
-import { IPayment } from "./IPayment";
+import type {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+} from "react";
+
+import type { IUser } from "./IUser";
+import type { IPayment } from "./IPayment";
+import type {
+  LoginFormData,
+  RegisterFormData,
+} from "./IAuthForms";
 
 export interface LoginData {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 }
 
 export interface UpdatePasswordData {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 }
 
 export interface AuthProviderProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 export interface AuthContextType {
-    signup: (user: IUser) => Promise<void>;
-    signin: (user: LoginData) => Promise<void>;
-    logout: () => void;
+  signup: (
+    userData: RegisterFormData
+  ) => Promise<void>;
 
-    createUser: (userData: IUser) => Promise<void>;
+  signin: (
+    user: LoginFormData
+  ) => Promise<void>;
 
-    updatePasswordByPassword: (
-        data: UpdatePasswordData
-    ) => Promise<void>;
+  logout: () => void;
 
-    getUsers: () => Promise<void>;
-    deleteUser: (id: string) => Promise<void>;
+  createUser: (
+    userData: RegisterFormData
+  ) => Promise<void>;
 
-    getOneProfile: (id: string) => Promise<IUser | undefined>;
+  updatePasswordByPassword: (
+    data: UpdatePasswordData
+  ) => Promise<void>;
 
-    updateProfile: (
-        id: string,
-        profile: Partial<IUser>
-    ) => Promise<IUser | undefined>;
+  getUsers: () => Promise<void>;
 
-    addPay: (pay: IPayment) => Promise<void>;
+  deleteUser: (
+    id: string
+  ) => Promise<void>;
 
-    getAllUsers: () => Promise<void>;
+  getOneProfile: (
+    id: string
+  ) => Promise<IUser | undefined>;
 
-    loading: boolean;
+  updateProfile: (
+    id: string,
+    profile: Partial<IUser>
+  ) => Promise<IUser | undefined>;
 
-    user: IUser | null;
+  addPay: (
+    pay: IPayment
+  ) => Promise<void>;
 
-    isAuthenticate: boolean;
+  getAllUsers: () => Promise<void>;
 
-    setIsAuthenticate: Dispatch<
-        SetStateAction<boolean>
-    >;
+  loading: boolean;
 
-    errors: string[];
+  user: IUser | null;
 
-    getAdminUsers: IUser[];
+  isAuthenticate: boolean;
 
-    users: IUser[];
+  setIsAuthenticate: Dispatch<
+    SetStateAction<boolean>
+  >;
+
+  errors: string[];
+
+  getAdminUsers: IUser[];
+
+  users: IUser[];
 }
