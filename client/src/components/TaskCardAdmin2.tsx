@@ -4,7 +4,6 @@ import { useParams, Link } from "react-router";
 import { MdModeEdit, MdDelete } from "react-icons/md";
 
 import { useTask } from "../context/TaskContext";
-import "./TaskCard.css";
 
 interface TaskItem2 {
   _id: string;
@@ -49,43 +48,45 @@ function TaskCardAdmin({
   }, [params.id, oneTask2, setValue]);
 
   return (
-    <div>
-      <div className="task-card-container">
-        <div className="card">
-          <h2>Titulo: {task.title2}</h2>
+    <div className="w-full">
+      <div className="glass-panel p-24 flex flex-col items-start hover:-translate-y-4 duration-300 relative group">
+        <h2 className="font-display text-20 font-bold text-white mb-8">{task.title2}</h2>
 
-          <p>Descripción: {task.description2}</p>
+        <p className="text-15 text-gray-300 mb-16">{task.description2}</p>
 
-          <p>
-            Fecha de publicación:{" "}
-            {new Date(task.date2).toLocaleDateString()}
-          </p>
+        <p className="text-12 text-gray-400 mb-4">
+          <span className="font-semibold text-gray-400">Fecha de publicación:</span>{" "}
+          {new Date(task.date2).toLocaleDateString()}
+        </p>
 
-          <p>ID usuario: {task.user}</p>
+        <p className="text-12 text-gray-400 mb-16">
+          <span className="font-semibold text-gray-400">ID usuario:</span> {task.user}
+        </p>
 
-          <div className="imagen-card">
-            <img
-              src={task.image}
-              width={200}
-              height={200}
-              alt={task.title2}
-            />
-          </div>
+        <div className="w-full flex justify-center mt-8 mb-16 rounded-12 overflow-hidden shadow-lg border border-white/5">
+          <img
+            src={task.image}
+            className="w-full object-cover max-h-192"
+            alt={task.title2}
+          />
+        </div>
 
-          <div>
-            <button
-              type="button"
-              onClick={() => {
-                deleteTask2(task._id);
-              }}
-            >
-              <MdDelete />
-            </button>
-
-            <Link to={`/taskd/${task._id}`}>
-              <MdModeEdit />
-            </Link>
-          </div>
+        <div className="flex gap-16 w-full justify-end mt-8 pt-16 border-t border-white/10">
+          <Link 
+            to={`/taskd/${task._id}`}
+            className="text-indigo-400 hover:text-indigo-300 transition-colors bg-indigo-500/10 p-8 rounded-8 hover:bg-indigo-500/20"
+          >
+            <MdModeEdit size={24} />
+          </Link>
+          <button
+            type="button"
+            className="text-rose-400 hover:text-rose-300 transition-colors bg-rose-500/10 p-8 rounded-8 hover:bg-rose-500/20 cursor-pointer border-none"
+            onClick={() => {
+              deleteTask2(task._id);
+            }}
+          >
+            <MdDelete size={24} />
+          </button>
         </div>
       </div>
     </div>

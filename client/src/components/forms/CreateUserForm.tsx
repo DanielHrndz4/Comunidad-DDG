@@ -83,17 +83,7 @@ export default function CreateUserForm({
     <FormModal title="Nuevo Usuario">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "24px",
-            background: "transparent",
-            boxShadow: "none",
-            padding: 0,
-            margin: 0,
-            width: "100%",
-            maxWidth: "100%"
-        }}
+        className="flex flex-col gap-6 bg-transparent shadow-none p-0 m-0 w-full"
       >
         <FormInput
           label="Nombre"
@@ -166,7 +156,7 @@ export default function CreateUserForm({
         />
 
         <div className="flex flex-col gap-2">
-          <label style={{ fontSize: "14px", fontWeight: "500", marginLeft: "4px", color: "#9ca3af", marginBottom: "2px" }}>
+          <label className="text-sm font-medium text-slate-400 ml-1 mb-1.5 block">
             Edad
           </label>
 
@@ -181,17 +171,7 @@ export default function CreateUserForm({
                 message: "Edad inválida",
               },
             })}
-            style={{
-              width: "100%",
-              backgroundColor: "#2a2a2a",
-              border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: "8px",
-              padding: "12px 16px",
-              color: "white",
-              outline: "none",
-              fontSize: "15px",
-              boxSizing: "border-box"
-            }}
+            className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-sm text-white outline-none focus:border-white/20 transition-colors"
           />
 
           <FormError
@@ -200,7 +180,7 @@ export default function CreateUserForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label style={{ fontSize: "14px", fontWeight: "500", marginLeft: "4px", color: "#9ca3af", marginBottom: "2px" }}>
+          <label className="text-sm font-medium text-slate-400 ml-1 mb-1.5 block">
             Rol
           </label>
 
@@ -209,18 +189,7 @@ export default function CreateUserForm({
               required: "El rol es requerido",
             })}
             defaultValue="normal"
-            style={{
-              width: "100%",
-              backgroundColor: "#2a2a2a",
-              border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: "8px",
-              padding: "12px 16px",
-              color: "white",
-              outline: "none",
-              fontSize: "15px",
-              boxSizing: "border-box",
-              cursor: "pointer"
-            }}
+            className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-sm text-white outline-none focus:border-white/20 transition-colors cursor-pointer"
           >
             <option value="normal">
               Normal
@@ -235,7 +204,7 @@ export default function CreateUserForm({
           />
         </div>
 
-        <div className="flex justify-between items-center pt-3">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-3">
           <SecondaryButton
             type="button"
             onClick={close}

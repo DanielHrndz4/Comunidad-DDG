@@ -161,8 +161,8 @@ export default function TaskTable({
         position="top center"
         closeOnDocumentClick={false}
         modal={true}
-        overlayStyle={{ background: "rgba(0,0,0,0.5)" }}
-        contentStyle={{ maxHeight: "95%", overflow: "auto" }}
+        overlayClassName="bg-black/50"
+        contentClassName="max-h-[95vh] overflow-auto"
       >
         {editing && (
           <UpadteTaskForm

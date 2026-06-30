@@ -225,17 +225,7 @@ export default function PayVigilanceForm({
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "24px",
-          background: "transparent",
-          boxShadow: "none",
-          padding: 0,
-          margin: 0,
-          width: "100%",
-          maxWidth: "100%"
-        }}
+        className="flex flex-col gap-6 bg-transparent shadow-none p-0 m-0 w-full"
       >
 
         <FormInput
@@ -334,7 +324,7 @@ export default function PayVigilanceForm({
           })}
         />
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "12px" }}>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-3">
 
           <SecondaryButton
             type="button"

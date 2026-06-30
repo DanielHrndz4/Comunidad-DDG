@@ -337,7 +337,7 @@ export default function AdminSIGView() {
                 </aside>
 
                 {/* Mapa */}
-                <div ref={mapRef} className="flex-1" style={{ minHeight: "400px" }} />
+                <div ref={mapRef} className="flex-1 min-h-[400px]" />
             </div>
         </div>
     );

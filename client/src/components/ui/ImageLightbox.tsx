@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 interface ImageLightboxProps {
   src: string;
   alt: string;
@@ -10,59 +8,29 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
   return (
     <div
       onClick={onClose}
-      style={{
-        position: "fixed", inset: 0, zIndex: 9999,
-        background: "rgba(0,0,0,0.92)", backdropFilter: "blur(8px)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "24px", cursor: "zoom-out",
-        animation: "fadeIn 0.18s ease"
-      }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-xl p-6 cursor-zoom-out animate-fadeIn"
     >
-      {/* Botón cerrar */}
       <button
+        type="button"
         onClick={onClose}
-        style={{
-          position: "absolute", top: "20px", right: "24px",
-          background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)",
-          borderRadius: "50%", width: "40px", height: "40px",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          color: "#ededed", cursor: "pointer", transition: "background 0.2s"
-        }}
-        onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.16)"}
-        onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
+        className="absolute right-6 top-6 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white transition hover:bg-white/20"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
 
-      {/* Imagen ampliada */}
       <img
         src={src}
         alt={alt}
         onClick={(e) => e.stopPropagation()}
-        style={{
-          maxWidth: "90vw", maxHeight: "85vh",
-          objectFit: "contain", borderRadius: "12px",
-          boxShadow: "0 30px 80px rgba(0,0,0,0.7)",
-          cursor: "default",
-          animation: "scaleIn 0.2s ease"
-        }}
+        className="max-h-[85vh] max-w-[90vw] rounded-[18px] object-contain shadow-[0_30px_80px_rgba(0,0,0,0.7)] animate-scaleIn"
       />
 
-      {/* Hint */}
-      <p style={{
-        position: "absolute", bottom: "20px", left: "50%", transform: "translateX(-50%)",
-        color: "rgba(255,255,255,0.3)", fontSize: "13px", margin: 0, userSelect: "none"
-      }}>
+      <p className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 text-xs text-white/60">
         Clic en cualquier lugar para cerrar
       </p>
-
-      <style>{`
-        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes scaleIn { from { transform: scale(0.94); opacity: 0 } to { transform: scale(1); opacity: 1 } }
-      `}</style>
     </div>
   );
 }

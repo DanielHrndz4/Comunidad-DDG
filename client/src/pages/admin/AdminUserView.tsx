@@ -21,27 +21,17 @@ export default function AdminUserView() {
   return (
     <div className="flex grow flex-col justify-start items-center w-full min-h-screen bg-transparent p-10 box-border">
       
-      {/* HEADER TIPO BENTO */}
-      <div style={{ width: "100%", maxWidth: "1000px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "32px", marginBottom: "48px", flexWrap: "wrap", gap: "20px" }}>
-        <div style={{ textAlign: "left" }}>
-          <h1 style={{ fontSize: "36px", fontWeight: "bold", color: "white", margin: "0 0 8px 0", letterSpacing: "-0.5px" }}>Gestión de Usuarios</h1>
-          <p style={{ fontSize: "16px", color: "#9ca3af", margin: 0 }}>Administra los miembros y accesos de la comunidad.</p>
+      {/* HEADER */}
+      <div className="w-full max-w-[1000px] flex justify-between items-center mt-32 mb-48 flex-wrap gap-20">
+        <div className="text-left">
+          <h1 className="text-[36px] font-bold text-white m-0 mb-8 tracking-tight">Gestión de Usuarios</h1>
+          <p className="text-[16px] text-[#9ca3af] m-0">Administra los miembros y accesos de la comunidad.</p>
         </div>
         
         <button
           type="button"
           onClick={openPopup}
-          style={{
-            display: "flex", alignItems: "center", gap: "8px",
-            background: "#3ecf8e", color: "#050505",
-            padding: "12px 24px", borderRadius: "8px",
-            fontSize: "15px", fontWeight: "600",
-            border: "none", cursor: "pointer",
-            boxShadow: "0 4px 14px rgba(62,207,142,0.4)",
-            transition: "all 0.2s ease"
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(62,207,142,0.6)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(62,207,142,0.4)"; }}
+          className="flex items-center gap-8 bg-[#3ecf8e] text-[#050505] px-24 py-12 rounded-lg text-[15px] font-semibold border-none cursor-pointer shadow-[0_4px_14px_rgba(62,207,142,0.4)] transition-all duration-200 hover:-translate-y-2 hover:shadow-[0_6px_20px_rgba(62,207,142,0.6)]"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -58,16 +48,8 @@ export default function AdminUserView() {
         position="top center"
         closeOnDocumentClick={false}
         modal={true}
-        overlayStyle={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
-        contentStyle={{
-          background: "transparent",
-          border: "none",
-          padding: 0,
-          width: "100%",
-          maxWidth: "600px",
-          maxHeight: "95vh",
-          overflow: "auto"
-        }}
+        overlayClassName="bg-black/70 backdrop-blur-sm"
+        contentClassName="!bg-transparent !border-none !p-0 w-full max-w-[600px] max-h-[95vh] overflow-auto"
       >
         <CreateUserForm close={closePopup} />
       </Popup>

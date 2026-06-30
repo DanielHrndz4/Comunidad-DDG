@@ -1,346 +1,209 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { FiEye, FiEyeOff } from "react-icons/fi";
+
+import appSwal from "../../utils/swal";
 
 import { useAuth } from "../../context/AuthContext";
-import assets from "../../assets";
 import type { RegisterFormData } from "../../interfaces/IAuthForms";
-import "./Register.css";
 
 interface RegisterProps {
   onClose: () => void;
 }
 
-type RegisterViewFormData = Omit<
-  RegisterFormData,
-  "role"
->;
+type RegisterViewFormData = Omit<RegisterFormData, "role">;
 
-function Register({
-  onClose,
-}: RegisterProps) {
-  // Estados para mostrar/ocultar contraseña y confirmación
-  const [mostrarPassword, setMostrarPassword] =
-    useState<boolean>(false);
+function Register({ onClose }: RegisterProps) {
+  const [mostrarPassword, setMostrarPassword] = useState<boolean>(false);
+  const [verPassword, setVerPassword] = useState<boolean>(false);
+  const [verConfirmPassword, setVerConfirmPassword] = useState<boolean>(false);
 
-  const [verPassword, setVerPassword] =
-    useState<boolean>(false);
-
-  const [verConfirmPassword, setVerConfirmPassword] =
-    useState<boolean>(false);
-
-  // Formulario controlado por react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterViewFormData>();
 
-  // Contexto de autenticación
-  const { signup, errors: registerErrors } =
-    useAuth();
+  const { signup, errors: registerErrors } = useAuth();
 
-  // Estados para manejo de mensajes de éxito
-  const [successMessage, setSuccessMessage] =
-    useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [submitted, setSubmitted] = useState<boolean>(false);
 
-  const [submitted, setSubmitted] =
-    useState<boolean>(false);
-
-  const [successMessageStyle, setSuccessMessageStyle] =
-    useState<CSSProperties>({});
-
-  // Efecto para mostrar mensaje de éxito y cerrar modal automáticamente
   useEffect(() => {
     if (submitted) {
       if (registerErrors.length === 0) {
         setSuccessMessage("¡Cuenta creada con éxito!");
-        setSuccessMessageStyle({
-          color: "white",
-          fontSize: "20px",
-          fontWeight: "bold",
-          textAlign: "center",
-        });
-
         const timer = setTimeout(() => {
           setSuccessMessage("");
           onClose();
         }, 5000);
-
         return () => clearTimeout(timer);
       }
-
       setSubmitted(false);
     }
   }, [registerErrors, submitted, onClose]);
 
-  // Función que se ejecuta al enviar el formulario
-  const onSubmit = handleSubmit(
-    async (values: RegisterViewFormData) => {
-      if (!mostrarPassword) {
-        // Primer paso: mostrar campos de contraseña
-        setMostrarPassword(true);
-        return;
-      }
-
-      // Validar coincidencia de contraseña
-      if (values.password !== values.confirmPassword) {
-        alert("Las contraseñas no coinciden.");
-        return;
-      }
-
-      try {
-        // El registro normal siempre crea usuario con rol "normal"
-        const payload: RegisterFormData = {
-          ...values,
-          role: "normal",
-        };
-
-        await signup(payload);
-        setSubmitted(true);
-      } catch (error: unknown) {
-        console.error(
-          "Error al crear cuenta:",
-          error
-        );
-      }
+  const onSubmit = handleSubmit(async (values: RegisterViewFormData) => {
+    if (!mostrarPassword) {
+      setMostrarPassword(true);
+      return;
     }
-  );
+    if (values.password !== values.confirmPassword) {
+      await appSwal.fire({
+        title: "Verifica la contraseña",
+        text: "Las contraseñas no coinciden.",
+        icon: "warning",
+      });
+      return;
+    }
+    try {
+      const payload: RegisterFormData = { ...values, role: "normal" };
+      await signup(payload);
+      setSubmitted(true);
+    } catch (error: unknown) {
+      console.error("Error al crear cuenta:", error);
+    }
+  });
 
-  // Función para cerrar el modal
-  const closeForm = (): void => {
-    onClose();
-  };
+  const closeForm = (): void => { onClose(); };
 
   return (
-    <div className="register-modal-overlay">
-      <div className="register-modal">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[1000] overflow-x-hidden">
+      <div className="bg-[#141414] p-24 rounded-xl w-[400px] max-w-[90%] max-h-[90%] shadow-[0_4px_12px_rgba(0,0,0,0.4)] overflow-y-auto flex flex-col items-center relative box-border mx-auto border border-white/10">
+
         {/* Botón para regresar al paso anterior */}
         {mostrarPassword && (
           <button
             type="button"
-            className="register-back-button"
-            onClick={() =>
-              setMostrarPassword(false)
-            }
-          />
+            className="self-start bg-none border-none text-[1.25rem] text-[#e2e8f0] cursor-pointer mb-10"
+            onClick={() => setMostrarPassword(false)}
+          >
+            ← Atrás
+          </button>
         )}
 
         {/* Título del modal */}
-        <h2
-          style={{ color: "white" }}
-          className="register-title"
-        >
+        <h2 className="text-white text-[1.5rem] text-center mb-20 font-bold">
           Crea tu cuenta
         </h2>
 
         {/* Formulario de registro */}
-        <form
-          onSubmit={onSubmit}
-          className="register-form"
-        >
-          {/* Campos de datos personales */}
+        <form onSubmit={onSubmit} className="flex flex-col w-[85%] items-center justify-center bg-transparent gap-12">
           <input
-            style={{ color: "white" }}
             type="text"
-            {...register("name", {
-              required: true,
-            })}
-            className="register-input"
+            {...register("name", { required: true })}
+            className="w-full box-border bg-[#1c1c1c] text-[#e2e8f0] border border-white/[0.12] rounded-full px-16 py-12 text-[1rem] outline-none transition-all duration-200 placeholder:text-[#4a5568] focus:border-[#3ecf8e] focus:shadow-[0_0_0_3px_rgba(62,207,142,0.15)]"
             placeholder="Ingrese su nombre"
           />
-          {errors.name && (
-            <p className="register-error-text">
-              El nombre es requerido
-            </p>
-          )}
+          {errors.name && <p className="text-[#fca5a5] text-[0.875rem] text-center">El nombre es requerido</p>}
 
           <input
-            style={{ color: "white" }}
             type="text"
-            {...register("username", {
-              required: true,
-            })}
-            className="register-input"
+            {...register("username", { required: true })}
+            className="w-full box-border bg-[#1c1c1c] text-[#e2e8f0] border border-white/[0.12] rounded-full px-16 py-12 text-[1rem] outline-none transition-all duration-200 placeholder:text-[#4a5568] focus:border-[#3ecf8e] focus:shadow-[0_0_0_3px_rgba(62,207,142,0.15)]"
             placeholder="Ingrese un usuario"
           />
-          {errors.username && (
-            <p className="register-error-text">
-              El usuario es requerido
-            </p>
-          )}
+          {errors.username && <p className="text-[#fca5a5] text-[0.875rem] text-center">El usuario es requerido</p>}
 
           <input
-            style={{ color: "white" }}
             type="email"
-            {...register("email", {
-              required: true,
-            })}
-            className="register-input"
+            {...register("email", { required: true })}
+            className="w-full box-border bg-[#1c1c1c] text-[#e2e8f0] border border-white/[0.12] rounded-full px-16 py-12 text-[1rem] outline-none transition-all duration-200 placeholder:text-[#4a5568] focus:border-[#3ecf8e] focus:shadow-[0_0_0_3px_rgba(62,207,142,0.15)]"
             placeholder="Ingrese su correo"
           />
-          {errors.email && (
-            <p className="register-error-text">
-              El email es requerido
-            </p>
-          )}
+          {errors.email && <p className="text-[#fca5a5] text-[0.875rem] text-center">El email es requerido</p>}
 
           <input
-            style={{ color: "white" }}
             type="tel"
-            {...register("telephone", {
-              required: true,
-            })}
-            className="register-input"
+            {...register("telephone", { required: true })}
+            className="w-full box-border bg-[#1c1c1c] text-[#e2e8f0] border border-white/[0.12] rounded-full px-16 py-12 text-[1rem] outline-none transition-all duration-200 placeholder:text-[#4a5568] focus:border-[#3ecf8e] focus:shadow-[0_0_0_3px_rgba(62,207,142,0.15)]"
             placeholder="Ingrese su teléfono"
           />
-          {errors.telephone && (
-            <p className="register-error-text">
-              El teléfono es requerido
-            </p>
-          )}
+          {errors.telephone && <p className="text-[#fca5a5] text-[0.875rem] text-center">El teléfono es requerido</p>}
 
           <input
-            style={{ color: "white" }}
             type="number"
-            {...register("age", {
-              required: true,
-              valueAsNumber: true,
-            })}
-            className="register-input"
+            {...register("age", { required: true, valueAsNumber: true })}
+            className="w-full box-border bg-[#1c1c1c] text-[#e2e8f0] border border-white/[0.12] rounded-full px-16 py-12 text-[1rem] outline-none transition-all duration-200 placeholder:text-[#4a5568] focus:border-[#3ecf8e] focus:shadow-[0_0_0_3px_rgba(62,207,142,0.15)]"
             placeholder="Ingrese su edad"
             min="0"
             step="1"
           />
-          {errors.age && (
-            <p className="register-error-text">
-              La edad es requerida
-            </p>
-          )}
+          {errors.age && <p className="text-[#fca5a5] text-[0.875rem] text-center">La edad es requerida</p>}
 
-          {/* Campos de contraseña, visibles solo después del primer paso */}
+          {/* Campos de contraseña */}
           {mostrarPassword && (
-            <div>
-              <div className="register-password-container">
+            <div className="w-full flex flex-col gap-12">
+              <div className="relative w-full">
                 <input
-                  style={{ color: "white" }}
-                  type={
-                    verPassword
-                      ? "text"
-                      : "password"
-                  }
-                  {...register("password", {
-                    required: true,
-                  })}
+                  type={verPassword ? "text" : "password"}
+                  {...register("password", { required: true })}
                   placeholder="Clave"
-                  className="register-input"
+                  className="w-full box-border bg-[#1c1c1c] text-[#e2e8f0] border border-white/[0.12] rounded-full px-16 py-12 pr-42 text-[1rem] outline-none transition-all duration-200 placeholder:text-[#4a5568] focus:border-[#3ecf8e] focus:shadow-[0_0_0_3px_rgba(62,207,142,0.15)]"
                 />
-
-                <img
-                  src={assets.ojo}
-                  alt="Mostrar contraseña"
-                  className="register-password-toggle"
-                  onClick={() =>
-                    setVerPassword(
-                      !verPassword
-                    )
-                  }
-                />
-
-                {errors.password && (
-                  <p className="register-error-text">
-                    La contraseña es requerida
-                  </p>
-                )}
+                <button
+                  type="button"
+                  className="absolute right-16 top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer text-[#6b7280] flex items-center p-0 hover:text-[#9ca3af]"
+                  onClick={() => setVerPassword(!verPassword)}
+                >
+                  {verPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                </button>
+                {errors.password && <p className="text-[#fca5a5] text-[0.875rem] mt-4 text-center">La contraseña es requerida</p>}
               </div>
 
-              <div className="register-password-container">
+              <div className="relative w-full">
                 <input
-                  style={{ color: "white" }}
-                  type={
-                    verConfirmPassword
-                      ? "text"
-                      : "password"
-                  }
-                  {...register("confirmPassword", {
-                    required: true,
-                  })}
+                  type={verConfirmPassword ? "text" : "password"}
+                  {...register("confirmPassword", { required: true })}
                   placeholder="Confirmar clave"
-                  className="register-input"
+                  className="w-full box-border bg-[#1c1c1c] text-[#e2e8f0] border border-white/[0.12] rounded-full px-16 py-12 pr-42 text-[1rem] outline-none transition-all duration-200 placeholder:text-[#4a5568] focus:border-[#3ecf8e] focus:shadow-[0_0_0_3px_rgba(62,207,142,0.15)]"
                 />
-
-                <img
-                  src={assets.ojo}
-                  alt="Mostrar confirmación"
-                  className="register-password-toggle"
-                  onClick={() =>
-                    setVerConfirmPassword(
-                      !verConfirmPassword
-                    )
-                  }
-                />
-
-                {errors.confirmPassword && (
-                  <p className="register-error-text">
-                    La confirmación de la contraseña es requerida
-                  </p>
-                )}
+                <button
+                  type="button"
+                  className="absolute right-16 top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer text-[#6b7280] flex items-center p-0 hover:text-[#9ca3af]"
+                  onClick={() => setVerConfirmPassword(!verConfirmPassword)}
+                >
+                  {verConfirmPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                </button>
+                {errors.confirmPassword && <p className="text-[#fca5a5] text-[0.875rem] mt-4 text-center">La confirmación es requerida</p>}
               </div>
             </div>
           )}
 
-          {/* Botón de siguiente / registrar */}
           <button
-            style={{
-              background: "white",
-              color: "black",
-              padding: "6px",
-            }}
             type="submit"
-            className="register-next-button"
+            className="w-2/5 py-10 px-6 bg-[#3ecf8e] text-[#1a1a1a] border-none rounded-full cursor-pointer text-[1rem] font-bold mt-12 transition-all duration-200 hover:bg-[#5fd9a6] active:scale-[0.98]"
           >
-            {mostrarPassword
-              ? "Registrar"
-              : "Siguiente"}
+            {mostrarPassword ? "Registrar" : "Siguiente"}
           </button>
         </form>
 
-        {/* Opciones para cerrar o volver al login */}
+        {/* Opciones */}
         <button
           type="button"
           onClick={closeForm}
-          style={{
-            color: "white",
-            cursor: "pointer",
-          }}
+          className="text-[#3ecf8e] cursor-pointer bg-transparent border-none mt-20 text-[14px] font-medium hover:underline"
         >
           ¿Ya tienes cuenta? Regresa al inicio de sesión
         </button>
 
         <button
           type="button"
-          style={{
-            padding: "8px",
-            cursor: "pointer",
-            color: "gray",
-          }}
+          className="py-8 cursor-pointer text-[#6b7280] bg-transparent border-none text-[14px] hover:text-[#9ca3af]"
           onClick={onClose}
         >
           Cancelar
         </button>
 
         {/* Mensajes de error y éxito */}
-        <br />
         {registerErrors.map((error, i) => (
-          <div
-            key={i}
-            className="register-error"
-          >
+          <div key={i} className="bg-red-500/10 border border-red-500/30 text-[#fca5a5] px-14 py-10 rounded-md text-[13px] w-full box-border mt-8">
             {error}
           </div>
         ))}
 
         {successMessage && (
-          <div style={successMessageStyle}>
+          <div className="text-white text-[20px] font-bold text-center mt-12">
             {successMessage}
           </div>
         )}

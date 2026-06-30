@@ -71,6 +71,7 @@ import ProtectedRoute from "./protected/ProtectedRoute";
 
 // CSS global
 import './index.css'
+import './utils/swal'
 
 // Renderizamos la aplicación en el root del HTML
 const rootElement = document.getElementById('root');

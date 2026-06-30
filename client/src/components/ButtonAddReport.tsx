@@ -16,27 +16,17 @@ export default function ButtonAddReport({
   }
 
   return (
-    <div className="login-modal-overlay">
-      <div className="login-modal">
-        <div className="login-divider">
-          <hr className="login-divider-line" />
-          <hr className="login-divider-line" />
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+      <div className="card-panel w-full max-w-md mx-4 p-6">
+        <div className="flex gap-2 justify-center mb-6">
+          <div className="h-1 flex-1 bg-white/10 rounded-full" />
+          <div className="h-1 flex-1 bg-white/10 rounded-full" />
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div className="flex justify-center mb-4">
           <button
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "gray",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontSize: "16px",
-              fontWeight: "bold",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              transition: "background-color 0.3s",
-            }}
+            type="button"
+            className="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg"
             onClick={() => {
               handleNavigation("/admincreatereports");
             }}
@@ -45,23 +35,10 @@ export default function ButtonAddReport({
           </button>
         </div>
 
-        <br />
-        <br />
-
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div className="flex justify-center">
           <button
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#e74c3c",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontSize: "16px",
-              fontWeight: "bold",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              transition: "background-color 0.3s",
-            }}
+            type="button"
+            className="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg"
             onClick={onClose}
           >
             Cancelar

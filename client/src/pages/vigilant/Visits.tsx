@@ -21,112 +21,6 @@ interface VisitItem {
   date: string;
 }
 
-const styles = {
-  page: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column" as const,
-    alignItems: "center",
-    padding: "28px 16px 40px",
-  },
-
-  formWrapper: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column" as const,
-    alignItems: "center",
-  },
-
-  title: {
-    fontSize: "2rem",
-    fontWeight: 700,
-    letterSpacing: "0.3px",
-    marginBottom: "20px",
-    color: "#c7d2fe",
-    textAlign: "center" as const,
-    textShadow: "0 4px 18px rgba(99, 102, 241, 0.18)",
-  },
-
-  historyTitle: {
-    fontSize: "2rem",
-    fontWeight: 700,
-    letterSpacing: "0.3px",
-    marginTop: "34px",
-    marginBottom: "22px",
-    color: "#c7d2fe",
-    textAlign: "center" as const,
-    textShadow: "0 4px 18px rgba(99, 102, 241, 0.18)",
-  },
-
-  formCard: {
-    width: "100%",
-    maxWidth: "420px",
-    padding: "28px 24px",
-    borderRadius: "22px",
-    background: "rgba(229, 231, 235, 0.92)",
-    border: "1px solid rgba(255, 255, 255, 0.35)",
-    boxShadow:
-      "0 10px 30px rgba(15, 23, 42, 0.28), 0 2px 10px rgba(255, 255, 255, 0.08) inset",
-    backdropFilter: "blur(10px)",
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "12px",
-  },
-
-  input: {
-    width: "100%",
-    padding: "14px 16px",
-    borderRadius: "14px",
-    border: "1px solid #dbe4f0",
-    background: "#e2e8f0",
-    color: "#0f172a",
-    fontSize: "0.98rem",
-    outline: "none",
-    boxSizing: "border-box" as const,
-    transition: "all 0.25s ease",
-  },
-
-  inputError: {
-    border: "1px solid #f87171",
-    background: "#fff7f7",
-    boxShadow: "0 0 0 3px rgba(248, 113, 113, 0.12)",
-  },
-
-  errorText: {
-    margin: "-4px 0 2px 4px",
-    fontSize: "0.85rem",
-    color: "#dc2626",
-    fontWeight: 500,
-  },
-
-  button: {
-    width: "100%",
-    marginTop: "8px",
-    padding: "14px 18px",
-    border: "none",
-    borderRadius: "14px",
-    background: "rgba(30, 41, 59, 0.92)",
-    color: "#ffffff",
-    fontSize: "1rem",
-    fontWeight: 600,
-    cursor: "pointer",
-    transition: "all 0.25s ease",
-    boxShadow: "0 8px 18px rgba(79, 70, 229, 0.28)",
-  },
-
-  buttonDisabled: {
-    opacity: 0.7,
-    cursor: "not-allowed",
-    boxShadow: "none",
-  },
-
-  historyContainer: {
-    width: "100%",
-    maxWidth: "1000px",
-    marginTop: "10px",
-  },
-};
-
 export default function Visits() {
   const {
     register,
@@ -233,11 +127,16 @@ export default function Visits() {
     );
 
   return (
-    <div style={styles.page}>
-      <div style={styles.formWrapper}>
-        <h3 style={styles.title}>Registro de visitas</h3>
+    <div className="w-full flex flex-col items-center px-16 py-28 pb-40">
+      <div className="w-full flex flex-col items-center">
+        <h3 className="text-[2rem] font-bold tracking-wide mb-20 text-[#c7d2fe] text-center [text-shadow:0_4px_18px_rgba(99,102,241,0.18)]">
+          Registro de visitas
+        </h3>
 
-        <form onSubmit={onSubmit} style={styles.formCard}>
+        <form
+          onSubmit={onSubmit}
+          className="w-full max-w-[420px] px-24 py-28 rounded-[22px] bg-[#e5e7eb]/[0.92] border border-white/35 shadow-[0_10px_30px_rgba(15,23,42,0.28),inset_0_2px_10px_rgba(255,255,255,0.08)] backdrop-blur-[10px] flex flex-col gap-12"
+        >
           <input
             type="text"
             placeholder="Nombre completo"
@@ -252,13 +151,10 @@ export default function Visits() {
                 "Este campo no puede quedar vacío o solo con espacios",
             })}
             autoFocus
-            style={{
-              ...styles.input,
-              ...(errors.visitName ? styles.inputError : {}),
-            }}
+            className={`w-full px-16 py-14 rounded-[14px] border bg-[#e2e8f0] text-[#0f172a] text-[0.98rem] outline-none box-border transition-all duration-[250ms] ${errors.visitName ? "border-[#f87171] bg-[#fff7f7] shadow-[0_0_0_3px_rgba(248,113,113,0.12)]" : "border-[#dbe4f0]"}`}
           />
           {errors.visitName && (
-            <p style={styles.errorText}>
+            <p className="-mt-4 mb-2 ml-4 text-[0.85rem] text-[#dc2626] font-medium">
               {getErrorMessage(errors.visitName.message)}
             </p>
           )}
@@ -274,13 +170,10 @@ export default function Visits() {
                   "Formato inválido. Ejemplo: 01234567-8",
               },
             })}
-            style={{
-              ...styles.input,
-              ...(errors.dui ? styles.inputError : {}),
-            }}
+            className={`w-full px-16 py-14 rounded-[14px] border bg-[#e2e8f0] text-[#0f172a] text-[0.98rem] outline-none box-border transition-all duration-[250ms] ${errors.dui ? "border-[#f87171] bg-[#fff7f7] shadow-[0_0_0_3px_rgba(248,113,113,0.12)]" : "border-[#dbe4f0]"}`}
           />
           {errors.dui && (
-            <p style={styles.errorText}>
+            <p className="-mt-4 mb-2 ml-4 text-[0.85rem] text-[#dc2626] font-medium">
               {getErrorMessage(errors.dui.message)}
             </p>
           )}
@@ -297,13 +190,10 @@ export default function Visits() {
                   "Formato de placa inválido",
               },
             })}
-            style={{
-              ...styles.input,
-              ...(errors.numPlaca ? styles.inputError : {}),
-            }}
+            className={`w-full px-16 py-14 rounded-[14px] border bg-[#e2e8f0] text-[#0f172a] text-[0.98rem] outline-none box-border transition-all duration-[250ms] ${errors.numPlaca ? "border-[#f87171] bg-[#fff7f7] shadow-[0_0_0_3px_rgba(248,113,113,0.12)]" : "border-[#dbe4f0]"}`}
           />
           {errors.numPlaca && (
-            <p style={styles.errorText}>
+            <p className="-mt-4 mb-2 ml-4 text-[0.85rem] text-[#dc2626] font-medium">
               {getErrorMessage(errors.numPlaca.message)}
             </p>
           )}
@@ -324,13 +214,10 @@ export default function Visits() {
                 Number.isInteger(v) ||
                 "Debe ser un número entero válido",
             })}
-            style={{
-              ...styles.input,
-              ...(errors.visitHouse ? styles.inputError : {}),
-            }}
+            className={`w-full px-16 py-14 rounded-[14px] border bg-[#e2e8f0] text-[#0f172a] text-[0.98rem] outline-none box-border transition-all duration-[250ms] ${errors.visitHouse ? "border-[#f87171] bg-[#fff7f7] shadow-[0_0_0_3px_rgba(248,113,113,0.12)]" : "border-[#dbe4f0]"}`}
           />
           {errors.visitHouse && (
-            <p style={styles.errorText}>
+            <p className="-mt-4 mb-2 ml-4 text-[0.85rem] text-[#dc2626] font-medium">
               {getErrorMessage(errors.visitHouse.message)}
             </p>
           )}
@@ -338,10 +225,7 @@ export default function Visits() {
           <button
             type="submit"
             disabled={isSubmitting}
-            style={{
-              ...styles.button,
-              ...(isSubmitting ? styles.buttonDisabled : {}),
-            }}
+            className={`w-full mt-8 px-18 py-14 border-none rounded-[14px] bg-[#1e293b]/[0.92] text-white text-[1rem] font-semibold cursor-pointer transition-all duration-[250ms] shadow-[0_8px_18px_rgba(79,70,229,0.28)] ${isSubmitting ? "opacity-70 cursor-not-allowed shadow-none" : ""}`}
           >
             {isSubmitting
               ? "Guardando..."
@@ -350,8 +234,8 @@ export default function Visits() {
         </form>
       </div>
 
-      <div style={styles.historyContainer}>
-        <h3 style={styles.historyTitle}>
+      <div className="w-full max-w-[1000px] mt-10">
+        <h3 className="text-[2rem] font-bold tracking-wide mt-34 mb-22 text-[#c7d2fe] text-center [text-shadow:0_4px_18px_rgba(99,102,241,0.18)]">
           Historial de visitas
         </h3>
 

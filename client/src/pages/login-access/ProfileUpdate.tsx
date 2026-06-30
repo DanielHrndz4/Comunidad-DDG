@@ -6,7 +6,6 @@ import Swal from "sweetalert2";
 
 import { useAuth } from "../../context/AuthContext";
 import assets from "../../assets";
-import "./ProfileUpdate.css";
 
 interface ProfileUpdateProps {
   close: () => void;

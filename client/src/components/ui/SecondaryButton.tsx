@@ -1,28 +1,20 @@
-import { ButtonHTMLAttributes, useState } from "react";
+import { ButtonHTMLAttributes } from "react";
 
-export default function SecondaryButton(props: ButtonHTMLAttributes<HTMLButtonElement>) {
-  const [hover, setHover] = useState(false);
-  const [active, setActive] = useState(false);
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+  loading?: boolean;
+}
+
+export default function SecondaryButton({ loading = false, disabled, className, children, ...props }: Props) {
+  const isDisabled = disabled || loading;
 
   return (
     <button
       {...props}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => { setHover(false); setActive(false); }}
-      onMouseDown={() => setActive(true)}
-      onMouseUp={() => setActive(false)}
-      style={{
-        padding: "12px 24px",
-        borderRadius: "8px",
-        backgroundColor: hover ? "rgba(255, 255, 255, 0.05)" : "#1c1c1c",
-        border: "1px solid rgba(255, 255, 255, 0.1)",
-        color: "white",
-        fontWeight: "500",
-        fontSize: "15px",
-        cursor: "pointer",
-        transition: "all 0.2s ease",
-        transform: active ? "scale(0.97)" : "scale(1)",
-      }}
-    />
+      disabled={isDisabled}
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-8 border border-white/10 bg-neutral-900 px-20 py-3 text-sm font-medium text-white transition-all duration-200 hover:bg-white/5 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:px-24 sm:py-3.5 sm:text-[15px] ${className || ""}`}
+    >
+      {loading && <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />}
+      <span>{children}</span>
+    </button>
   );
 }

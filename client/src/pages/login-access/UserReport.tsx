@@ -5,7 +5,6 @@ import { Link } from "react-router";
 import { useTask } from "../../context/TaskContext";
 import TaskCard from "../../components/TaskCard";
 import assets from "../../assets";
-import "./LoginAccess.css";
 import type { IReport } from "../../interfaces/IReport";
 
 interface UserReportFormData {
@@ -84,83 +83,92 @@ function UserReport() {
   );
 
   return (
-    <div>
-      <div className="header-login-access">
-        <nav className="user-home-navbar">
-          <div className="user-home-navbar-left">
-            <Link to="/" />
-          </div>
+    <div className="min-h-screen bg-[#030712] text-white">
+      <header className="border-b border-white/10 bg-[#111827]/[0.85] backdrop-blur-sm">
+        <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4">
+          <Link to="/" className="flex items-center gap-3">
+            <img src={assets.casa} alt="Inicio" className="h-10 w-auto" />
+            <span className="text-lg font-semibold text-white">Comunidad DDG</span>
+          </Link>
 
-          <div className="user-home-navbar-right">
-            <Link to="/user">
+          <div className="flex items-center gap-3">
+            <Link
+              to="/user"
+              className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-[#d1d5db] transition hover:bg-white/20"
+            >
+              Inicio
+            </Link>
+            <Link
+              to="/profile"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
+            >
               <img
-                src={assets.casa}
-                alt="Inicio"
-                className="user-home-icono"
+                src={assets.usuario1}
+                alt="Usuario"
+                className="h-8 w-8 rounded-full"
               />
             </Link>
-
-            <div className="user-home-dropdown">
-              <Link to="/profile">
-                <img
-                  src={assets.usuario1}
-                  alt="Usuario"
-                  className="user-home-icono-usuario"
-                />
-              </Link>
-            </div>
           </div>
-        </nav>
-      </div>
+        </div>
+      </header>
 
-      <br />
+      <main className="mx-auto w-full max-w-[920px] px-6 py-10">
+        <section className="mb-12">
+          <h1 className="text-3xl font-bold text-white">Crear reporte</h1>
+          <p className="mt-3 text-sm text-[#cbd5e1]">
+            Comparte un reporte con la comunidad. Incluye título, descripción y foto.
+          </p>
+        </section>
 
-      <div className="add-topic">
-        <form onSubmit={onSubmit}>
-          <div>
+        <section className="mb-14 rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-[0_20px_60px_rgba(15,23,42,0.4)]">
+          <form onSubmit={onSubmit} className="flex flex-col gap-6">
             <input
               type="text"
-              placeholder="Ingrese el titulo de su reporte"
+              placeholder="Ingrese el título de su reporte"
               {...register("title")}
               autoFocus
+              className="w-full rounded-3xl border border-white/10 bg-[#0f172a] px-5 py-4 text-sm text-white outline-none transition focus:border-[#3ecf8e] focus:ring-2 focus:ring-[#3ecf8e]/20"
             />
-          </div>
 
-          <div>
             <textarea
-              rows={3}
+              rows={4}
               placeholder="Descripción"
               {...register("description")}
+              className="w-full rounded-3xl border border-white/10 bg-[#0f172a] px-5 py-4 text-sm text-white outline-none transition focus:border-[#3ecf8e] focus:ring-2 focus:ring-[#3ecf8e]/20"
             />
-          </div>
 
-          <div>
-            <input
-              type="file"
-              onChange={handleImageChange}
-            />
+            <label className="flex cursor-pointer items-center justify-between rounded-3xl border border-dashed border-white/30 bg-white/5 px-5 py-4 text-sm text-[#cbd5e1] transition hover:border-[#3ecf8e] hover:text-white">
+              <span>{imageBase64 ? "Imagen cargada" : "Selecciona una imagen"}</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
 
             {imageError && (
-              <p style={{ color: "red" }}>
-                {imageError}
-              </p>
+              <p className="text-sm font-medium text-red-400">{imageError}</p>
             )}
+
+            <button
+              type="submit"
+              className="w-full rounded-full bg-[#3ecf8e] px-6 py-4 text-sm font-semibold text-[#0f172a] transition hover:bg-[#5fd9a6]"
+            >
+              Publicar reporte
+            </button>
+          </form>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold text-white mb-6">Reportes recientes</h2>
+          <div className="grid gap-6">
+            {tasksAdmin.map((task) => (
+              <TaskCard task={task} key={task._id} />
+            ))}
           </div>
-
-          <button type="submit">
-            Publicar
-          </button>
-        </form>
-      </div>
-
-      <div>
-        {tasksAdmin.map((task) => (
-          <TaskCard
-            task={task}
-            key={task._id}
-          />
-        ))}
-      </div>
+        </section>
+      </main>
     </div>
   );
 }

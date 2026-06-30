@@ -1,5 +1,4 @@
-import TableCard from "./TableRow";
-import TableView from "./TableView";
+// Imports removed: TableCard y TableView no se utilizan en este componente
 
 interface UserItem {
   _id?: string;
@@ -37,19 +36,19 @@ export default function UserNormalTable({
   // Validación defensiva
   if (!Array.isArray(users)) {
     return (
-      <div style={{ width: "100%", maxWidth: "1000px", margin: "24px auto 0", textAlign: "center", padding: "40px", backgroundColor: "#1c1c1c", border: "1px solid #2e2e2e", borderRadius: "8px" }}>
-        <p style={{ color: "#8b8b8b", margin: 0, fontSize: "14px" }}>No hay datos de usuarios disponibles.</p>
+      <div className="w-full max-w-4xl mx-auto mt-6 text-center p-10 bg-slate-900 border border-slate-700 rounded-lg">
+        <p className="text-slate-400 m-0 text-sm">No hay datos de usuarios disponibles.</p>
       </div>
     );
   }
 
   return (
-    <div style={{ width: "100%", maxWidth: "1000px", margin: "24px auto 0", overflowX: "auto", borderRadius: "8px", border: "1px solid #2e2e2e", backgroundColor: "#1c1c1c", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.5)" }}>
-      <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse" }}>
+    <div className="w-full max-w-4xl mx-auto mt-6 overflow-x-auto rounded-lg border border-slate-700 bg-slate-900 shadow-lg">
+      <table className="w-full text-left border-collapse">
         <thead>
-          <tr style={{ backgroundColor: "#232323", borderBottom: "1px solid #2e2e2e" }}>
-            <th style={{ padding: "12px 24px", fontSize: "12px", fontWeight: "600", color: "#8b8b8b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Usuario</th>
-            <th style={{ padding: "12px 24px", fontSize: "12px", fontWeight: "600", color: "#8b8b8b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Email</th>
+          <tr className="bg-slate-800 border-b border-slate-700">
+            <th className="px-6 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Usuario</th>
+            <th className="px-6 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Email</th>
           </tr>
         </thead>
         <tbody>
@@ -59,26 +58,24 @@ export default function UserNormalTable({
             return (
               <tr 
                 key={userId} 
-                style={{ borderBottom: "1px solid #2e2e2e", transition: "background-color 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#2a2a2a"}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                className="border-b border-slate-700 transition-colors duration-200 hover:bg-slate-800"
               >
-                <td style={{ padding: "16px 24px", whiteSpace: "nowrap" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                    <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "rgba(62, 207, 142, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(62, 207, 142, 0.2)" }}>
-                      <span style={{ color: "#3ecf8e", fontWeight: "bold", fontSize: "16px" }}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                      <span className="text-emerald-400 font-bold text-sm">
                         {i.name ? i.name.charAt(0).toUpperCase() : "?"}
                       </span>
                     </div>
                     <div>
-                      <div style={{ color: "#ededed", fontWeight: "500", fontSize: "14px" }}>{i.name}</div>
-                      <div style={{ color: "#8b8b8b", fontSize: "12px", marginTop: "2px" }}>Activo en la comunidad</div>
+                      <div className="text-white font-medium text-sm">{i.name}</div>
+                      <div className="text-slate-400 text-xs mt-0.5">Activo en la comunidad</div>
                     </div>
                   </div>
                 </td>
                 
-                <td style={{ padding: "16px 24px", whiteSpace: "nowrap" }}>
-                  <span style={{ color: "#a1a1aa", fontSize: "14px" }}>{i.email}</span>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="text-slate-300 text-sm">{i.email}</span>
                 </td>
               </tr>
             );

@@ -1,29 +1,20 @@
-import { ButtonHTMLAttributes, useState } from "react";
+import { ButtonHTMLAttributes } from "react";
 
-export default function PrimaryButton(props: ButtonHTMLAttributes<HTMLButtonElement>) {
-  const [hover, setHover] = useState(false);
-  const [active, setActive] = useState(false);
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+  loading?: boolean;
+}
+
+export default function PrimaryButton({ loading = false, disabled, className, children, ...props }: Props) {
+  const isDisabled = disabled || loading;
 
   return (
     <button
       {...props}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => { setHover(false); setActive(false); }}
-      onMouseDown={() => setActive(true)}
-      onMouseUp={() => setActive(false)}
-      style={{
-        padding: "12px 24px",
-        borderRadius: "8px",
-        backgroundColor: props.disabled ? "rgba(62, 207, 142, 0.4)" : "#3ecf8e",
-        color: "#050505",
-        fontWeight: "600",
-        fontSize: "15px",
-        border: "none",
-        cursor: props.disabled ? "not-allowed" : "pointer",
-        transition: "all 0.2s ease",
-        transform: active && !props.disabled ? "scale(0.97)" : "scale(1)",
-        boxShadow: hover && !props.disabled ? "0 0 15px rgba(62,207,142,0.4)" : "none",
-      }}
-    />
+      disabled={isDisabled}
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-8 border-none bg-emerald-400 px-20 py-3 text-sm font-semibold text-neutral-950 transition-all duration-200 hover:shadow-[0_0_15px_rgba(52,211,153,0.4)] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-emerald-500/40 disabled:text-neutral-500 sm:px-24 sm:py-3.5 sm:text-[15px] ${className || ""}`}
+    >
+      {loading && <span className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-950/20 border-t-neutral-950" />}
+      <span>{children}</span>
+    </button>
   );
 }

@@ -4,7 +4,6 @@ import { Link } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 import UserCard from "../../components/UserCard";
 import assets from "../../assets";
-import "./User.css";
 
 export default function Users() {
   const { users, getAllUsers } = useAuth();

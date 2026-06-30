@@ -120,22 +120,12 @@ export default function PayVigilanceForUserNormal({
         (cardDigits.length === 16 && !validarNumeroTarjeta(numberTargetValue) ? "Número de tarjeta inválido" : undefined);
 
     return (
-        <div style={{ width: "100%", maxWidth: "760px", margin: "0 auto" }}>
+        <div className="w-full max-w-2xl mx-auto">
             <FormModal title="Gestión de Pago">
 
                 <form
                     onSubmit={handleSubmit(onSubmit)}
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "24px",
-                        background: "transparent",
-                        boxShadow: "none",
-                        padding: 0,
-                        margin: 0,
-                        width: "100%",
-                        maxWidth: "100%"
-                    }}
+                    className="flex flex-col gap-6 bg-transparent shadow-none p-0 m-0 w-full"
                 >
 
                     {/* Número de tarjeta — fila completa */}
@@ -168,7 +158,7 @@ export default function PayVigilanceForUserNormal({
                     />
 
                     {/* Monto y CVC en grid 2 col */}
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                    <div className="grid grid-cols-2 gap-5">
                         <FormInput
                             type="number"
                             label="Monto ($)"
@@ -200,10 +190,10 @@ export default function PayVigilanceForUserNormal({
                     </div>
 
                     {/* Divisor */}
-                    <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }} />
+                    <div className="border-t border-white/5" />
 
                     {/* Botones */}
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "4px" }}>
+                    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-1">
                         <SecondaryButton type="button" onClick={close}>
                             Cancelar
                         </SecondaryButton>

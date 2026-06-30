@@ -16,38 +16,35 @@ export default function FormInput({
 }: Props) {
   const [focused, setFocused] = useState(false);
 
-  const borderColor = error ? "#ef4444" : success ? "#3ecf8e" : focused ? "#3ecf8e" : "rgba(255, 255, 255, 0.1)";
-  const bgColor = error ? "rgba(239, 68, 68, 0.05)" : success ? "rgba(62, 207, 142, 0.05)" : "#2a2a2a";
-  const labelColor = error ? "#ef4444" : success ? "#3ecf8e" : focused ? "#3ecf8e" : "#9ca3af";
-
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-      <label style={{ fontSize: "14px", fontWeight: "500", marginLeft: "4px", color: labelColor, transition: "color 0.2s" }}>
+    <div className="flex w-full flex-col gap-2 sm:gap-3">
+      <label
+        className={`ml-1 text-sm font-medium transition-colors duration-200 sm:text-[15px] ${
+          error ? "text-red-500" : success ? "text-emerald-400" : focused ? "text-emerald-400" : "text-gray-400"
+        }`}
+      >
         {label}
       </label>
-      <div style={{ position: "relative" }}>
+      <div className="relative w-full">
         <input
           {...props}
+          aria-invalid={Boolean(error)}
           onFocus={(e) => { setFocused(true); onFocus?.(e); }}
           onBlur={(e) => { setFocused(false); onBlur?.(e); }}
-          style={{
-            width: "100%",
-            backgroundColor: bgColor,
-            border: `1px solid ${borderColor}`,
-            borderRadius: "8px",
-            padding: "12px 16px",
-            fontSize: "15px",
-            color: "white",
-            outline: "none",
-            transition: "all 0.2s",
-            boxSizing: "border-box",
-            boxShadow: focused ? `0 0 0 2px rgba(62,207,142,0.1)` : "none"
-          }}
+          className={`w-full touch-manipulation rounded-8 border px-4 py-3 text-sm text-white outline-none box-border transition-all duration-200 sm:px-4 sm:py-3.5 sm:text-[15px] ${
+            error
+              ? "border-red-500 bg-red-500/5 focus:ring-2 focus:ring-red-500/10"
+              : success
+              ? "border-emerald-400 bg-emerald-500/5 focus:ring-2 focus:ring-emerald-400/20"
+              : focused
+              ? "border-emerald-400 bg-neutral-800 ring-2 ring-emerald-400/10"
+              : "border-white/10 bg-neutral-800"
+          }`}
         />
-        {error && <span style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", color: "#ef4444" }}>✕</span>}
-        {success && !error && <span style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", color: "#3ecf8e" }}>✓</span>}
+        {error && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500 sm:right-4">✕</span>}
+        {success && !error && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-400 sm:right-4">✓</span>}
       </div>
-      {error && <p style={{ fontSize: "12px", color: "#ef4444", margin: "0 0 0 4px" }}>{error}</p>}
+      {error && <p className="m-0 ml-1 text-xs text-red-500 sm:text-sm">{error}</p>}
     </div>
   );
 }

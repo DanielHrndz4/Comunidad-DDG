@@ -58,16 +58,8 @@ function UserHome() {
         position="top center"
         closeOnDocumentClick={false}
         modal={true}
-        overlayStyle={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
-        contentStyle={{
-          background: "transparent",
-          border: "none",
-          padding: 0,
-          width: "100%",
-          maxWidth: "760px",
-          maxHeight: "95vh",
-          overflow: "auto"
-        }}
+        overlayClassName="bg-black/70 backdrop-blur-sm"
+        contentClassName="!bg-transparent !border-none !p-0 w-full max-w-[760px] max-h-[95vh] overflow-auto"
       >
         <PayVigilanceForUserNormal close={closePopup} />
       </Popup>

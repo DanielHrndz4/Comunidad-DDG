@@ -24,13 +24,13 @@ export default function UserTable({
   const navigate = useNavigate();
 
   return (
-    <div style={{ width: "100%", maxWidth: "1000px", margin: "24px auto 0", overflowX: "auto", borderRadius: "8px", border: "1px solid #2e2e2e", backgroundColor: "#1c1c1c", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.5)" }}>
-      <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse" }}>
+    <div className="w-full max-w-4xl mx-auto mt-6 overflow-x-auto rounded-lg border border-slate-700 bg-slate-900 shadow-lg">
+      <table className="w-full text-left border-collapse">
         <thead>
-          <tr style={{ backgroundColor: "#232323", borderBottom: "1px solid #2e2e2e" }}>
-            <th style={{ padding: "12px 24px", fontSize: "12px", fontWeight: "600", color: "#8b8b8b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Usuario</th>
-            <th style={{ padding: "12px 24px", fontSize: "12px", fontWeight: "600", color: "#8b8b8b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Email</th>
-            <th style={{ padding: "12px 24px", fontSize: "12px", fontWeight: "600", color: "#8b8b8b", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "right" }}>Acciones</th>
+          <tr className="bg-slate-800 border-b border-slate-700">
+            <th className="px-6 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Usuario</th>
+            <th className="px-6 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Email</th>
+            <th className="px-6 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -40,42 +40,29 @@ export default function UserTable({
             return (
               <tr 
                 key={userId ?? i.email} 
-                style={{ borderBottom: "1px solid #2e2e2e", transition: "background-color 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#2a2a2a"}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                className="border-b border-slate-700 transition-colors duration-200 hover:bg-slate-800"
               >
-                <td style={{ padding: "16px 24px", whiteSpace: "nowrap" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                    <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "rgba(62, 207, 142, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(62, 207, 142, 0.2)" }}>
-                      <span style={{ color: "#3ecf8e", fontWeight: "bold", fontSize: "16px" }}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                      <span className="text-emerald-400 font-bold text-sm">
                         {i.username.charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div>
-                      <div style={{ color: "#ededed", fontWeight: "500", fontSize: "14px" }}>{i.username}</div>
-                      <div style={{ color: "#8b8b8b", fontSize: "12px", marginTop: "2px" }}>ID: {userId?.substring(0, 8)}...</div>
+                      <div className="text-white font-medium text-sm">{i.username}</div>
+                      <div className="text-slate-400 text-xs mt-0.5">ID: {userId?.substring(0, 8)}...</div>
                     </div>
                   </div>
                 </td>
                 
-                <td style={{ padding: "16px 24px", whiteSpace: "nowrap" }}>
-                  <span style={{ color: "#a1a1aa", fontSize: "14px" }}>{i.email}</span>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="text-slate-300 text-sm">{i.email}</span>
                 </td>
                 
-                <td style={{ padding: "16px 24px", whiteSpace: "nowrap", textAlign: "right" }}>
+                <td className="px-6 py-4 whitespace-nowrap text-right">
                   <button
-                    style={{
-                      display: "inline-flex", alignItems: "center", justifyContent: "center",
-                      backgroundColor: "transparent",
-                      color: "#ef4444",
-                      border: "1px solid #451a1a",
-                      padding: "6px 10px",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease"
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.15)"; e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.5)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.borderColor = "#451a1a"; }}
+                    className="inline-flex items-center justify-center bg-transparent text-red-500 border border-red-950 hover:bg-red-500/15 hover:border-red-500/50 px-2.5 py-1.5 rounded-md transition-all duration-200"
                     title="Eliminar usuario"
                     onClick={async () => {
                       if (!userId) {

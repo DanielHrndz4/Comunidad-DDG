@@ -14,241 +14,236 @@ interface ProfileUpdateFormData {
   age: number;
 }
 
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  backgroundColor: "#1c1c1c",
-  border: "1px solid #2e2e2e",
-  borderRadius: "6px",
-  padding: "9px 14px",
-  color: "#ededed",
-  outline: "none",
-  fontSize: "14px",
-  boxSizing: "border-box",
-  transition: "border-color 0.2s",
-};
-
 export default function Profile() {
   const { user, updateProfile, updatePasswordByPassword } = useAuth();
   const [editing, setEditing] = useState(false);
-
+  const [isSaving, setIsSaving] = useState(false);
   const { register, handleSubmit, reset } = useForm<ProfileUpdateFormData>();
 
   useEffect(() => {
-    if (user) {
-      reset({
-        name: user.name,
-        username: user.username,
-        email: user.email,
-        password: "",
-        telephone: user.telephone,
-        age: user.age,
-      });
-    }
+    if (!user) return;
+
+    reset({
+      name: user.name,
+      username: user.username,
+      email: user.email,
+      password: "",
+      telephone: user.telephone,
+      age: user.age,
+    });
   }, [user, reset]);
 
   if (!user) {
     return (
-      <main style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
-        <p style={{ color: "#8b8b8b", fontSize: "14px" }}>Cargando perfil...</p>
+      <main className="flex min-h-screen items-center justify-center bg-[#030712] px-6 py-10">
+        <p className="text-sm text-[#9ca3af]">Cargando perfil...</p>
       </main>
     );
   }
 
   const initials = user.name
-    ? user.name.split(" ").map((w: string) => w[0]).slice(0, 2).join("").toUpperCase()
+    ? user.name
+        .split(" ")
+        .map((word) => word[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
     : "U";
 
   const onSubmit = async (data: ProfileUpdateFormData) => {
-    const payload: Partial<IUser> = { ...data };
-    const newPassword = payload.password?.trim();
-    
-    delete payload.password; // Remove from standard profile update payload
+    const payload: Partial<IUser> = {
+      name: data.name,
+      username: data.username,
+      email: data.email,
+      telephone: data.telephone,
+      age: data.age,
+    };
 
-    const userId = user.id ?? user._id;
-    if (!userId) {
-      Swal.fire({ title: "Error", text: "No se encontró el ID del usuario.", icon: "error", background: "#1c1c1c", color: "#ededed" });
-      return;
-    }
+    const newPassword = data.password?.trim();
+
+    setIsSaving(true);
 
     try {
-      // 1. Si el usuario ingresó contraseña, actualizarla primero mediante su endpoint específico
-      if (newPassword && newPassword !== "") {
-        await updatePasswordByPassword({ username: data.username, password: newPassword });
+      if (newPassword) {
+        await updatePasswordByPassword({
+          username: data.username,
+          password: newPassword,
+        });
       }
 
-      // 2. Actualizar el resto del perfil
+      const userId = user.id ?? user._id;
+      if (!userId) throw new Error("ID de usuario no encontrado");
+
       await updateProfile(userId, payload);
-      
+
       await Swal.fire({
-        title: "¡Actualizado!", text: "Datos guardados correctamente.", icon: "success",
-        background: "#1c1c1c", color: "#ededed", confirmButtonColor: "#3ecf8e",
-        showConfirmButton: false, timer: 2000,
+        title: "¡Actualizado!",
+        text: "Datos guardados correctamente.",
+        icon: "success",
+        background: "#111827",
+        color: "#f8fafc",
+        confirmButtonColor: "#3ecf8e",
+        showConfirmButton: false,
+        timer: 2000,
       });
+
       setEditing(false);
-    } catch {
-      Swal.fire({ title: "Error", text: "No se pudo actualizar la información.", icon: "error", background: "#1c1c1c", color: "#ededed", confirmButtonColor: "#ef4444" });
+    } catch (error) {
+      console.error("Error al actualizar perfil:", error);
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo actualizar la información.",
+        icon: "error",
+        background: "#111827",
+        color: "#f8fafc",
+        confirmButtonColor: "#ef4444",
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const viewFields = [
     { label: "Nombre completo", value: user.name, icon: "👤" },
-    { label: "Username",        value: user.username, icon: "🔑" },
-    { label: "Email",           value: user.email, icon: "✉️" },
-    { label: "Teléfono",        value: user.telephone || "—", icon: "📱" },
-    { label: "Edad",            value: user.age ? `${user.age} años` : "—", icon: "🎂" },
+    { label: "Usuario", value: user.username, icon: "🔑" },
+    { label: "Email", value: user.email, icon: "✉️" },
+    { label: "Teléfono", value: user.telephone || "-", icon: "📱" },
+    { label: "Edad", value: user.age ? `${user.age} años` : "-", icon: "🎂" },
   ];
 
   return (
-    <main style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 24px 80px", boxSizing: "border-box", minHeight: "100vh" }}>
-
-      {/* Header */}
-      <div style={{ width: "100%", maxWidth: "1000px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "32px" }}>
-        <div>
-          <h1 style={{ fontSize: "32px", fontWeight: "700", color: "white", margin: "0 0 8px 0", letterSpacing: "-0.5px" }}>Mi Perfil</h1>
-          <p style={{ color: "#8b8b8b", fontSize: "15px", margin: 0 }}>Gestiona tu información personal.</p>
-        </div>
-
-        {!editing && (
-          <button
-            onClick={() => setEditing(true)}
-            style={{ display: "flex", alignItems: "center", gap: "8px", backgroundColor: "#3ecf8e", color: "#050505", border: "none", borderRadius: "8px", padding: "10px 20px", fontSize: "14px", fontWeight: "600", cursor: "pointer", transition: "all 0.2s" }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#2bbd7a"; e.currentTarget.style.transform = "translateY(-1px)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#3ecf8e"; e.currentTarget.style.transform = "translateY(0)"; }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
-            Editar perfil
-          </button>
-        )}
-      </div>
-
-      <div style={{ width: "100%", maxWidth: "1000px", display: "grid", gridTemplateColumns: "300px 1fr", gap: "32px", alignItems: "start" }}>
-
-        {/* ── Col izquierda: Avatar ── */}
-        <div style={{ backgroundColor: "#141414", border: "1px solid #2e2e2e", borderRadius: "12px", padding: "40px 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
-          <div style={{ width: "100px", height: "100px", borderRadius: "50%", background: "linear-gradient(135deg, #3ecf8e 0%, #1a9e6e 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "36px", fontWeight: "700", color: "#050505", boxShadow: "0 0 0 6px rgba(62,207,142,0.12)" }}>
-            {initials}
+    <main className="min-h-screen bg-[#030712] px-4 py-6 text-white sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+      <div className="mx-auto max-w-[1120px] space-y-10">
+        <div className="flex flex-col gap-6 rounded-[32px] border border-white/10 bg-white/5 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.4)] sm:p-8 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Mi Perfil</h1>
+            <p className="mt-3 text-sm text-[#9ca3af]">Gestiona tu información personal.</p>
           </div>
 
-          <div style={{ textAlign: "center", marginTop: "8px" }}>
-            <div style={{ color: "#ededed", fontWeight: "600", fontSize: "20px", marginBottom: "8px" }}>{user.name}</div>
-            <div style={{ display: "inline-block", backgroundColor: "rgba(62,207,142,0.1)", color: "#3ecf8e", border: "1px solid rgba(62,207,142,0.2)", borderRadius: "20px", padding: "4px 14px", fontSize: "12px", fontWeight: "600", letterSpacing: "0.5px", textTransform: "uppercase" }}>
-              {user.role === "normal" ? "Usuario" : user.role}
-            </div>
-          </div>
-
-          <div style={{ width: "100%", borderTop: "1px solid #2e2e2e", margin: "8px 0" }} />
-          <div style={{ width: "100%", textAlign: "center" }}>
-            <div style={{ color: "#8b8b8b", fontSize: "12px", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "6px", fontWeight: "500" }}>Email</div>
-            <div style={{ color: "#a1a1aa", fontSize: "14px", wordBreak: "break-all" }}>{user.email}</div>
-          </div>
-        </div>
-
-        {/* ── Col derecha: Vista o Edición ── */}
-        <div style={{ backgroundColor: "#141414", border: "1px solid #2e2e2e", borderRadius: "12px", overflow: "hidden" }}>
-
-          {/* Cabecera */}
-          <div style={{ padding: "20px 28px", borderBottom: "1px solid #2e2e2e", backgroundColor: "#1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h2 style={{ color: "#ededed", fontSize: "16px", fontWeight: "600", margin: 0 }}>
-              {editing ? "Editar información" : "Información de la cuenta"}
-            </h2>
-            {editing && (
-              <button onClick={() => { setEditing(false); reset(); }}
-                style={{ background: "transparent", color: "#8b8b8b", border: "1px solid #2e2e2e", borderRadius: "8px", padding: "6px 16px", fontSize: "13px", fontWeight: "500", cursor: "pointer", transition: "all 0.2s" }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = "#ededed"; e.currentTarget.style.borderColor = "#555"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = "#8b8b8b"; e.currentTarget.style.borderColor = "#2e2e2e"; }}
-              >
-                Cancelar
-              </button>
-            )}
-          </div>
-
-          {/* ── MODO VISTA ── */}
           {!editing && (
-            <div style={{ padding: "8px 0" }}>
-              {viewFields.map((field, idx) => (
-                <div
-                  key={idx}
-                  style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 28px", borderBottom: idx < viewFields.length - 1 ? "1px solid #1f1f1f" : "none", transition: "background 0.15s" }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1c1c1c"}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                    <span style={{ fontSize: "18px" }}>{field.icon}</span>
-                    <span style={{ color: "#8b8b8b", fontSize: "14px", fontWeight: "500" }}>{field.label}</span>
-                  </div>
-                  <span style={{ color: "#ededed", fontSize: "15px", fontWeight: "500" }}>{field.value}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* ── MODO EDICIÓN ── */}
-          {editing && (
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              style={{ padding: "28px", display: "flex", flexDirection: "column", gap: "20px", background: "transparent", margin: 0, boxShadow: "none" }}
+            <button
+              type="button"
+              className="inline-flex items-center justify-center gap-3 rounded-full bg-[#3ecf8e] px-5 py-3 text-sm font-semibold text-[#050505] transition hover:bg-[#5fd9a6]"
+              onClick={() => setEditing(true)}
             >
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-                <div>
-                  <label style={{ display: "block", color: "#8b8b8b", fontSize: "13px", fontWeight: "500", marginBottom: "8px" }}>Nombre completo</label>
-                  <input type="text" {...register("name", { required: true })} style={inputStyle}
-                    onFocus={(e) => e.currentTarget.style.borderColor = "#3ecf8e"}
-                    onBlur={(e) => e.currentTarget.style.borderColor = "#2e2e2e"} />
-                </div>
-                <div>
-                  <label style={{ display: "block", color: "#8b8b8b", fontSize: "13px", fontWeight: "500", marginBottom: "8px" }}>Username</label>
-                  <input type="text" {...register("username", { required: true })} style={inputStyle}
-                    onFocus={(e) => e.currentTarget.style.borderColor = "#3ecf8e"}
-                    onBlur={(e) => e.currentTarget.style.borderColor = "#2e2e2e"} />
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display: "block", color: "#8b8b8b", fontSize: "13px", fontWeight: "500", marginBottom: "8px" }}>Email</label>
-                <input type="email" {...register("email", { required: true })} style={inputStyle}
-                  onFocus={(e) => e.currentTarget.style.borderColor = "#3ecf8e"}
-                  onBlur={(e) => e.currentTarget.style.borderColor = "#2e2e2e"} />
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-                <div>
-                  <label style={{ display: "block", color: "#8b8b8b", fontSize: "13px", fontWeight: "500", marginBottom: "8px" }}>Teléfono</label>
-                  <input type="text" {...register("telephone", { required: true })} style={inputStyle}
-                    onFocus={(e) => e.currentTarget.style.borderColor = "#3ecf8e"}
-                    onBlur={(e) => e.currentTarget.style.borderColor = "#2e2e2e"} />
-                </div>
-                <div>
-                  <label style={{ display: "block", color: "#8b8b8b", fontSize: "13px", fontWeight: "500", marginBottom: "8px" }}>Edad</label>
-                  <input type="number" {...register("age", { required: true, valueAsNumber: true })} style={inputStyle}
-                    onFocus={(e) => e.currentTarget.style.borderColor = "#3ecf8e"}
-                    onBlur={(e) => e.currentTarget.style.borderColor = "#2e2e2e"} />
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display: "block", color: "#8b8b8b", fontSize: "13px", fontWeight: "500", marginBottom: "8px" }}>
-                  Nueva contraseña <span style={{ color: "#555", fontStyle: "italic", fontWeight: "400" }}>(opcional)</span>
-                </label>
-                <input type="password" {...register("password")} placeholder="Dejar en blanco para no cambiar" style={inputStyle}
-                  onFocus={(e) => e.currentTarget.style.borderColor = "#3ecf8e"}
-                  onBlur={(e) => e.currentTarget.style.borderColor = "#2e2e2e"} />
-              </div>
-
-              <div style={{ borderTop: "1px solid #2e2e2e", paddingTop: "24px", marginTop: "8px", display: "flex", justifyContent: "flex-end" }}>
-                <button
-                  type="submit"
-                  style={{ backgroundColor: "#3ecf8e", color: "#050505", border: "none", borderRadius: "8px", padding: "12px 28px", fontSize: "15px", fontWeight: "600", cursor: "pointer", transition: "all 0.2s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#2bbd7a"; e.currentTarget.style.transform = "translateY(-1px)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#3ecf8e"; e.currentTarget.style.transform = "translateY(0)"; }}
-                >
-                  Guardar cambios
-                </button>
-              </div>
-            </form>
+              Editar perfil
+            </button>
           )}
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
+          <section className="rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-[0_20px_60px_rgba(15,23,42,0.4)]">
+            <div className="mb-8 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-[#3ecf8e] to-[#1a9e6e] text-4xl font-bold text-[#050505] shadow-[0_12px_30px_rgba(62,207,142,0.35)]">
+              {initials}
+            </div>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm uppercase tracking-[0.24em] text-[#9ca3af]">Rol</p>
+                <p className="mt-2 text-lg font-semibold">{user.role}</p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-[#0f172a] p-4">
+                <p className="text-sm uppercase tracking-[0.24em] text-[#9ca3af]">Email</p>
+                <p className="mt-2 text-base text-[#d1d5db] break-words">{user.email}</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-[0_20px_60px_rgba(15,23,42,0.4)]">
+            {!editing ? (
+              <div className="space-y-4">
+                {viewFields.map((field) => (
+                  <div key={field.label} className="flex flex-col gap-2 rounded-3xl border border-white/10 bg-[#111827] p-5">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl">{field.icon}</span>
+                      <h2 className="text-sm font-semibold text-[#e5e7eb]">{field.label}</h2>
+                    </div>
+                    <p className="text-base text-[#cbd5e1]">{field.value}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="flex flex-col gap-2 text-sm text-[#cbd5e1]">
+                    Nombre completo
+                    <input
+                      type="text"
+                      {...register("name", { required: true })}
+                      className="rounded-3xl border border-white/10 bg-[#0f172a] px-4 py-3 text-sm text-white outline-none transition focus:border-[#3ecf8e] focus:ring-2 focus:ring-[#3ecf8e]/20"
+                    />
+                  </label>
+
+                  <label className="flex flex-col gap-2 text-sm text-[#cbd5e1]">
+                    Usuario
+                    <input
+                      type="text"
+                      {...register("username", { required: true })}
+                      className="rounded-3xl border border-white/10 bg-[#0f172a] px-4 py-3 text-sm text-white outline-none transition focus:border-[#3ecf8e] focus:ring-2 focus:ring-[#3ecf8e]/20"
+                    />
+                  </label>
+                </div>
+
+                <label className="flex flex-col gap-2 text-sm text-[#cbd5e1]">
+                  Email
+                  <input
+                    type="email"
+                    {...register("email", { required: true })}
+                    className="rounded-3xl border border-white/10 bg-[#0f172a] px-4 py-3 text-sm text-white outline-none transition focus:border-[#3ecf8e] focus:ring-2 focus:ring-[#3ecf8e]/20"
+                  />
+                </label>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="flex flex-col gap-2 text-sm text-[#cbd5e1]">
+                    Teléfono
+                    <input
+                      type="text"
+                      {...register("telephone", { required: true })}
+                      className="rounded-3xl border border-white/10 bg-[#0f172a] px-4 py-3 text-sm text-white outline-none transition focus:border-[#3ecf8e] focus:ring-2 focus:ring-[#3ecf8e]/20"
+                    />
+                  </label>
+
+                  <label className="flex flex-col gap-2 text-sm text-[#cbd5e1]">
+                    Edad
+                    <input
+                      type="number"
+                      {...register("age", { required: true, valueAsNumber: true })}
+                      className="rounded-3xl border border-white/10 bg-[#0f172a] px-4 py-3 text-sm text-white outline-none transition focus:border-[#3ecf8e] focus:ring-2 focus:ring-[#3ecf8e]/20"
+                    />
+                  </label>
+                </div>
+
+                <label className="flex flex-col gap-2 text-sm text-[#cbd5e1]">
+                  Nueva contraseña
+                  <input
+                    type="password"
+                    {...register("password")}
+                    placeholder="Dejar en blanco para no cambiar"
+                    className="rounded-3xl border border-white/10 bg-[#0f172a] px-4 py-3 text-sm text-white outline-none transition focus:border-[#3ecf8e] focus:ring-2 focus:ring-[#3ecf8e]/20"
+                  />
+                </label>
+
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setEditing(false)}
+                    className="rounded-full border border-white/10 bg-transparent px-5 py-3 text-sm text-[#cbd5e1] transition hover:border-[#3ecf8e] hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={isSaving}
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#3ecf8e] px-6 py-3 text-sm font-semibold text-[#050505] transition hover:bg-[#5fd9a6] disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={isSaving}
+                  >
+                    {isSaving && <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#050505]/20 border-t-[#050505]" />}
+                    {isSaving ? "Guardando..." : "Guardar cambios"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </section>
         </div>
       </div>
     </main>

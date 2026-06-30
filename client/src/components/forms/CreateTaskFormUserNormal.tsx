@@ -34,6 +34,7 @@ export default function CreateTaskFormUserNormal({
 
     const [imageError, setImageError] =
         useState<string>("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigate = useNavigate();
 
@@ -97,6 +98,8 @@ export default function CreateTaskFormUserNormal({
             return;
         }
 
+        setIsSubmitting(true);
+
         try {
 
             await createAnnouncement({
@@ -120,6 +123,8 @@ export default function CreateTaskFormUserNormal({
                 text: "No se pudo crear el anuncio",
                 icon: "error",
             });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -128,17 +133,7 @@ export default function CreateTaskFormUserNormal({
 
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "24px",
-                    background: "transparent",
-                    boxShadow: "none",
-                    padding: 0,
-                    margin: 0,
-                    width: "100%",
-                    maxWidth: "100%"
-                }}
+                className="flex w-full max-w-full flex-col gap-4 bg-transparent p-0 shadow-none sm:gap-6"
             >
 
                 <FormInput
@@ -176,34 +171,15 @@ export default function CreateTaskFormUserNormal({
 
                 <div className="flex flex-col gap-2">
 
-                    <label
-                        style={{
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            color: "#9ca3af",
-                            marginLeft: "4px",
-                            marginBottom: "2px"
-                        }}
-                    >
+                    <label className="ml-1 mb-1 text-sm font-medium text-[#9ca3af] sm:text-[15px]">
                         Imagen
                     </label>
 
-                    <div style={{ position: "relative" }}>
+                    <div className="relative">
                         <input
                             type="file"
                             onChange={handleImageChange}
-                            style={{
-                                width: "100%",
-                                backgroundColor: "#2a2a2a",
-                                border: "1px solid rgba(255,255,255,0.1)",
-                                borderRadius: "8px",
-                                padding: "12px 16px",
-                                color: "white",
-                                outline: "none",
-                                fontSize: "15px",
-                                cursor: "pointer",
-                                boxSizing: "border-box"
-                            }}
+                            className="w-full cursor-pointer rounded-lg border border-white/10 bg-[#2a2a2a] px-4 py-3 text-sm text-white outline-none transition focus:border-[#3ecf8e] focus:ring-2 focus:ring-[#3ecf8e]/20"
                         />
                     </div>
 
@@ -211,24 +187,18 @@ export default function CreateTaskFormUserNormal({
 
                 </div>
 
-                <div
-                    className="
-                        flex
-                        justify-between
-                        items-center
-                        pt-3
-                    "
-                >
+                <div className="flex flex-col-reverse items-stretch gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
 
                     <SecondaryButton
                         type="button"
                         onClick={close}
+                        disabled={isSubmitting}
                     >
                         Cancelar
                     </SecondaryButton>
 
-                    <PrimaryButton type="submit">
-                        Publicar
+                    <PrimaryButton type="submit" loading={isSubmitting}>
+                        {isSubmitting ? "Publicando..." : "Publicar"}
                     </PrimaryButton>
 
                 </div>

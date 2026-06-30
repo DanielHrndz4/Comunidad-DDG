@@ -1,5 +1,3 @@
-import "./TaskCard.css";
-
 interface TaskItem {
   title: string;
   description: string;
@@ -12,33 +10,30 @@ interface TaskCardProps {
   task: TaskItem;
 }
 
-function TaskCard({ task }: TaskCardProps) {
+export default function TaskCard({ task }: TaskCardProps) {
   return (
-    <div className="w-full">
-      <div className="bg-white/5 p-6 rounded-2xl flex flex-col items-start duration-300 ease-in-out border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-sm hover:bg-white/10 hover:border-white/20">
-        <h2 className="text-xl font-bold text-gray-100 mb-2">{task.title}</h2>
+    <article className="card-panel w-full">
+      <div className="flex flex-col gap-6">
+        <div>
+          <h2 className="font-display text-2xl font-bold text-white mb-3">{task.title}</h2>
+          <p className="text-sm text-slate-300">{task.description}</p>
+        </div>
 
-        <p className="text-gray-300 mb-4">{task.description}</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <p className="text-xs text-slate-400">
+            <span className="font-semibold text-slate-200">Publicado:</span>{' '}
+            {new Date(task.date).toLocaleDateString()}
+          </p>
+          <p className="text-xs text-slate-400">
+            <span className="font-semibold text-slate-200">Usuario ID:</span>{' '}
+            {task.user}
+          </p>
+        </div>
 
-        <p className="text-sm text-gray-500 mb-1">
-          <span className="font-semibold text-gray-400">Publicado:</span>{" "}
-          {new Date(task.date).toLocaleDateString()}
-        </p>
-
-        <p className="text-sm text-gray-500 mb-4">
-          <span className="font-semibold text-gray-400">Usuario ID:</span> {task.user}
-        </p>
-
-        <div className="w-full flex justify-center mt-2 rounded-xl overflow-hidden shadow-lg border border-white/5">
-          <img
-            src={task.image}
-            className="w-full object-cover max-h-48"
-            alt={task.title}
-          />
+        <div className="overflow-hidden rounded-[24px] border border-white/10 shadow-lg">
+          <img src={task.image} alt={task.title} className="h-72 w-full object-cover" />
         </div>
       </div>
-    </div>
+    </article>
   );
 }
-
-export default TaskCard;
