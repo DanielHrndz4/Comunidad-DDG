@@ -1,5 +1,12 @@
+import dns from 'dns';
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
 import mongoose from "mongoose";
 import "dotenv/config";
+/*import { connectDB } from './db.ts';
+import app from './app.ts';*/
+/*connectDB();*/
+console.log("URI:", process.env.MONGO_URL); 
 
 /**
 * Establece la conexión a la base de datos MongoDB usando la URI
@@ -22,6 +29,7 @@ export const connectiondb = async () => {
         await mongoose.connect(URI);
         console.log("Conectado a MongoDB");
     } catch (e) {
+        /*console.log("Error detallado de MongoDB:", e.message);*/
         console.error(e);
         throw new Error('Error a la hora de iniciar la base de datos');
     }

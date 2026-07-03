@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 
 import { IReport } from "../../interfaces/IReport";
 import { createReport } from "../../services/report.service";
+import { useGeolocation } from "../../hooks/useGeolocation";
 
 import FormModal from "../ui/FormModal";
 import FormInput from "../ui/FormInput";
@@ -34,6 +35,13 @@ export default function CreateReportFormUserNormal({
 
     const [imageError, setImageError] =
         useState<string>("");
+
+    const {
+        status: geoStatus,
+        point: geoPoint,
+        errorMessage: geoError,
+        getLocation,
+    } = useGeolocation();
 
     const navigate = useNavigate();
 
@@ -91,10 +99,20 @@ export default function CreateReportFormUserNormal({
             return;
         }
 
+        if (geoStatus !== "success" || !geoPoint) {
+            Swal.fire({
+                title: "Ubicación requerida",
+                text: "Debes obtener tu ubicación antes de publicar el reporte",
+                icon: "warning",
+            });
+            return;
+        }
+
         try {
             await createReport({
                 ...data,
                 image: imageBase64,
+                location: geoPoint,
             });
             Swal.fire({
                 title: "¡Publicación creada!",
@@ -190,6 +208,127 @@ export default function CreateReportFormUserNormal({
                     <FormError message={imageError} />
 
                 </div>
+
+                <div className="flex flex-col gap-2">
+                    <label
+                        className="
+                            text-[0.88rem]
+                            font-medium
+                            text-[#6E6E73]
+                            ml-1
+                        "
+                    >
+                        Ubicación
+                    </label>
+
+                    {geoStatus === "loading" && (
+                        <div
+                            className="
+                                flex
+                                items-center
+                                gap-2
+                                bg-[#F5F5F7]
+                                border
+                                border-[#D2D2D7]
+                                rounded-[20px]
+                                px-4
+                                py-3
+                                text-[0.9rem]
+                                text-[#6E6E73]
+                            "
+                        >
+                            <span
+                                className="
+                                    w-4
+                                    h-4
+                                    rounded-full
+                                    border-2
+                                    border-[#D2D2D7]
+                                    border-t-[#0071E3]
+                                    animate-spin
+                                "
+                            />
+                            Obteniendo tu ubicación...
+                        </div>
+                    )}
+
+                    {geoStatus === "success" && geoPoint && (
+                        <div
+                            className="
+                                flex
+                                items-center
+                                justify-between
+                                gap-2
+                                bg-[#F5FFF8]
+                                border
+                                border-[#34C759]
+                                rounded-[20px]
+                                px-4
+                                py-3
+                                text-[0.9rem]
+                                text-[#1D1D1F]
+                            "
+                        >
+                            <span>
+                                ✓ Ubicación obtenida ({geoPoint.coordinates[1]}, {geoPoint.coordinates[0]})
+                            </span>
+                            <button
+                                type="button"
+                                onClick={getLocation}
+                                className="
+                                    text-[0.8rem]
+                                    px-3
+                                    py-1
+                                    rounded-full
+                                    bg-white
+                                    border
+                                    border-[#D2D2D7]
+                                    text-[#1D1D1F]
+                                    cursor-pointer
+                                    hover:bg-[#EBEBED]
+                                "
+                            >
+                                Actualizar
+                            </button>
+                        </div>
+                    )}
+
+                    {geoStatus === "error" && (
+                        <div
+                            className="
+                                flex
+                                flex-col
+                                gap-2
+                                bg-[#FFF5F5]
+                                border
+                                border-[#FF3B30]
+                                rounded-[20px]
+                                px-4
+                                py-3
+                            "
+                        >
+                            <FormError message={geoError ?? "No se pudo obtener tu ubicación"} />
+                            <button
+                                type="button"
+                                onClick={getLocation}
+                                className="
+                                    self-start
+                                    text-[0.8rem]
+                                    px-3
+                                    py-1
+                                    rounded-full
+                                    bg-[#FF3B30]
+                                    text-white
+                                    cursor-pointer
+                                    hover:brightness-90
+                                "
+                            >
+                                Reintentar
+                            </button>
+                        </div>
+                    )}
+                </div>
+
                 <div
                     className="
                         flex
@@ -204,7 +343,10 @@ export default function CreateReportFormUserNormal({
                     >
                         Cancelar
                     </SecondaryButton>
-                    <PrimaryButton type="submit">
+                    <PrimaryButton
+                        type="submit"
+                        disabled={geoStatus !== "success" || !geoPoint}
+                    >
                         Publicar
                     </PrimaryButton>
 
