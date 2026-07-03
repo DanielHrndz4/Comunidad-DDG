@@ -22,6 +22,10 @@ function Vigilant() {
       text: "Horarios",
       image: assets.calendario,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      callback: () => navigate("/schedules"),
+>>>>>>> parent of ee9baa0 (update final files)
 =======
       callback: () => navigate("/schedules"),
 >>>>>>> parent of ee9baa0 (update final files)
