@@ -12,28 +12,55 @@ export default function FormModal({
 
     return (
         <div
-            style={{
-                width: "100%",
-                maxWidth: "600px",
-                margin: "0 auto",
-                backgroundColor: "#1c1c1c",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                borderRadius: "16px",
-                overflow: "hidden",
-                padding: "32px 40px",
-                boxShadow: "0 10px 40px rgba(0, 0, 0, 0.5)",
-                boxSizing: "border-box"
-            }}
+            className="
+                w-full
+                max-w-[95vw]
+                sm:max-w-2xl
+
+                bg-white/85
+                backdrop-blur-2xl
+
+                border
+                border-[#E5E5E7]
+
+                rounded-[38px]
+
+                overflow-hidden
+
+                px-6
+                sm:px-10
+
+                py-8
+
+                shadow-[0_10px_40px_rgba(0,0,0,0.08)]
+
+                animate-[modalIn_.35s_cubic-bezier(0.16,1,0.3,1)]
+            "
         >
+
+            <style>{`
+                @keyframes modalIn {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.96) translateY(12px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: scale(1) translateY(0);
+                    }
+                }
+            `}</style>
+
             <h2
-                style={{
-                    textAlign: "center",
-                    fontSize: "28px",
-                    fontWeight: "bold",
-                    color: "white",
-                    margin: "0 0 24px 0",
-                    letterSpacing: "-0.5px"
-                }}
+                className="
+                    text-center
+                    text-[2.2rem]
+                    font-semibold
+                    tracking-[-0.04em]
+                    text-[#1D1D1F]
+                    mb-8
+                "
             >
                 {title}
             </h2>

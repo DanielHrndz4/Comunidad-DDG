@@ -1,5 +1,5 @@
 // Importamos el componente NavBarVigilant, que será la barra de navegación de la vista Vigilant
-import NavBar from "../../components/NavBar";
+import NavBarVigilant from "../../components/NavBarVigilant";
 // Importamos Outlet de react-router para renderizar las rutas hijas dentro de este layout
 import { Outlet } from "react-router";
 
@@ -16,9 +16,9 @@ export default function VigilantLayout() {
         // - m-0: sin margen
         // - flex flex-col: display flex en columna
         // - tooltipBoundary: clase personalizada, probablemente para manejar tooltips dentro del layout
-        <div className="font-sans bg-transparent h-content min-h-screen m-0 flex flex-col tooltipBoundary">
+        <div className="font-sans bg-custom-white h-content min-h-screen m-0 flex flex-col tooltipBoundary">
             {/* Renderizamos la barra de navegación */}
-            <NavBar />
+            <NavBarVigilant />
             {/* Outlet renderiza cualquier ruta hija que se defina en react-router */}
             <Outlet />
         </div>

@@ -21,16 +21,16 @@ function Vigilant() {
     {
       text: "Horarios",
       image: assets.calendario,
+<<<<<<< HEAD
+=======
+      callback: () => navigate("/schedules"),
+>>>>>>> parent of ee9baa0 (update final files)
     },
   ];
 
   return (
     <div className="flex grow-1 flex-col justify-center items-center p-29 w-full box-border">
-      <HomeCardContainer 
-        cards={menuCards}
-        title="Panel de Vigilancia"
-        subtitle="Registra visitas y gestiona los horarios de ingreso de forma segura."
-      />
+      <HomeCardContainer cards={menuCards} />
     </div>
   );
 }
