@@ -17,7 +17,7 @@ const app = express(); // Crea la aplicación Express
 connectiondb(); // Establece conexión con la base de datos al iniciar el servidor
 
 // Configura CORS para permitir solicitudes desde el frontend y con envío de cookies
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: "*", credentials: true }));
 
 import fs from "fs";
 import path from "path";
