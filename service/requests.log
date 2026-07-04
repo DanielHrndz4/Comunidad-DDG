@@ -52615,3 +52615,12 @@
 [2026-07-04T05:11:24.089Z] GET /taskhome - Status: 304 - Duration: 5577ms
 [2026-07-04T05:11:30.028Z] GET /taskhome - Status: 304 - Duration: 5938ms
 [2026-07-04T05:12:16.630Z] POST /logout - Status: 200 - Duration: 0ms
+[2026-07-04T17:42:52.974Z] GET /verify - Status: 401 - Duration: 6ms
+[2026-07-04T17:42:52.978Z] GET /verify - Status: 401 - Duration: 2ms
+[2026-07-04T17:43:24.696Z] POST /register - Status: 201 - Duration: 412ms
+[2026-07-04T17:43:49.476Z] POST /verify-otp - Status: 200 - Duration: 232ms
+[2026-07-04T17:44:03.797Z] POST /login - Status: 200 - Duration: 212ms
+[2026-07-04T17:44:07.853Z] GET /taskhome - Status: 304 - Duration: 67ms
+[2026-07-04T17:44:07.914Z] GET /taskhome - Status: 304 - Duration: 60ms
+[2026-07-04T17:45:20.831Z] GET /allUser - Status: 200 - Duration: 87ms
+[2026-07-04T17:45:20.934Z] GET /allUser - Status: 304 - Duration: 96ms
