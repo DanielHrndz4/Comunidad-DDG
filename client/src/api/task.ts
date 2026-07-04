@@ -6,8 +6,8 @@ export const createTaskRequest = (
   task: TaskPayload
 ) => axios.post("/task", task);
 
-export const getTaskRequest = () =>
-  axios.get("/task");
+export const getTaskRequest = (page?: number, limit?: number) =>
+  axios.get(page && limit ? `/task?page=${page}&limit=${limit}` : "/task");
 
 export const getOneTaskRequest = (
   id: string
@@ -22,18 +22,18 @@ export const deleteTaskRequest = (
   id: string
 ) => axios.delete(`/task/${id}`);
 
-export const getTaskHomeRequest = () =>
-  axios.get("/taskHome");
+export const getTaskHomeRequest = (page?: number, limit?: number) =>
+  axios.get(page && limit ? `/taskhome?page=${page}&limit=${limit}` : "/taskhome");
 
-export const getTaskAdminRequest = () =>
-  axios.get("/taskHome");
+export const getTaskAdminRequest = (page?: number, limit?: number) =>
+  axios.get(page && limit ? `/taskhome?page=${page}&limit=${limit}` : "/taskhome");
 
 export const createTaskRequest2 = (
   task: TaskPayload
 ) => axios.post("/taskd", task);
 
-export const getTaskRequest2 = () =>
-  axios.get("/taskd");
+export const getTaskRequest2 = (page?: number, limit?: number) =>
+  axios.get(page && limit ? `/taskd?page=${page}&limit=${limit}` : "/taskd");
 
 export const getOneTaskRequest2 = (
   id: string
@@ -48,11 +48,11 @@ export const deleteTaskRequest2 = (
   id: string
 ) => axios.delete(`/taskd/${id}`);
 
-export const getTaskHomeRequest2 = () =>
-  axios.get("/taskHomed");
+export const getTaskHomeRequest2 = (page?: number, limit?: number) =>
+  axios.get(page && limit ? `/taskhomed?page=${page}&limit=${limit}` : "/taskhomed");
 
-export const getTaskAdminRequest2 = () =>
-  axios.get("/taskHomed");
+export const getTaskAdminRequest2 = (page?: number, limit?: number) =>
+  axios.get(page && limit ? `/taskhomed?page=${page}&limit=${limit}` : "/taskhomed");
 
 export const getNearbyTasksRequest = (
   longitude: number,

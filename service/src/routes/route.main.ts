@@ -297,6 +297,7 @@ const router = Router();
 router.post("/register", validateSchema(registerSchema), userController.register.bind(userController));
 router.post("/login", validateSchema(loginSchema), userController.login.bind(userController));
 router.post("/logout", userController.logout.bind(userController));
+router.post("/verify-otp", userController.verifyOtp.bind(userController));
 router.get("/profile", authRequired, userController.profile.bind(userController));
 router.get("/verify", userController.verifyToken.bind(userController));
 router.get("/users", authRequired, userController.getAllUsers.bind(userController));
@@ -309,5 +310,7 @@ router.get("/allPay", authRequired, payController.getAllPay.bind(payController))
 
 router.post("/createUser", validateSchema(registerSchema), authRequired, userController.createUserByAdmin.bind(userController));
 router.put("/updatePassword", userController.updatePassword.bind(userController));
+router.post("/request-password-reset", userController.requestPasswordReset.bind(userController));
+router.post("/confirm-password-reset", userController.confirmPasswordReset.bind(userController));
 
 export default router;

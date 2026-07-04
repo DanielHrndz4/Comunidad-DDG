@@ -19,64 +19,53 @@ export default function NavBar() {
         </Link>
       </div>
 
-      <div className="flex items-center gap-20">
-        <div className="flex items-center gap-5">
-          <Link
-            to="/admin/sig"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium hover:bg-white/10 transition-colors"
+      <Popup
+        trigger={
+          <button type="button" className="button">
+            <img
+              src={assets.usuario1}
+              alt="Usuario"
+              className="h-45 cursor-pointer"
+            />
+          </button>
+        }
+        position="bottom center"
+        closeOnDocumentClick
+        arrow={false}
+        keepTooltipInside=".tooltipBoundary"
+      >
+        <div className="flex flex-col gap-8 bg-custom-brown border border-white rounded-md p-16 w-210">
+          <button
+            className="flex justify-between items-center g-10 bg-none border-none cursor-pointer text-[1rem] text-left
+            py-8 px-10 rounded-xl duration-300 ease-in-out text-white hover:bg-dark-slate"
+            onClick={() => {
+              navigate("/admin/profile");
+            }}
           >
-            🗺️ Mapa SIG
-          </Link>
+            <p style={{ color: "white" }}>Ver Perfil</p>
+            <img
+              className="h-20 w-20"
+              src={assets.girar}
+              alt="Ver Perfil"
+            />
+          </button>
+
+          <button
+            className="flex justify-between items-center g-10 bg-none border-none cursor-pointer text-[1rem] text-left
+            py-8 px-10 rounded-xl duration-300 ease-in-out text-white hover:bg-dark-slate"
+            onClick={() => {
+              logout();
+            }}
+          >
+            <p style={{ color: "white" }}>Cerrar sesión</p>
+            <img
+              className="h-20 w-20"
+              src={assets.cerrarSesion}
+              alt="Cerrar sesión"
+            />
+          </button>
         </div>
-
-        <Popup
-          trigger={
-            <button type="button" className="button">
-              <img
-                src={assets.usuario1}
-                alt="Usuario"
-                className="h-45 cursor-pointer"
-              />
-            </button>
-          }
-          position="bottom center"
-          closeOnDocumentClick
-          arrow={false}
-          keepTooltipInside=".tooltipBoundary"
-        >
-          <div className="flex flex-col gap-8 bg-custom-brown border border-white rounded-md p-16 w-210">
-            <button
-              className="flex justify-between items-center g-10 bg-none border-none cursor-pointer text-[1rem] text-left
-              py-8 px-10 rounded-xl duration-300 ease-in-out text-white hover:bg-dark-slate"
-              onClick={() => {
-                navigate("/admin/profile");
-              }}
-            >
-              <p style={{ color: "white" }}>Ver Perfil</p>
-              <img
-                className="h-20 w-20"
-                src={assets.girar}
-                alt="Ver Perfil"
-              />
-            </button>
-
-            <button
-              className="flex justify-between items-center g-10 bg-none border-none cursor-pointer text-[1rem] text-left
-              py-8 px-10 rounded-xl duration-300 ease-in-out text-white hover:bg-dark-slate"
-              onClick={() => {
-                logout();
-              }}
-            >
-              <p style={{ color: "white" }}>Cerrar sesión</p>
-              <img
-                className="h-20 w-20"
-                src={assets.cerrarSesion}
-                alt="Cerrar sesión"
-              />
-            </button>
-          </div>
-        </Popup>
-      </div>
+      </Popup>
     </nav>
   );
 }

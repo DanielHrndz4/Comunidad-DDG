@@ -188,6 +188,7 @@ export function TaskProvider({
 
         try {
             await deleteTaskRequest(id);
+            setTaskAdmin((prev) => prev.filter((t) => t._id !== id));
 
         } catch (error: unknown) {
             console.log(error);
@@ -200,6 +201,7 @@ export function TaskProvider({
 
         try {
             await deleteTaskRequest2(id);
+            setTaskAdmin2((prev) => prev.filter((t) => t._id !== id));
 
         } catch (error: unknown) {
             console.log(error);
@@ -240,8 +242,10 @@ export function TaskProvider({
     ): Promise<void> => {
 
         try {
-            await updateTaskRequest(id, task);
-
+            const res = await updateTaskRequest(id, task);
+            setTaskAdmin((prev) =>
+                prev.map((t) => (t._id === id ? { ...t, ...res.data.data } : t))
+            );
         } catch (error: unknown) {
             console.error(error);
         }
@@ -253,8 +257,10 @@ export function TaskProvider({
     ): Promise<void> => {
 
         try {
-            await updateTaskRequest2(id, task);
-
+            const res = await updateTaskRequest2(id, task);
+            setTaskAdmin2((prev) =>
+                prev.map((t) => (t._id === id ? { ...t, ...res.data.data } : t))
+            );
         } catch (error: unknown) {
             console.error(error);
         }
@@ -278,7 +284,7 @@ export function TaskProvider({
 
         try {
             await createVisit(visit);
-
+            await getVisitVigilant();
         } catch (error: unknown) {
             console.log(error);
         }

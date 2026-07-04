@@ -127,14 +127,14 @@ export default function CreateUserForm({
         <FormInput
           type="password"
           label="Contraseña"
-          placeholder="Mínimo 12 caracteres"
+          placeholder="Mínimo 8 caracteres"
           error={getErrorMessage(errors.password?.message)}
-          success={passwordValue.length >= 12}
+          success={passwordValue.length >= 8}
           {...register("password", {
             required: "La contraseña es requerida",
             minLength: {
-              value: 12,
-              message: "Mínimo 12 caracteres",
+              value: 8,
+              message: "Mínimo 8 caracteres",
             },
           })}
         />
@@ -155,44 +155,7 @@ export default function CreateUserForm({
           })}
         />
 
-        <div className="flex flex-col gap-2">
-          <label className="text-[0.88rem] font-medium text-[#6E6E73] ml-1">
-            Edad
-          </label>
 
-          <input
-            type="number"
-            min={0}
-            {...register("age", {
-              required: "La edad es requerida",
-              valueAsNumber: true,
-              min: {
-                value: 0,
-                message: "Edad inválida",
-              },
-            })}
-            className="
-              w-full
-              h-[58px]
-              px-5
-              rounded-[20px]
-              bg-[#F5F5F7]
-              border
-              border-[#D2D2D7]
-              text-[#1D1D1F]
-              outline-none
-              transition-all
-              duration-200
-              focus:border-[#0071E3]
-              focus:ring-4
-              focus:ring-[#0071E3]/10
-            "
-          />
-
-          <FormError
-            message={getErrorMessage(errors.age?.message)}
-          />
-        </div>
 
         <div className="flex flex-col gap-2">
           <label className="text-[0.88rem] font-medium text-[#6E6E73] ml-1">

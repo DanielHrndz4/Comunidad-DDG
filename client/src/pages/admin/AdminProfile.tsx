@@ -86,13 +86,6 @@ export default function AdminProfile() {
             </p>
 
             <h3 className="mb-16 text-dark-slate text-[1.2rem]">
-              Edad:
-            </h3>
-            <p className="my-8 text-dark-gray">
-              {user.age}
-            </p>
-
-            <h3 className="mb-16 text-dark-slate text-[1.2rem]">
               Contacto
             </h3>
             <p className="my-8 text-dark-gray">

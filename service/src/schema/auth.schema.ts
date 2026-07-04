@@ -18,8 +18,8 @@ export const registerSchema = z.object({
     .string({
       required_error: "La contraseña es requerida",
     })
-    .min(12, {
-      message: "La contraseña debe tener como mínimo 12 caracteres",
+    .min(8, {
+      message: "La contraseña debe tener como mínimo 8 caracteres",
     }),
 
   telephone: z
@@ -33,14 +33,7 @@ export const registerSchema = z.object({
       message: "El teléfono debe contener solo números",
     }),
 
-  age: z.coerce
-    .number({
-      required_error: "Edad es requerida",
-      invalid_type_error: "Edad debe ser un número válido",
-    })
-    .min(18, {
-      message: "Debe ser mayor de edad",
-    }),
+  age: z.coerce.number().optional(),
 
   role: z.enum(["normal", "vigilant", "admin"]).optional(),
 });

@@ -7,7 +7,7 @@ export class Task2Controller {
     // Controlador para crear una nueva tarea del modelo Task2
     public async createTask2(req: Request, res: Response): Promise<Response> {
         try {
-            const { title2, description2, image, date2 } = req.body;
+            const { title2, description2, image, date2, location } = req.body;
 
             const userId = (req as unknown as Record<string, unknown>).user ? ((req as unknown as Record<string, unknown>).user as Record<string, unknown>).id : undefined;
 
@@ -16,7 +16,8 @@ export class Task2Controller {
                 description2,
                 image,
                 date2,
-                user: userId
+                user: userId,
+                ...(location && { location }),
             });
 
             const saveTask = await newTask.save();
@@ -32,7 +33,14 @@ export class Task2Controller {
     public async getTask2(req: Request, res: Response): Promise<Response> {
         try {
             const userId = (req as unknown as Record<string, unknown>).user ? ((req as unknown as Record<string, unknown>).user as Record<string, unknown>).id : undefined;
-            const tasks = await Task2.find({ user: userId }).populate("user");
+            const page = req.query.page ? parseInt(req.query.page as string) : undefined;
+            const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+            
+            const query = Task2.find({ user: userId }).populate("user", "name username email role");
+            if (page && limit) {
+                query.skip((page - 1) * limit).limit(limit);
+            }
+            const tasks = await query;
             
             return res.status(HttpCodes.OK).json(HttpResponse(HttpCodes.OK, "Tareas obtenidas", tasks, true));
         } catch (error: unknown) {
@@ -44,7 +52,15 @@ export class Task2Controller {
     // Controlador para obtener todas las tareas (home o vista pública)
     public async getTaskHome2(req: Request, res: Response): Promise<Response> {
         try {
-            const tasks = await Task2.find();
+            const page = req.query.page ? parseInt(req.query.page as string) : undefined;
+            const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+            
+            const query = Task2.find();
+            if (page && limit) {
+                query.skip((page - 1) * limit).limit(limit);
+            }
+            const tasks = await query;
+            
             return res.status(HttpCodes.OK).json(HttpResponse(HttpCodes.OK, "Todas las tareas obtenidas", tasks, true));
         } catch (error: unknown) {
             const err = error as Error;
@@ -55,7 +71,7 @@ export class Task2Controller {
     // Controlador para obtener una sola tarea por ID
     public async getOneTask2(req: Request, res: Response): Promise<Response> {
         try {
-            const task = await Task2.findById(req.params.id).populate("user");
+            const task = await Task2.findById(req.params.id).populate("user", "name username email role");
 
             if (!task) {
                 return res.status(HttpCodes.NOT_FOUND).json(HttpResponse(HttpCodes.NOT_FOUND, "Tarea no encontrada", null, false));

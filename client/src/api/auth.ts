@@ -16,6 +16,9 @@ export const loginRequest = (
 export const verifyTokenRequest = () =>
     axios.get("/verify");
 
+export const logoutRequest = () =>
+    axios.post("/logout");
+
 export const getUsersAdmin = () =>
     axios.get("/users");
 
@@ -39,6 +42,8 @@ export const addPayVigilanceFromUser = (
     pay: unknown
 ) => axios.post("/payVigilance", pay);
 
+export const getPaymentsRequest = () => axios.get("/allPay");
+
 export const registerRequestByAdmin = (
     user: RegisterFormData
 ) => axios.post("/createUser", user);
@@ -54,3 +59,29 @@ export const updatePasswordRequest = ({
         username,
         password,
     });
+
+export const verifyOtpRequest = ({
+    email,
+    otp,
+}: {
+    email: string;
+    otp: string;
+}) =>
+    axios.post("/verify-otp", {
+        email,
+        otp,
+    });
+
+export const requestPasswordResetRequest = (emailOrUsername: string) =>
+    axios.post("/request-password-reset", { emailOrUsername });
+
+export const confirmPasswordResetRequest = ({
+    emailOrUsername,
+    otp,
+    password,
+}: {
+    emailOrUsername: string;
+    otp: string;
+    password: string;
+}) =>
+    axios.post("/confirm-password-reset", { emailOrUsername, otp, password });

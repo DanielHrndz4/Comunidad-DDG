@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { getTaskHomeRequest, getNearbyTasksRequest } from "../../api/task.js";
+import { getTaskHomeRequest, getTaskHomeRequest2, getNearbyTasksRequest } from "../../api/task.js";
 
 // Corrige el ícono de marcador por defecto de Leaflet con Vite/Webpack
-delete L.Icon.Default.prototype._getIconUrl;
+delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
     iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -29,18 +29,18 @@ const ICON_NEARBY = L.icon({
 });
 
 // El Salvador centrado
-const EL_SALVADOR_CENTER = [13.7942, -88.8965];
+const EL_SALVADOR_CENTER: [number, number] = [13.7942, -88.8965];
 const DEFAULT_ZOOM = 9;
 
 export default function AdminSIGView() {
-    const mapRef = useRef(null);
-    const mapInstanceRef = useRef(null);
-    const markersLayerRef = useRef(null);
-    const nearbyLayerRef = useRef(null);
-    const radiusCircleRef = useRef(null);
+    const mapRef = useRef<HTMLDivElement>(null);
+    const mapInstanceRef = useRef<L.Map | null>(null);
+    const markersLayerRef = useRef<L.LayerGroup | null>(null);
+    const nearbyLayerRef = useRef<L.LayerGroup | null>(null);
+    const radiusCircleRef = useRef<L.Circle | null>(null);
 
-    const [allTasks, setAllTasks] = useState([]);
-    const [nearbyResult, setNearbyResult] = useState(null);
+    const [allTasks, setAllTasks] = useState<any[]>([]);
+    const [nearbyResult, setNearbyResult] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [searchError, setSearchError] = useState("");
 
@@ -66,7 +66,7 @@ export default function AdminSIGView() {
         nearbyLayerRef.current = L.layerGroup().addTo(map);
 
         // Click en mapa → rellena coordenadas de búsqueda
-        map.on("click", (e) => {
+        map.on("click", (e: L.LeafletMouseEvent) => {
             setLatitude(e.latlng.lat.toFixed(6));
             setLongitude(e.latlng.lng.toFixed(6));
         });
@@ -83,13 +83,30 @@ export default function AdminSIGView() {
     useEffect(() => {
         const loadTasks = async () => {
             try {
-                const res = await getTaskHomeRequest();
-                const tasksWithLocation = res.data.filter(
-                    (t) => t.location?.coordinates?.length === 2
+                const [resTasks, resReports] = await Promise.all([
+                    getTaskHomeRequest(),
+                    getTaskHomeRequest2().catch(() => ({ data: { data: [] } } as any))
+                ]);
+                
+                const tasksArray = resTasks.data?.data || [];
+                const reportsArray = resReports.data?.data || (Array.isArray(resReports.data) ? resReports.data : []);
+
+                const combined = [
+                    ...tasksArray,
+                    ...reportsArray.map((r: any) => ({
+                        ...r,
+                        title: r.title || r.title2,
+                        description: r.description || r.description2,
+                        date: r.date || r.date2
+                    }))
+                ];
+                
+                const tasksWithLocation = combined.filter(
+                    (t: any) => t.location?.coordinates?.length === 2
                 );
                 setAllTasks(tasksWithLocation);
-            } catch {
-                // Si falla, el mapa simplemente queda vacío
+            } catch (error) {
+                console.error("Error loading tasks for SIG:", error);
             }
         };
         loadTasks();
@@ -102,20 +119,36 @@ export default function AdminSIGView() {
 
         allTasks.forEach((task) => {
             const [lng, lat] = task.location.coordinates;
-            L.marker([lat, lng], { icon: ICON_NORMAL })
+            const icon = task.isDangerZone ? ICON_NEARBY : ICON_NORMAL;
+            L.marker([lat, lng], { icon })
                 .bindPopup(buildPopupHtml(task))
                 .addTo(markersLayerRef.current);
+            
+            if (task.isDangerZone) {
+                L.circle([lat, lng], {
+                    radius: 15, // Small radius (15m)
+                    color: "#e54a55",
+                    fillColor: "#e54a55",
+                    fillOpacity: 0.3,
+                    weight: 2,
+                    dashArray: "4, 4"
+                }).addTo(markersLayerRef.current);
+            }
         });
     }, [allTasks]);
 
-    const buildPopupHtml = (task) => {
+    const buildPopupHtml = (task: any) => {
         const imgHtml = task.image
             ? `<img src="${task.image}" alt="img" style="width:100%;max-height:100px;object-fit:cover;border-radius:6px;margin-bottom:4px;"/>`
+            : "";
+        const titlePrefix = task.isDangerZone 
+            ? `<span style="color:#e54a55;font-weight:bold;display:block;margin-bottom:2px;">⚠️ ZONA DE PELIGRO</span>` 
             : "";
         return `
             <div style="min-width:160px;font-family:sans-serif;">
                 ${imgHtml}
-                <strong style="font-size:0.9rem;">${task.title}</strong><br/>
+                ${titlePrefix}
+                <strong style="font-size:0.9rem;color:${task.isDangerZone ? '#e54a55' : 'inherit'};">${task.title}</strong><br/>
                 <span style="font-size:0.8rem;color:#555;">${task.description || ""}</span><br/>
                 <small style="color:#999;">📍 ${task.location.coordinates[1].toFixed(4)}, ${task.location.coordinates[0].toFixed(4)}</small>
             </div>
@@ -124,13 +157,13 @@ export default function AdminSIGView() {
 
     const handleGeolocate = () => {
         if (!navigator.geolocation) return;
-        navigator.geolocation.getCurrentPosition((pos) => {
+        navigator.geolocation.getCurrentPosition((pos: GeolocationPosition) => {
             setLatitude(pos.coords.latitude.toFixed(6));
             setLongitude(pos.coords.longitude.toFixed(6));
         });
     };
 
-    const handleSearch = async (e) => {
+    const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         setSearchError("");
 
@@ -156,7 +189,7 @@ export default function AdminSIGView() {
         }
     };
 
-    const paintNearbyResults = (geojson, lat, lng, rad) => {
+    const paintNearbyResults = (geojson: any, lat: number, lng: number, rad: number) => {
         if (!nearbyLayerRef.current || !mapInstanceRef.current) return;
         nearbyLayerRef.current.clearLayers();
 
@@ -186,7 +219,7 @@ export default function AdminSIGView() {
             .addTo(nearbyLayerRef.current);
 
         // Pinta los resultados con ícono rojo
-        geojson.features.forEach((feature) => {
+        geojson.features.forEach((feature: any) => {
             const [fLng, fLat] = feature.geometry.coordinates;
             const { title, description, image } = feature.properties;
             const task = { title, description, image, location: { coordinates: [fLng, fLat] } };
@@ -315,7 +348,7 @@ export default function AdminSIGView() {
                             {nearbyResult.features.length === 0 ? (
                                 <p className="text-xs text-[#6E6E73]">No se encontraron tareas en ese radio.</p>
                             ) : (
-                                nearbyResult.features.map((f, i) => (
+                                nearbyResult.features.map((f: any, i: number) => (
                                     <div
                                         key={i}
                                         className="mb-3 p-3 bg-[#F5F5F7] rounded-xl border border-[#D2D2D7]"

@@ -1,3 +1,5 @@
+import { IGeoPoint } from "./IReport";
+
 export interface ITaskAnnouncement {
   _id: string;
   title2: string;
@@ -5,4 +7,5 @@ export interface ITaskAnnouncement {
   date2: string;
   user: string;
   image: string;
+  location?: IGeoPoint;
 }

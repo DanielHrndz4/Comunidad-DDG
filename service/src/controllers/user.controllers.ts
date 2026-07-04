@@ -20,6 +20,21 @@ export class UserController {
     }
   }
 
+  // Controlador para verificar código OTP
+  public async verifyOtp(req: Request, res: Response): Promise<Response> {
+    try {
+      const { email, otp } = req.body;
+      if (!email || !otp) {
+        return res.status(HttpCodes.BAD_REQUEST).json(HttpResponse(HttpCodes.BAD_REQUEST, "Email y código OTP son requeridos", null, false));
+      }
+      const result = await userService.verifyOtp(email, otp);
+      return res.status(HttpCodes.OK).json(HttpResponse(HttpCodes.OK, result.message, result, true));
+    } catch (error: unknown) {
+      const err = error as Error;
+      return res.status(HttpCodes.BAD_REQUEST).json(HttpResponse(HttpCodes.BAD_REQUEST, err.message, null, false));
+    }
+  }
+
   // Controlador para que el admin cree nuevos usuarios
   public async createUserByAdmin(req: Request, res: Response): Promise<Response> {
     try {
@@ -37,7 +52,11 @@ export class UserController {
       const { username, password } = req.body;
       const { token, user } = await userService.authUser(username, password);
 
-      res.cookie('token', token);
+      res.cookie('token', token, {
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000, // 1 day in ms
+      });
 
       return res.status(HttpCodes.OK).json(HttpResponse(HttpCodes.OK, "Login exitoso", user, true));
     } catch (error: unknown) {
@@ -179,6 +198,36 @@ export class UserController {
       const { username, password } = req.body;
       const result = await userService.changePassword(username, password);
       return res.status(HttpCodes.OK).json(HttpResponse(HttpCodes.OK, "Contraseña actualizada", result, true));
+    } catch (error: unknown) {
+      const err = error as Error;
+      return res.status(HttpCodes.BAD_REQUEST).json(HttpResponse(HttpCodes.BAD_REQUEST, err.message, null, false));
+    }
+  }
+
+  // Controlador para solicitar el restablecimiento de contraseña (genera OTP)
+  public async requestPasswordReset(req: Request, res: Response): Promise<Response> {
+    try {
+      const { emailOrUsername } = req.body;
+      if (!emailOrUsername) {
+        return res.status(HttpCodes.BAD_REQUEST).json(HttpResponse(HttpCodes.BAD_REQUEST, "Email o nombre de usuario es requerido", null, false));
+      }
+      const result = await userService.requestPasswordReset(emailOrUsername);
+      return res.status(HttpCodes.OK).json(HttpResponse(HttpCodes.OK, result.message, result, true));
+    } catch (error: unknown) {
+      const err = error as Error;
+      return res.status(HttpCodes.BAD_REQUEST).json(HttpResponse(HttpCodes.BAD_REQUEST, err.message, null, false));
+    }
+  }
+
+  // Controlador para confirmar el restablecimiento de contraseña (verifica OTP y guarda la contraseña)
+  public async confirmPasswordReset(req: Request, res: Response): Promise<Response> {
+    try {
+      const { emailOrUsername, otp, password } = req.body;
+      if (!emailOrUsername || !otp || !password) {
+        return res.status(HttpCodes.BAD_REQUEST).json(HttpResponse(HttpCodes.BAD_REQUEST, "Email/usuario, OTP y la nueva contraseña son requeridos", null, false));
+      }
+      const result = await userService.confirmPasswordReset(emailOrUsername, otp, password);
+      return res.status(HttpCodes.OK).json(HttpResponse(HttpCodes.OK, result.message, result, true));
     } catch (error: unknown) {
       const err = error as Error;
       return res.status(HttpCodes.BAD_REQUEST).json(HttpResponse(HttpCodes.BAD_REQUEST, err.message, null, false));

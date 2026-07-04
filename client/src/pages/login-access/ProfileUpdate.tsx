@@ -18,7 +18,6 @@ interface ProfileUpdateFormData {
   email: string;
   password?: string;
   telephone: string;
-  age: number;
 }
 
 export default function ProfileUpdate({
@@ -48,7 +47,6 @@ export default function ProfileUpdate({
             "telephone",
             profile.telephone
           );
-          setValue("age", profile.age);
         }
       }
     }
@@ -199,14 +197,7 @@ export default function ProfileUpdate({
             placeholder="Teléfono actualizado"
           />
 
-          <input
-            type="number"
-            {...register("age", {
-              required: true,
-              valueAsNumber: true,
-            })}
-            placeholder="Edad actualizada"
-          />
+
 
           <button type="submit">
             Actualizar datos
