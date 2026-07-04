@@ -1,0 +1,14 @@
+site_name: Comunidad DDG Documentation
+
+theme:
+  name: material
+
+plugins:
+  - search
+  - swagger-ui-tag:
+      tryItOutEnabled: true
+      docExpansion: list
+
+nav:
+  - Inicio: index.md
+  - Documentación de la API: api.md

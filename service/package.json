@@ -7,7 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch app.ts",
-    "build": "tsc --project tsconfig.build.json"
+    "build": "tsc --project tsconfig.build.json",
+    "export-swagger": "tsx src/scripts/exportSwagger.ts"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/PNC-012025/pnc-proyecto-final-grupo-01-s01#readme",
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^7.3.4",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -29,7 +31,6 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.0",
     "multer": "^2.0.2",
-    "nodemailer": "^9.0.3",
     "nodemon": "^3.1.10",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
@@ -44,7 +45,6 @@
     "@types/mongoose": "^5.11.97",
     "@types/multer": "^2.1.0",
     "@types/node": "^25.6.0",
-    "@types/nodemailer": "^8.0.1",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "tsx": "^4.21.0",
