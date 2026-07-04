@@ -5,13 +5,21 @@ export const insertTask = async (taskData: Record<string, unknown>) => {
     return await newTask.save();
 };
 
-export const selectTask = async (userId: string) => {
-    return await Task.find({ user: userId }).populate("user");
+export const selectTask = async (userId: string, page?: number, limit?: number) => {
+    const query = Task.find({ user: userId }).populate("user", "name username email role");
+    if (page && limit) {
+        query.skip((page - 1) * limit).limit(limit);
+    }
+    return await query;
 };
 
-export const selectTaskHome = async () => {
+export const selectTaskHome = async (page?: number, limit?: number) => {
     try {
-        const tasks = await Task.find();
+        const query = Task.find();
+        if (page && limit) {
+            query.skip((page - 1) * limit).limit(limit);
+        }
+        const tasks = await query;
         return tasks;
     } catch (error) {
         throw new Error('Error al obtener las tareas');
@@ -19,7 +27,7 @@ export const selectTaskHome = async () => {
 };
 
 export const selectOneTask = async (taskId: string) => {
-    return await Task.findById(taskId).populate("user");
+    return await Task.findById(taskId).populate("user", "name username email role");
 };
 
 export const deleteTaskById = async (taskId: string) => {
@@ -41,5 +49,5 @@ export const selectTasksNearby = async (longitude: number, latitude: number, rad
                 $maxDistance: radius
             }
         }
-    }).populate("user");
+    }).populate("user", "name username email role");
 };

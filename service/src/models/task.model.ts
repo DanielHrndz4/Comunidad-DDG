@@ -42,6 +42,10 @@ const taskSchema = new mongoose.Schema(
       type: locationSchema,
       default: undefined,
     },
+    isDangerZone: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

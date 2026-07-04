@@ -302,7 +302,7 @@ router.get("/task", authRequired, taskController.getTask.bind(taskController));
  *       401:
  *         description: Acceso denegado
  */
-router.get("/taskhome", authRequired, taskController.getTaskHome.bind(taskController));
+router.get("/taskhome", taskController.getTaskHome.bind(taskController));
 
 /**
  * @swagger
@@ -502,7 +502,7 @@ router.get("/taskd", authRequired, task2Controller.getTask2.bind(task2Controller
  *       401:
  *         description: Acceso denegado
  */
-router.get("/taskhomed", authRequired, task2Controller.getTaskHome2.bind(task2Controller));
+router.get("/taskhomed", task2Controller.getTaskHome2.bind(task2Controller));
 
 /**
  * @swagger

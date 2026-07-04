@@ -5,7 +5,7 @@ import type {
 } from "react";
 
 import type { IUser } from "./IUser";
-import type { IPayment } from "./IPayment";
+import type { IPayment, IPaymentRecord } from "./IPayment";
 import type {
   LoginFormData,
   RegisterFormData,
@@ -34,7 +34,7 @@ export interface AuthContextType {
     user: LoginFormData
   ) => Promise<void>;
 
-  logout: () => void;
+  logout: () => void | Promise<void>;
 
   createUser: (
     userData: RegisterFormData
@@ -42,6 +42,14 @@ export interface AuthContextType {
 
   updatePasswordByPassword: (
     data: UpdatePasswordData
+  ) => Promise<void>;
+
+  requestPasswordReset: (
+    emailOrUsername: string
+  ) => Promise<{ email: string }>;
+
+  confirmPasswordReset: (
+    data: { emailOrUsername: string; otp: string; password: string }
   ) => Promise<void>;
 
   getUsers: () => Promise<void>;
@@ -64,6 +72,8 @@ export interface AuthContextType {
   ) => Promise<void>;
 
   getAllUsers: () => Promise<void>;
+
+  getPayments: () => Promise<IPaymentRecord[]>;
 
   loading: boolean;
 

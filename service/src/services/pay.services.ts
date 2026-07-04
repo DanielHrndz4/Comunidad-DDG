@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import Pay from '../models/pay.vigilance.model.js';
-import { findPay, createPay, getAllPays } from "../repository/pay.repository.js";
+import { findPay, createPay, getAllPays, getPaysByUser } from "../repository/pay.repository.js";
 
 export class PayService {
     /**
@@ -34,5 +34,12 @@ export class PayService {
     */
     public async selectPay() {
         return await getAllPays();
+    }
+
+    /**
+    * Obtiene los pagos de un usuario específico.
+    */
+    public async selectPayByUser(userId: string) {
+        return await getPaysByUser(userId);
     }
 }

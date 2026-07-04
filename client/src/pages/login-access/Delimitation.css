@@ -1,0 +1,292 @@
+.delim-info-card,
+.delim-map-container-card,
+.delim-admin-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(20, 43, 54, 0.05);
+  border: 1.5px solid rgba(20, 43, 54, 0.06);
+  display: flex;
+  flex-direction: column;
+  font-family: "Montserrat", sans-serif;
+  box-sizing: border-box;
+}
+
+.delim-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(45, 189, 161, 0.06);
+  border-left: 4px solid #2dbda1;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.delim-banner-icon {
+  font-size: 28px;
+  color: #2dbda1;
+  flex-shrink: 0;
+}
+
+.delim-banner h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #142b36;
+}
+
+.delim-banner p {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.delim-desc-box {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4b5563;
+  margin-bottom: 24px;
+  padding: 0 4px;
+}
+
+.delim-rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.delim-rule-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.delim-rule-icon-wrapper {
+  background: rgba(20, 43, 54, 0.05);
+  color: #142b36;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.delim-rule-item h4 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #142b36;
+}
+
+.delim-rule-item p {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.delim-card-title {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #142b36;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.delim-admin-card {
+  margin-top: 8px;
+}
+
+.delim-admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1.5px solid rgba(20, 43, 54, 0.05);
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.delim-admin-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #142b36;
+}
+
+.delim-settings-icon {
+  font-size: 20px;
+  color: #142b36;
+}
+
+.delim-btn-secondary {
+  background: transparent;
+  border: 1.5px solid rgba(20, 43, 54, 0.2);
+  color: #142b36;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  font-family: "Montserrat", sans-serif;
+}
+
+.delim-btn-secondary:hover {
+  background: rgba(20, 43, 54, 0.05);
+  border-color: #142b36;
+}
+
+.delim-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.delim-form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.delim-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.delim-form-group.full-width {
+  grid-column: span 3;
+}
+
+.delim-form-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #142b36;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.delim-form-group input,
+.delim-form-group textarea {
+  border: 1.5px solid rgba(20, 43, 54, 0.12);
+  border-radius: 10px;
+  padding: 12px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  color: #142b36;
+  background: #fafafa;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.delim-form-group input:focus,
+.delim-form-group textarea:focus {
+  border-color: #2dbda1;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(45, 189, 161, 0.15);
+}
+
+.delim-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.delim-btn-primary {
+  background: #142b36;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  font-family: "Montserrat", sans-serif;
+}
+
+.delim-btn-primary:hover {
+  background: #2dbda1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(45, 189, 161, 0.2);
+}
+
+@media (max-width: 900px) {
+  .delim-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .delim-form-row {
+    grid-template-columns: 1fr;
+  }
+  .delim-form-group.full-width {
+    grid-column: span 1;
+  }
+}
+
+/* ====== READ-ONLY PANEL ====== */
+.delim-readonly-card {
+  background: #f9fafb;
+  border: 1.5px solid rgba(20, 43, 54, 0.08);
+}
+
+.delim-readonly-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(20, 43, 54, 0.06);
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(20, 43, 54, 0.1);
+  letter-spacing: 0.3px;
+  cursor: default;
+  user-select: none;
+}
+
+.delim-readonly-form {
+  pointer-events: none;
+  user-select: text;
+}
+
+.delim-readonly-field {
+  border: 1.5px solid rgba(20, 43, 54, 0.07);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  color: #374151;
+  background: #ffffff;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+}
+
+.delim-readonly-multiline {
+  align-items: flex-start;
+  min-height: 62px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.delim-readonly-note {
+  margin: 8px 0 0 0;
+  font-size: 11px;
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  border-top: 1px solid rgba(20, 43, 54, 0.05);
+  padding-top: 14px;
+}

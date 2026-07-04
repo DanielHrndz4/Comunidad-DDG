@@ -9,7 +9,7 @@ export class TaskController {
     // Controlador para crear una nueva tarea
     public async createTask(req: Request, res: Response): Promise<Response> {
         try {
-            const { title, description, image, date, location } = req.body;
+            const { title, description, image, date, location, isDangerZone } = req.body;
 
             const authUser = (req as any).user;
 
@@ -38,6 +38,7 @@ export class TaskController {
                 date,
                 user: userId,
                 ...(location && { location }),
+                isDangerZone: !!isDangerZone,
             };
 
             console.log("NEW TASK:", newTask);
@@ -66,7 +67,9 @@ export class TaskController {
     public async getTask(req: Request, res: Response): Promise<Response> {
         try {
             const userId = (req as unknown as Record<string, unknown>).user ? ((req as unknown as Record<string, unknown>).user as Record<string, unknown>).id : undefined;
-            const tasks = await taskService.selectTheTask(userId);
+            const page = req.query.page ? parseInt(req.query.page as string) : undefined;
+            const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+            const tasks = await taskService.selectTheTask(userId, page, limit);
             return res.status(HttpCodes.OK).json(HttpResponse(HttpCodes.OK, "Tareas obtenidas", tasks, true));
         } catch (error: unknown) {
             const err = error as Error;
@@ -77,7 +80,9 @@ export class TaskController {
     // Controlador para obtener todas las tareas (vista pública o home)
     public async getTaskHome(req: Request, res: Response): Promise<Response> {
         try {
-            const tasks = await taskService.selectTheTaskHome();
+            const page = req.query.page ? parseInt(req.query.page as string) : undefined;
+            const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+            const tasks = await taskService.selectTheTaskHome(page, limit);
             return res.status(HttpCodes.OK).json(HttpResponse(HttpCodes.OK, "Todas las tareas", tasks, true));
         } catch (error: unknown) {
             const err = error as Error;

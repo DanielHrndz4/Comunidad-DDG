@@ -3,23 +3,27 @@ import {
   useState,
   useContext,
   useEffect,
+  useCallback,
 } from "react";
 
 import {
   registerRequest,
   loginRequest,
   verifyTokenRequest,
+  logoutRequest,
   getUsersAdmin,
   deleteUserAdmin,
   getOneProfileUser,
   updateOneProfile,
   addPayVigilanceFromUser,
+  getPaymentsRequest,
   getAllUsersForUser,
   registerRequestByAdmin,
   updatePasswordRequest,
+  requestPasswordResetRequest,
+  confirmPasswordResetRequest,
 } from "../api/auth";
 
-import Cookies from "js-cookie";
 
 import type {
   AuthContextType,
@@ -29,7 +33,7 @@ import type {
 } from "../interfaces/IAuthContext";
 
 import type { IUser } from "../interfaces/IUser";
-import type { IPayment } from "../interfaces/IPayment";
+import type { IPayment, IPaymentRecord } from "../interfaces/IPayment";
 import { RegisterFormData } from "@/interfaces/IAuthForms";
 
 export const AuthContext =
@@ -117,6 +121,59 @@ export const AuthProvider = ({
     }
   };
 
+  const requestPasswordReset = async (
+    emailOrUsername: string
+  ): Promise<{ email: string }> => {
+    try {
+      setErrors([]);
+      const res = await requestPasswordResetRequest(emailOrUsername);
+      return res.data.data;
+    } catch (error: unknown) {
+      const err = error as {
+        response?: {
+          data?: unknown;
+        };
+        message?: string;
+      };
+      const data = err.response?.data;
+      const msgs = Array.isArray(data)
+        ? (data as string[])
+        : [
+          (data as { message?: string } | undefined)?.message ||
+          err.message ||
+          "Error al solicitar código OTP",
+        ];
+      setErrors(msgs);
+      throw error;
+    }
+  };
+
+  const confirmPasswordReset = async (
+    data: { emailOrUsername: string; otp: string; password: string }
+  ): Promise<void> => {
+    try {
+      setErrors([]);
+      await confirmPasswordResetRequest(data);
+    } catch (error: unknown) {
+      const err = error as {
+        response?: {
+          data?: unknown;
+        };
+        message?: string;
+      };
+      const data = err.response?.data;
+      const msgs = Array.isArray(data)
+        ? (data as string[])
+        : [
+          (data as { message?: string } | undefined)?.message ||
+          err.message ||
+          "Error al restablecer la contraseña",
+        ];
+      setErrors(msgs);
+      throw error;
+    }
+  };
+
   const signup = async (
     userData: RegisterFormData
   ): Promise<void> => {
@@ -132,11 +189,21 @@ export const AuthProvider = ({
 
     } catch (error: unknown) {
 
-      console.log("Error");
+      const err = error as {
+        response?: {
+          data?: {
+            message?: string;
+          };
+        };
+        message?: string;
+      };
 
-      setErrors([
-        "Vuelva a intentarlo o contacte con el administrador",
-      ]);
+      const backendMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "Vuelva a intentarlo o contacte con el administrador";
+
+      setErrors([backendMessage]);
 
       throw error;
     }
@@ -159,13 +226,21 @@ export const AuthProvider = ({
 
     } catch (error: unknown) {
 
-      console.log(
-        "Revise que los campos sean correctos"
-      );
+      const err = error as {
+        response?: {
+          data?: {
+            message?: string;
+          };
+        };
+        message?: string;
+      };
 
-      setErrors([
-        "Revise que los campos sean correctos",
-      ]);
+      const backendMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "Revise que los campos sean correctos";
+
+      setErrors([backendMessage]);
     }
   };
 
@@ -203,44 +278,34 @@ export const AuthProvider = ({
     }
   };
 
-  const logout = (): void => {
-
-    Cookies.remove("token");
-
+  const logout = async (): Promise<void> => {
+    try {
+      await logoutRequest();
+    } catch (_) {
+      // ignore if server is unreachable
+    }
     setIsAuthenticate(false);
-
     setUser(null);
   };
 
-  const getUsers = async (): Promise<void> => {
 
+  const getUsers = useCallback(async (): Promise<void> => {
     try {
-
-      const res =
-        await getUsersAdmin();
-
+      const res = await getUsersAdmin();
       setGetAdminUsers(res.data.data);
-
     } catch (error: unknown) {
-
       console.log(error);
     }
-  };
+  }, []);
 
-  const getAllUsers = async (): Promise<void> => {
-
+  const getAllUsers = useCallback(async (): Promise<void> => {
     try {
-
-      const res =
-        await getAllUsersForUser();
-
+      const res = await getAllUsersForUser();
       setGetUsers(res.data.data);
-
     } catch (error: unknown) {
-
       console.log(error);
     }
-  };
+  }, []);
 
   const deleteUser = async (
     id: string
@@ -297,10 +362,26 @@ export const AuthProvider = ({
       const freshRes = await getOneProfileUser(id);
       const freshUser = freshRes.data.data as IUser;
 
-      setUser((prev) => ({
-        ...(prev ?? {}),
-        ...freshUser,
-      }));
+      if (user && (user._id === id || user.id === id)) {
+        setUser((prev) => ({
+          ...(prev ?? {}),
+          ...freshUser,
+        }));
+      }
+
+      setGetAdminUsers((prev) =>
+        prev.map((u) => {
+          const userId = u._id ?? u.id;
+          return userId === id ? { ...u, ...freshUser } : u;
+        })
+      );
+
+      setGetUsers((prev) =>
+        prev.map((u) => {
+          const userId = u._id ?? u.id;
+          return userId === id ? { ...u, ...freshUser } : u;
+        })
+      );
 
       return freshUser;
     } catch (error: unknown) {
@@ -325,6 +406,19 @@ export const AuthProvider = ({
     }
   };
 
+  const getPayments = async (): Promise<IPaymentRecord[]> => {
+    try {
+      const res = await getPaymentsRequest();
+      if (res.data && res.data.data) {
+        return res.data.data;
+      }
+      return [];
+    } catch (error: unknown) {
+      console.error("Error al obtener pagos:", error);
+      return [];
+    }
+  };
+
   useEffect(() => {
 
     if (errors.length > 0) {
@@ -345,23 +439,6 @@ export const AuthProvider = ({
   useEffect(() => {
 
     async function checkLogin() {
-
-      const cookies =
-        Cookies.get() as Record<
-          string,
-          string | undefined
-        >;
-
-      if (!cookies.token) {
-
-        setIsAuthenticate(false);
-
-        setLoading(false);
-
-        setUser(null);
-
-        return;
-      }
 
       try {
 
@@ -385,8 +462,7 @@ export const AuthProvider = ({
 
       } catch (error: unknown) {
 
-        console.log(error);
-
+        // Token missing or invalid — user is not authenticated
         setIsAuthenticate(false);
 
         setUser(null);
@@ -430,6 +506,8 @@ export const AuthProvider = ({
 
         addPay,
 
+        getPayments,
+
         users,
 
         getAllUsers,
@@ -437,6 +515,10 @@ export const AuthProvider = ({
         createUser,
 
         updatePasswordByPassword,
+
+        requestPasswordReset,
+
+        confirmPasswordReset,
       }}
     >
       {children}

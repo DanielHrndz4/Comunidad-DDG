@@ -29,7 +29,7 @@ export function useGeolocation(
   options: UseGeolocationOptions = {}
 ): UseGeolocationResult {
   const {
-    autoStart = true,
+    autoStart = false,
     enableHighAccuracy = true,
     timeout = 10000,
     maximumAge = 0,

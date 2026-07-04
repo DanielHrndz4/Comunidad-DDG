@@ -15,15 +15,7 @@ import VigilantLayout from './pages/vigilant/VigilantLayaout.jsx'
 // @ts-ignore
 import AdminHome from './pages/admin/AdminHome.jsx'
 // @ts-ignore
-import AdminUserView from './pages/admin/AdminUserView.jsx'
-// @ts-ignore
-import AdminTaskView from './pages/admin/AdminTaskView.jsx'
-// @ts-ignore
-import AdminReportView from './pages/admin/AdminReportView.jsx'
-// @ts-ignore
-import AdminProfile from './pages/admin/AdminProfile.jsx'
-// @ts-ignore
-import AdminSIGView from './pages/admin/AdminSIGView.jsx'
+import AdminSIGView from './pages/admin/AdminSIGView'
 
 // Vistas de registro e inicio de sesión
 // @ts-ignore
@@ -32,10 +24,12 @@ import Register from "./pages/register/Register.jsx";
 import Login from "./pages/login/Login.jsx";
 // @ts-ignore
 import Home from "./pages/home/Home.jsx";
+// @ts-ignore
+import VerifyOtp from "./pages/login/VerifyOtp.jsx";
 
 // Contextos
 // @ts-ignore
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 // @ts-ignore
 import { TaskProvider } from "./context/TaskContext";
 
@@ -43,17 +37,21 @@ import { TaskProvider } from "./context/TaskContext";
 // @ts-ignore
 import LoginAccess from "./pages/login-access/LoginAccess.jsx";
 // @ts-ignore
-import PayVigilance from "./pages/login-access/PayVigilance.jsx";
-// @ts-ignore
-import Profile from "./pages/login-access/Profile.jsx";
-// @ts-ignore
 import ProfileUpdate from "./pages/login-access/ProfileUpdate.jsx";
+
+// Perfil unificado por rol
 // @ts-ignore
-import UserNormalReportView from './pages/login-access/UserNormalReportView.jsx'
+import SharedProfile from "./components/SharedProfile.jsx";
 // @ts-ignore
-import UserNormalAnunciosView from './pages/login-access/UserNormalAnunciosView.jsx'
+import PaymentsView from "./pages/login-access/PaymentsView.jsx";
+
+// Vistas unificadas (compartidas por roles)
 // @ts-ignore
-import UserNormalView from './pages/login-access/UserNormalView.jsx'
+import ReportsView from './pages/login-access/ReportsView.jsx'
+// @ts-ignore
+import AnunciosView from './pages/login-access/AnunciosView.jsx'
+// @ts-ignore
+import UsersView from './pages/login-access/UsersView.jsx'
 
 // Vistas de vigilantes
 // @ts-ignore
@@ -63,7 +61,8 @@ import Visits from "./pages/vigilant/Visits.jsx";
 // @ts-ignore
 import Schedules from "./pages/vigilant/Schedules.jsx";
 // @ts-ignore
-import ProfileVigilant from "./pages/vigilant/ProfileVigilant.jsx";
+import Delimitation from "./pages/login-access/Delimitation.jsx";
+
 
 // Rutas protegidas según rol
 // @ts-ignore
@@ -71,6 +70,15 @@ import ProtectedRoute from "./protected/ProtectedRoute";
 
 // CSS global
 import './index.css'
+
+// Wrapper para Delimitación según rol (normal o vigilant) para evitar colisión de rutas
+function DelimitationLayoutWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "vigilant") {
+    return <VigilantLayout />;
+  }
+  return <UserNormalLayout />;
+}
 
 // Renderizamos la aplicación en el root del HTML
 const rootElement = document.getElementById('root');
@@ -84,17 +92,18 @@ if (rootElement) {
               <Route index element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/verify-otp" element={<VerifyOtp />} />
 
               <Route element={<ProtectedRoute />}>
                 <Route element={<ProtectedRoute allowedRoles={["normal"]} />}>
                   <Route element={<UserNormalLayout />}>
                     <Route path="/user" element={<LoginAccess />} />
-                    <Route path="/userReport" element={<UserNormalReportView />} />
+                    <Route path="/userReport" element={<ReportsView />} />
                     <Route path="/profile/:id" element={<ProfileUpdate />} />
-                    <Route path="/payVigilance" element={<PayVigilance />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/allUsers" element={<UserNormalView />} />
-                    <Route path="/userAnuncios" element={<UserNormalAnunciosView />} />
+                    <Route path="/payVigilance" element={<PaymentsView />} />
+                    <Route path="/profile" element={<SharedProfile />} />
+                    <Route path="/allUsers" element={<UsersView />} />
+                    <Route path="/userAnuncios" element={<AnunciosView />} />
                   </Route>
                 </Route>
 
@@ -102,19 +111,27 @@ if (rootElement) {
                   <Route element={<VigilantLayout />}>
                     <Route path="/vigilant" element={<Vigilant />} />
                     <Route path="/visits" element={<Visits />} />
-                    <Route path="/profileVigilant" element={<ProfileVigilant />} />
+                    <Route path="/profileVigilant" element={<SharedProfile />} />
                     <Route path="/schedules" element={<Schedules />} />
+                  </Route>
+                </Route>
+
+                <Route element={<ProtectedRoute allowedRoles={["normal", "vigilant"]} />}>
+                  <Route element={<DelimitationLayoutWrapper />}>
+                    <Route path="/delimitation" element={<Delimitation />} />
                   </Route>
                 </Route>
 
                 <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
                   <Route element={<AdminLayout />}>
                     <Route path='/admin' element={<AdminHome />} />
-                    <Route path="/admin/users" element={<AdminUserView />} />
-                    <Route path="/admin/tasks" element={<AdminTaskView />} />
-                    <Route path="/admin/reports" element={<AdminReportView />} />
-                    <Route path="/admin/profile" element={<AdminProfile />} />
+                    <Route path="/admin/users" element={<UsersView />} />
+                    <Route path="/admin/tasks" element={<AnunciosView />} />
+                    <Route path="/admin/reports" element={<ReportsView />} />
+                    <Route path="/admin/profile" element={<SharedProfile />} />
+                    <Route path="/admin/payments" element={<PaymentsView />} />
                     <Route path="/admin/sig" element={<AdminSIGView />} />
+                    <Route path="/admin/delimitation" element={<Delimitation />} />
                   </Route>
                 </Route>
               </Route>

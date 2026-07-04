@@ -11,4 +11,6 @@ export interface IReport {
   location?: IGeoPoint;
   date: string;
   user: string;
+  isDangerZone?: boolean;
+  uploadAddress?: string;
 }

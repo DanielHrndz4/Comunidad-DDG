@@ -20,15 +20,15 @@ export class TaskService {
     /**
     * Obtiene tareas por el ID del usuario.
     */
-    public async selectTheTask(userId: unknown) {
-        return await selectTask(userId as string);
+    public async selectTheTask(userId: unknown, page?: number, limit?: number) {
+        return await selectTask(userId as string, page, limit);
     }
 
     /**
     * Obtiene todas las tareas disponibles.
     */
-    public async selectTheTaskHome() {
-        return await selectTaskHome();
+    public async selectTheTaskHome(page?: number, limit?: number) {
+        return await selectTaskHome(page, limit);
     }
 
     /**

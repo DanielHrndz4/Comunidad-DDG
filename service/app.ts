@@ -19,6 +19,24 @@ connectiondb(); // Establece conexión con la base de datos al iniciar el servid
 // Configura CORS para permitir solicitudes desde el frontend y con envío de cookies
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
+import fs from "fs";
+import path from "path";
+app.use((req, res, next) => {
+    const logFile = "/home/gilthunder/Escritorio/Comunidad-DDG/service/requests.log";
+    const start = Date.now();
+    res.on("finish", () => {
+        const duration = Date.now() - start;
+        const logLine = `[${new Date().toISOString()}] ${req.method} ${req.url} - Status: ${res.statusCode} - Duration: ${duration}ms\n`;
+        fs.appendFileSync(logFile, logLine);
+        if (req.url.includes("task") && req.method === "POST") {
+            const bodyCopy = { ...req.body };
+            if (bodyCopy.image) bodyCopy.image = `base64 (${bodyCopy.image.length} chars)`;
+            fs.appendFileSync(logFile, `  Body: ${JSON.stringify(bodyCopy)}\n`);
+        }
+    });
+    next();
+});
+
 // Permite recibir JSON con un límite de 50MB
 app.use(express.json({ limit: "50mb" }));
 
@@ -46,3 +64,5 @@ app.listen(PORT, () => {
     console.log("El servidor está trabajando en el puerto: " + PORT);
     console.log("Documentación Swagger disponible en: http://localhost:" + PORT + "/api-docs");
 });
+// Trigger tsx watch reload
+

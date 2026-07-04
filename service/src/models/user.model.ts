@@ -27,13 +27,23 @@ const userSchema = new mongoose.Schema({
     },
     age: {
         type: Number,
-        require: true
+        default: 18
     },
     role: {
         type: String,
         enum: ["admin", "vigilant", "normal", "user"],
         default: "normal",
         require: true
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    otpCode: {
+        type: String
+    },
+    otpExpires: {
+        type: Date
     }
 }, {
     timestamps: true

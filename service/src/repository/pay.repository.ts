@@ -10,5 +10,9 @@ export const createPay = async (payData: Record<string, unknown>) => {
 };
 
 export const getAllPays = async () => {
-    return await Pay.find();
+    return await Pay.find().populate("user", "name username email");
+};
+
+export const getPaysByUser = async (userId: string) => {
+    return await Pay.find({ user: userId }).populate("user", "name username email");
 };

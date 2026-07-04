@@ -18,6 +18,7 @@ import tarjetaDeIdentificacion from './tarjeta-de-identificacion.png';
 import tresPuntos from './tres-puntos.png';
 import usuario1 from './usuario1.png';
 import visa from './visa.png';
+import falcon from './falcon.png';
 
 const assets = {
     agregar,
@@ -40,6 +41,7 @@ const assets = {
     tresPuntos,
     usuario1,
     visa,
+    falcon,
 };
 
 export default assets;

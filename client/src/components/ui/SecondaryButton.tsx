@@ -1,25 +1,30 @@
 import { ButtonHTMLAttributes } from "react";
 
 export default function SecondaryButton(props: ButtonHTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      {...props}
-      className={`
-        px-7
-        py-3
-        rounded-full
-        bg-[#F5F5F7]
-        border
-        border-[#D2D2D7]
-        text-[#1D1D1F]
-        font-medium
-        text-[0.92rem]
-        transition-all
-        duration-200
-        hover:bg-[#EBEBED]
-        active:scale-[0.97]
-        ${props.className ?? ""}
-      `}
-    />
-  );
+    const { style, children, ...rest } = props;
+    return (
+        <button
+            {...rest}
+            style={{
+                background: "#f5f5f7",
+                color: "#142B36",
+                border: "1.5px solid #e8e8ed",
+                borderRadius: "12px",
+                padding: "12px 24px",
+                fontSize: "14px",
+                fontWeight: 600,
+                fontFamily: "'Montserrat','Inter',sans-serif",
+                cursor: "pointer",
+                transition: "all .2s ease",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                ...style,
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#ebebed"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "#f5f5f7"; }}
+        >
+            {children}
+        </button>
+    );
 }
