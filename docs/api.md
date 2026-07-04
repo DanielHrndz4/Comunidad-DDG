@@ -68,7 +68,7 @@ A continuación se detallan las rutas principales organizadas por módulos en el
 | `GET` | `/api/profile` | `authRequired` | Obtener el perfil completo del usuario autenticado. |
 | `GET` | `/api/users` | `authRequired` | Obtener todos los usuarios del sistema (solo administradores). |
 | `DELETE` | `/api/users/:id` | `authRequired` | Eliminar a un usuario por ID. |
-| `PUT` | `/api/profile/:id` | `authRequired` | Actualizar los datos del perfil (nombre, teléfono, edad, etc.). |
+| `PUT` | `/api/profile/:id` | `authRequired` | Actualizar los datos del perfil (nombre, teléfono, etc.). |
 | `POST` | `/api/createUser` | `authRequired` | Crear directamente un usuario con rol específico (admin, vigilante, etc.). |
 | `POST` | `/api/request-password-reset` | Ninguno | Solicitar restablecimiento de contraseña (envía OTP). |
 | `POST` | `/api/confirm-password-reset` | Ninguno | Confirmar el cambio de contraseña usando el OTP recibido. |

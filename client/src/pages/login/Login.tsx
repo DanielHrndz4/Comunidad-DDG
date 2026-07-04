@@ -216,8 +216,8 @@ export default function Login({
                   {...registerSignup("password", { 
                     required: "La contraseña es requerida",
                     minLength: {
-                      value: 8,
-                      message: "Mínimo 8 caracteres"
+                      value: 12,
+                      message: "Mínimo 12 caracteres"
                     }
                   })}
                 />

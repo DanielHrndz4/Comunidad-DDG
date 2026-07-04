@@ -6,7 +6,9 @@
     "install:all": "yarn --cwd client install && yarn --cwd service install",
     "install:client": "yarn --cwd client install",
     "install:service": "yarn --cwd service install",
-    "dev": "concurrently \"yarn --cwd service dev\" \"yarn --cwd client dev\""
+    "dev": "concurrently \"yarn --cwd service dev\" \"yarn --cwd client dev\"",
+    "docs:serve": ".venv/bin/mkdocs serve",
+    "docs:build": ".venv/bin/mkdocs build"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
