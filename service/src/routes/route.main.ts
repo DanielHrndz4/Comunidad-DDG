@@ -197,15 +197,11 @@ const router = Router();
  *               password:
  *                 type: string
  *                 format: password
- *                 minLength: 6
- *                 example: "password123"
+ *                 minLength: 12
+ *                 example: "password12345"
  *               telephone:
  *                 type: string
  *                 example: "+50378787878"
- *               age:
- *                 type: integer
- *                 minimum: 18
- *                 example: 25
  *               role:
  *                 type: string
  *                 enum: ["admin", "vigilant", "normal"]
@@ -217,7 +213,6 @@ const router = Router();
  *               - email
  *               - password
  *               - telephone
- *               - age
  *               - role
  *     responses:
  *       201:

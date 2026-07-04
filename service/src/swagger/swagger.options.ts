@@ -49,17 +49,12 @@ const swaggerOptions = {
                         password: {
                             type: "string",
                             format: "password",
-                            minLength: 6,
-                            example: "password123"
+                            minLength: 12,
+                            example: "password12345"
                         },
                         telephone: {
                             type: "string",
                             example: "+50378787878"
-                        },
-                        age: {
-                            type: "integer",
-                            minimum: 18,
-                            example: 25
                         },
                         role: {
                             type: "string",
@@ -68,7 +63,7 @@ const swaggerOptions = {
                             example: "vigilant"
                         }
                     },
-                    required: ["name", "username", "email", "password", "telephone", "age", "role"]
+                    required: ["name", "username", "email", "password", "telephone", "role"]
                 },
                 Login: {
                     type: "object",
