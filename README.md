@@ -1,5 +1,9 @@
 **DOCUMENTACIÓN TÉCNICA**
 
+**Documentacion: [https://site-six-murex-23.vercel.app/](https://site-six-murex-23.vercel.app/)**
+
+**Web: [https://client-mu-nine-76.vercel.app/](https://client-mu-nine-76.vercel.app/)**
+
 📌 **1️⃣ Nombre del Proyecto**
 
 Comunidad DDG
