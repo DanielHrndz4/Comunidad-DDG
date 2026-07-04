@@ -7,7 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch app.ts",
-    "build": "tsc --project tsconfig.build.json"
+    "build": "tsc --project tsconfig.build.json",
+    "export-swagger": "tsx src/scripts/exportSwagger.ts"
   },
   "repository": {
     "type": "git",

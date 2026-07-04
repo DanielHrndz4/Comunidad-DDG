@@ -1,0 +1,1644 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Proyecto IS 2025",
+    "version": "1.0.0",
+    "description": "Esta es la documentación oficial de nuestra API para el Proyecto de Ingeniería de Software 2025. Aquí encontrarás todo lo necesario para interactuar con el sistema.",
+    "contact": {
+      "name": "Equipo de Soporte"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:1200",
+      "description": "Servidor de Desarrollo (Local)"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Register": {
+        "type": "object",
+        "required": [
+          "name",
+          "username",
+          "email",
+          "password",
+          "telephone",
+          "age"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12
+          },
+          "telephone": {
+            "type": "string",
+            "minLength": 8,
+            "pattern": "^\\d+$"
+          },
+          "age": {
+            "type": "integer",
+            "minimum": 18
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "vigilant",
+              "admin"
+            ]
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateTask": {
+        "type": "object",
+        "required": [
+          "title",
+          "description",
+          "image"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "Point"
+                ]
+              },
+              "coordinates": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateTaskD": {
+        "type": "object",
+        "required": [
+          "title2",
+          "description2"
+        ],
+        "properties": {
+          "title2": {
+            "type": "string"
+          },
+          "description2": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateSchedule": {
+        "type": "object",
+        "required": [
+          "day",
+          "startTime",
+          "endTime"
+        ],
+        "properties": {
+          "day": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateVisit": {
+        "type": "object",
+        "required": [
+          "visitorName",
+          "reason"
+        ],
+        "properties": {
+          "visitorName": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "CreatePay": {
+        "type": "object",
+        "required": [
+          "numberTarget",
+          "context",
+          "amount",
+          "cvc",
+          "date"
+        ],
+        "properties": {
+          "numberTarget": {
+            "type": "string",
+            "minLength": 16
+          },
+          "context": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cvc": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/schedules": {
+      "post": {
+        "summary": "Crear un nuevo horario de vigilancia",
+        "tags": [
+          "Vigilancia"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Horario creado correctamente"
+          }
+        }
+      },
+      "get": {
+        "summary": "Obtener todos los horarios",
+        "tags": [
+          "Vigilancia"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de horarios"
+          }
+        }
+      }
+    },
+    "/api/visit": {
+      "post": {
+        "summary": "Registrar una nueva visita",
+        "tags": [
+          "Vigilancia"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVisit"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Visita registrada correctamente"
+          }
+        }
+      }
+    },
+    "/api/visits": {
+      "get": {
+        "summary": "Obtener todas las visitas",
+        "tags": [
+          "Vigilancia"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de visitas"
+          }
+        }
+      }
+    },
+    "/schedules": {
+      "post": {
+        "summary": "Registra un nuevo horario de vigilancia",
+        "tags": [
+          "Vigilancia - Horarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "day",
+                  "startTime",
+                  "endTime"
+                ],
+                "properties": {
+                  "day": {
+                    "type": "string",
+                    "description": "Día de la semana (ej. Lunes)"
+                  },
+                  "startTime": {
+                    "type": "string",
+                    "description": "Hora de inicio del turno"
+                  },
+                  "endTime": {
+                    "type": "string",
+                    "description": "Hora de fin del turno"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Horario guardado correctamente"
+          },
+          "401": {
+            "description": "No tienes permiso"
+          }
+        }
+      },
+      "get": {
+        "summary": "Consulta la lista completa de horarios",
+        "tags": [
+          "Vigilancia - Horarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Aquí están todos los horarios registrados"
+          },
+          "401": {
+            "description": "Acceso denegado"
+          }
+        }
+      }
+    },
+    "/visit": {
+      "post": {
+        "summary": "Registra la entrada de una visita",
+        "tags": [
+          "Vigilancia - Visitas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "visitorName",
+                  "reason"
+                ],
+                "properties": {
+                  "visitorName": {
+                    "type": "string",
+                    "description": "Nombre completo del visitante"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "¿A qué viene? (Motivo)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Visita registrada en el sistema"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/visits": {
+      "get": {
+        "summary": "Consulta el historial de visitas",
+        "tags": [
+          "Vigilancia - Visitas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Listado de todas las visitas"
+          },
+          "401": {
+            "description": "Acceso denegado"
+          }
+        }
+      }
+    },
+    "/api/task": {
+      "post": {
+        "summary": "Crear una nueva tarea",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTask"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tarea creada correctamente"
+          }
+        }
+      },
+      "get": {
+        "summary": "Obtener todas las tareas",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tareas"
+          }
+        }
+      }
+    },
+    "/api/taskhome": {
+      "get": {
+        "summary": "Obtener tareas para home",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tareas home"
+          }
+        }
+      }
+    },
+    "/api/task/{id}": {
+      "get": {
+        "summary": "Obtener una tarea por ID",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Datos de la tarea"
+          }
+        }
+      },
+      "put": {
+        "summary": "Actualizar una tarea por ID",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTask"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tarea actualizada"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar una tarea por ID",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarea eliminada"
+          }
+        }
+      }
+    },
+    "/api/taskd": {
+      "post": {
+        "summary": "Crear una nueva tarea D",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTaskD"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tarea D creada correctamente"
+          }
+        }
+      },
+      "get": {
+        "summary": "Obtener todas las tareas D",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tareas D"
+          }
+        }
+      }
+    },
+    "/api/taskhomed": {
+      "get": {
+        "summary": "Obtener tareas D para home",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tareas D home"
+          }
+        }
+      }
+    },
+    "/api/taskd/{id}": {
+      "get": {
+        "summary": "Obtener una tarea D por ID",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Datos de la tarea D"
+          }
+        }
+      },
+      "put": {
+        "summary": "Actualizar una tarea D por ID",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTaskD"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tarea D actualizada"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar una tarea D por ID",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarea D eliminada"
+          }
+        }
+      }
+    },
+    "/task": {
+      "post": {
+        "summary": "Crea una nueva tarea pendiente",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "description"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "¿Qué tienes que hacer? (Título)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Explica un poco más los detalles"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "¿Para cuándo es? (Fecha límite)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "¡Listo! Tarea guardada"
+          },
+          "401": {
+            "description": "No estás autorizado"
+          }
+        }
+      },
+      "get": {
+        "summary": "Consulta todas tus tareas pendientes",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Aquí tienes tu lista de tareas"
+          },
+          "401": {
+            "description": "Necesitas iniciar sesión"
+          }
+        }
+      }
+    },
+    "/taskhome": {
+      "get": {
+        "summary": "Obtiene un resumen de tareas para el inicio",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tareas destacadas para la pantalla principal"
+          },
+          "401": {
+            "description": "Acceso denegado"
+          }
+        }
+      }
+    },
+    "/tasks/nearby": {
+      "get": {
+        "summary": "Obtiene tareas cercanas a una coordenada geográfica",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "longitude",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Longitud del punto central (entre -180 y 180)"
+          },
+          {
+            "in": "query",
+            "name": "latitude",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Latitud del punto central (entre -90 y 90)"
+          },
+          {
+            "in": "query",
+            "name": "radius",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Radio máximo de búsqueda en metros"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GeoJSON FeatureCollection con las tareas cercanas (compatible con QGIS)"
+          },
+          "400": {
+            "description": "Parámetros inválidos o fuera de rango"
+          },
+          "500": {
+            "description": "Error del servidor"
+          }
+        }
+      }
+    },
+    "/task/{id}": {
+      "get": {
+        "summary": "Busca una tarea específica por su ID",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "El ID de la tarea que buscas"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Aquí está la tarea que pediste"
+          },
+          "401": {
+            "description": "No tienes permiso"
+          },
+          "404": {
+            "description": "No encontramos esa tarea"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Elimina una tarea que ya no necesites",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "El ID de la tarea a borrar"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarea eliminada correctamente"
+          },
+          "401": {
+            "description": "No autorizado"
+          },
+          "404": {
+            "description": "Esa tarea no existe"
+          }
+        }
+      },
+      "put": {
+        "summary": "Modifica los detalles de una tarea existente",
+        "tags": [
+          "Tareas"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "El ID de la tarea a actualizar"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Nuevo título"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Nueva descripción"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Nueva fecha"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tarea actualizada con éxito"
+          },
+          "401": {
+            "description": "No autorizado"
+          },
+          "404": {
+            "description": "No encontramos la tarea"
+          }
+        }
+      }
+    },
+    "/taskd": {
+      "post": {
+        "summary": "Crea una nueva tarea especial (Tipo 2)",
+        "tags": [
+          "Tareas Tipo 2"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "description"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Título de la tarea especial"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Detalles de la tarea"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Fecha límite"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tarea especial creada"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "get": {
+        "summary": "Consulta tus tareas especiales (Tipo 2)",
+        "tags": [
+          "Tareas Tipo 2"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tareas especiales"
+          },
+          "401": {
+            "description": "Necesitas iniciar sesión"
+          }
+        }
+      }
+    },
+    "/taskhomed": {
+      "get": {
+        "summary": "Resumen de tareas especiales para el inicio",
+        "tags": [
+          "Tareas Tipo 2"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tareas especiales destacadas"
+          },
+          "401": {
+            "description": "Acceso denegado"
+          }
+        }
+      }
+    },
+    "/taskd/{id}": {
+      "get": {
+        "summary": "Busca una tarea especial por ID",
+        "tags": [
+          "Tareas Tipo 2"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID de la tarea especial"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles encontrados"
+          },
+          "401": {
+            "description": "No autorizado"
+          },
+          "404": {
+            "description": "No existe esa tarea"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Elimina una tarea especial",
+        "tags": [
+          "Tareas Tipo 2"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID de la tarea a borrar"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarea especial eliminada"
+          },
+          "401": {
+            "description": "No autorizado"
+          },
+          "404": {
+            "description": "No encontrada"
+          }
+        }
+      },
+      "put": {
+        "summary": "Actualiza una tarea especial",
+        "tags": [
+          "Tareas Tipo 2"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ID de la tarea a modificar"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Nuevo título"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Nueva descripción"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Nueva fecha"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tarea especial actualizada"
+          },
+          "401": {
+            "description": "No autorizado"
+          },
+          "404": {
+            "description": "No encontrada"
+          }
+        }
+      }
+    },
+    "/api/register": {
+      "post": {
+        "summary": "Registrar nuevo usuario",
+        "tags": [
+          "Usuarios"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Register"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario registrado correctamente"
+          }
+        }
+      }
+    },
+    "/api/login": {
+      "post": {
+        "summary": "Iniciar sesión",
+        "tags": [
+          "Usuarios"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sesión iniciada con éxito"
+          }
+        }
+      }
+    },
+    "/api/logout": {
+      "post": {
+        "summary": "Cerrar sesión",
+        "tags": [
+          "Usuarios"
+        ],
+        "responses": {
+          "200": {
+            "description": "Sesión cerrada"
+          }
+        }
+      }
+    },
+    "/api/profile": {
+      "get": {
+        "summary": "Obtener perfil del usuario autenticado",
+        "tags": [
+          "Usuarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfil del usuario"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "summary": "Obtener todos los usuarios",
+        "tags": [
+          "Usuarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de usuarios"
+          }
+        }
+      }
+    },
+    "/api/profile/{id}": {
+      "get": {
+        "summary": "Obtener perfil de un usuario por ID",
+        "tags": [
+          "Usuarios"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfil del usuario"
+          }
+        }
+      },
+      "put": {
+        "summary": "Actualizar perfil de un usuario",
+        "tags": [
+          "Usuarios"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfil actualizado"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "delete": {
+        "summary": "Eliminar un usuario",
+        "tags": [
+          "Usuarios"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario eliminado"
+          }
+        }
+      }
+    },
+    "/api/payVigilance": {
+      "post": {
+        "summary": "Agregar pago a un vigilante",
+        "tags": [
+          "Pagos"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Pago registrado"
+          }
+        }
+      }
+    },
+    "/api/allPay": {
+      "get": {
+        "summary": "Obtener todos los pagos realizados",
+        "tags": [
+          "Pagos"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de pagos"
+          }
+        }
+      }
+    },
+    "/api/createUser": {
+      "post": {
+        "summary": "Crear nuevo usuario (solo administrador)",
+        "description": "Endpoint para que un administrador cree nuevos usuarios en el sistema. Requiere autenticación JWT con rol de administrador.",
+        "tags": [
+          "Usuarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Juan Pérez"
+                  },
+                  "username": {
+                    "type": "string",
+                    "example": "juanperez"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "juan@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "minLength": 6,
+                    "example": "password123"
+                  },
+                  "telephone": {
+                    "type": "string",
+                    "example": "+50378787878"
+                  },
+                  "age": {
+                    "type": "integer",
+                    "minimum": 18,
+                    "example": 25
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "admin",
+                      "vigilant",
+                      "normal"
+                    ],
+                    "default": "normal",
+                    "example": "vigilant"
+                  }
+                },
+                "required": [
+                  "name",
+                  "username",
+                  "email",
+                  "password",
+                  "telephone",
+                  "age",
+                  "role"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario creado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string",
+                  "example": "token=abcde12345; Path=/; HttpOnly"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error de validación o datos incorrectos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "El nombre de usuario ya está en uso"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado (token inválido o sin privilegios de admin)"
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Error al crear el usuario en la base de datos"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/updatePassword": {
+      "put": {
+        "summary": "Update user password",
+        "tags": [
+          "Usuarios"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "The username of the user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "The new password"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Password updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid username or password"
+          },
+          "401": {
+            "description": "Unauthorized - invalid credentials"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Vigilancia",
+      "description": "Endpoints para horarios y visitas"
+    },
+    {
+      "name": "Tareas",
+      "description": "Endpoints para la gestión de tareas"
+    },
+    {
+      "name": "Usuarios",
+      "description": "Operaciones relacionadas con usuarios"
+    }
+  ]
+}
