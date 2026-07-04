@@ -1,0 +1,59 @@
+site_name: Comunidad DDG - Documentación
+site_url: https://golic98.github.io/ProyectoIS2025/
+site_author: Comunidad DDG Team
+site_description: Documentación técnica completa para el proyecto Comunidad DDG (Vigilancia, SIG y Publicación en Red Comunitaria)
+
+theme:
+  name: material
+  language: es
+  palette:
+    # Paleta de colores para modo claro
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Cambiar a modo oscuro
+    # Paleta de colores para modo oscuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Cambiar a modo claro
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:pymdownx.emoji.twemoji
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - attr_list
+  - md_in_html
+
+nav:
+  - Inicio: index.md
+  - Instalación y Configuración: instalacion.md
+  - Arquitectura y Datos: arquitectura.md
+  - Guía de Desarrollo: desarrollo.md
+  - Documentación de API: api.md
+  - Plan de Pruebas: pruebas.md
