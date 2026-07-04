@@ -127,14 +127,14 @@ export default function CreateUserForm({
         <FormInput
           type="password"
           label="Contraseña"
-          placeholder="Mínimo 8 caracteres"
+          placeholder="Mínimo 12 caracteres"
           error={getErrorMessage(errors.password?.message)}
-          success={passwordValue.length >= 8}
+          success={passwordValue.length >= 12}
           {...register("password", {
             required: "La contraseña es requerida",
             minLength: {
-              value: 8,
-              message: "Mínimo 8 caracteres",
+              value: 12,
+              message: "Mínimo 12 caracteres",
             },
           })}
         />
